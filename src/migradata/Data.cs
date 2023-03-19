@@ -20,6 +20,8 @@ public class Data
         ParameterCollection.Add(new SqlParameter(parameterName, parameterValue));
     }
 
+    public IEnumerable<string>? CNPJBase {get; set;}
+
     public async Task ReadAsync(string querySelect)
      => await Task.Run(() =>
         {
@@ -27,13 +29,12 @@ public class Data
             {
                 try
                 {
-                    connection.Open();
-                    Console.WriteLine("Conexão bem-sucedida!");
+                    connection.Open();                    
 
-                    //SqlCommand commandSelect = new SqlCommand(querySelect, connection);
                     SqlCommand _command = connection.CreateCommand();
                     _command.CommandType = CommandType.Text;
                     _command.CommandText = querySelect;
+                    _command.CommandTimeout = 0;
 
                     foreach (SqlParameter p in ParameterCollection)
                     {
@@ -41,10 +42,13 @@ public class Data
                     }
 
                     SqlDataReader reader = _command.ExecuteReader();
+
+                    var _list = new List<string>();
                     while (reader.Read())
                     {
-                        Console.WriteLine($"CNPJ: {reader[1]}, Nome: {reader[2]}, Natureza: {reader[3]}");
+                        _list.Add(reader[0].ToString()!);
                     }
+                    CNPJBase = _list;
                     reader.Close();
                 }
                 catch (Exception ex)
@@ -54,42 +58,31 @@ public class Data
             }
         });
 
-    public async Task<bool> WriteAsync(string queryWrite)
- => await Task.Run(() =>
-    {
-        using (SqlConnection connection = new SqlConnection(_connectionString))
-        {
-            try
+    public async Task WriteAsync(string queryWrite)
+        => await Task.Run(() =>
             {
-                connection.Open();
-                Console.WriteLine("Conexão bem-sucedida!");
-
-                //SqlCommand commandSelect = new SqlCommand(querySelect, connection);
-                SqlCommand _command = connection.CreateCommand();
-                _command.CommandType = CommandType.Text;
-                _command.CommandText = queryWrite;
-                _command.CommandTimeout = 0;
-
-                foreach (SqlParameter p in ParameterCollection)
+                using (SqlConnection connection = new SqlConnection(_connectionString))
                 {
-                    _command.Parameters.Add(new SqlParameter(p.ParameterName, p.Value));
+                    try
+                    {
+                        connection.Open();
+                        SqlCommand _command = connection.CreateCommand();
+                        _command.CommandType = CommandType.Text;
+                        _command.CommandText = queryWrite;
+                        _command.CommandTimeout = 0;
+
+                        foreach (SqlParameter p in ParameterCollection)
+                        {
+                            _command.Parameters.Add(new SqlParameter(p.ParameterName, p.Value));
+                        }
+
+                        var r = _command.ExecuteNonQuery();
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine("Erro ao conectar: " + ex.Message);
+                    }
                 }
-
-                Console.WriteLine("Executando!");
-                var r = _command.ExecuteNonQuery();
-
-                Console.WriteLine($"Registros afetados: {r}");
-                if ( r > 0)
-                    return true;
-                else
-                    return false;
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine("Erro ao conectar: " + ex.Message);
-                return false;
-            }
-        }
-    });
+            });
 
 }

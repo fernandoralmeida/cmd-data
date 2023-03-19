@@ -3,7 +3,6 @@
 public class MotivoSituacaoCadastral
 {
     public MotivoSituacaoCadastral() {}
-    public Guid Id { get; set; }
     public string? Codigo
     {
         get; set;

@@ -12,45 +12,40 @@ BEGIN TRANSACTION;
 GO
 
 CREATE TABLE [Cnaes] (
-    [Id] uniqueidentifier NOT NULL,
     [Codigo] varchar(10) NULL,
-    [Descricao] varchar(max) NULL,
-    CONSTRAINT [PK_Cnaes] PRIMARY KEY ([Id])
+    [Descricao] varchar(max) NULL
 );
 GO
 
 CREATE TABLE [Empresas] (
-    [Id] uniqueidentifier NOT NULL,
     [CNPJBase] varchar(10) NULL,
     [RazaoSocial] varchar(255) NULL,
     [NaturezaJuridica] varchar(10) NULL,
     [QualificacaoResponsavel] varchar(5) NULL,
     [CapitalSocial] varchar(255) NULL,
     [PorteEmpresa] varchar(5) NULL,
-    [EnteFederativoResponsavel] varchar(255) NULL,
-    CONSTRAINT [PK_Empresas] PRIMARY KEY ([Id])
+    [EnteFederativoResponsavel] varchar(255) NULL
 );
 GO
 
 CREATE TABLE [Estabelecimentos] (
-    [Id] uniqueidentifier NOT NULL,
-    [CNPJBase] varchar(10) NULL,
-    [CNPJOrdem] varchar(5) NULL,
-    [CNPJDV] varchar(3) NULL,
+    [CNPJBase] varchar(8) NULL,
+    [CNPJOrdem] varchar(4) NULL,
+    [CNPJDV] varchar(2) NULL,
     [IdentificadorMatrizFilial] varchar(2) NULL,
     [NomeFantasia] varchar(255) NULL,
-    [SituacaoCadastral] varchar(3) NULL,
+    [SituacaoCadastral] varchar(2) NULL,
     [DataSituacaoCadastral] varchar(10) NULL,
-    [MotivoSituacaoCadastral] varchar(3) NULL,
+    [MotivoSituacaoCadastral] varchar(2) NULL,
     [NomeCidadeExterior] varchar(255) NULL,
     [Pais] varchar(5) NULL,
     [DataInicioAtividade] varchar(10) NULL,
     [CnaeFiscalPrincipal] varchar(255) NULL,
     [CnaeFiscalSecundaria] varchar(max) NULL,
-    [TipoLogradouro] varchar(50) NULL,
+    [TipoLogradouro] varchar(255) NULL,
     [Logradouro] varchar(255) NULL,
-    [Numero] varchar(10) NULL,
-    [Complemento] varchar(50) NULL,
+    [Numero] varchar(255) NULL,
+    [Complemento] varchar(255) NULL,
     [Bairro] varchar(255) NULL,
     [CEP] varchar(10) NULL,
     [UF] varchar(2) NULL,
@@ -63,66 +58,52 @@ CREATE TABLE [Estabelecimentos] (
     [Fax] varchar(255) NULL,
     [CorreioEletronico] varchar(255) NULL,
     [SituacaoEspecial] varchar(255) NULL,
-    [DataSitucaoEspecial] varchar(10) NULL,
-    CONSTRAINT [PK_Estabelecimentos] PRIMARY KEY ([Id])
+    [DataSitucaoEspecial] varchar(10) NULL
 );
 GO
 
 CREATE TABLE [MotivoSituacaoCadastral] (
-    [Id] uniqueidentifier NOT NULL,
     [Codigo] varchar(10) NULL,
-    [Descricao] varchar(max) NULL,
-    CONSTRAINT [PK_MotivoSituacaoCadastral] PRIMARY KEY ([Id])
+    [Descricao] varchar(max) NULL
 );
 GO
 
 CREATE TABLE [Municipios] (
-    [Id] uniqueidentifier NOT NULL,
     [Codigo] varchar(10) NULL,
-    [Descricao] varchar(max) NULL,
-    CONSTRAINT [PK_Municipios] PRIMARY KEY ([Id])
+    [Descricao] varchar(max) NULL
 );
 GO
 
 CREATE TABLE [NaturezaJuridica] (
-    [Id] uniqueidentifier NOT NULL,
     [Codigo] varchar(10) NULL,
-    [Descricao] varchar(max) NULL,
-    CONSTRAINT [PK_NaturezaJuridica] PRIMARY KEY ([Id])
+    [Descricao] varchar(max) NULL
 );
 GO
 
 CREATE TABLE [Paises] (
-    [Id] uniqueidentifier NOT NULL,
     [Codigo] varchar(10) NULL,
-    [Descricao] varchar(max) NULL,
-    CONSTRAINT [PK_Paises] PRIMARY KEY ([Id])
+    [Descricao] varchar(max) NULL
 );
 GO
 
 CREATE TABLE [QualificacaoSocios] (
-    [Id] uniqueidentifier NOT NULL,
     [Codigo] varchar(10) NULL,
-    [Descricao] varchar(max) NULL,
-    CONSTRAINT [PK_QualificacaoSocios] PRIMARY KEY ([Id])
+    [Descricao] varchar(max) NULL
 );
 GO
 
 CREATE TABLE [Simples] (
-    [Id] uniqueidentifier NOT NULL,
     [CNPJBase] varchar(10) NULL,
     [OpcaoSimples] varchar(2) NULL,
     [DataOpcaoSimples] varchar(10) NULL,
     [DataExclusaoSimples] varchar(10) NULL,
     [OpcaoMEI] varchar(2) NULL,
     [DataOpcaoMEI] varchar(10) NULL,
-    [DataExclusaoMEI] varchar(10) NULL,
-    CONSTRAINT [PK_Simples] PRIMARY KEY ([Id])
+    [DataExclusaoMEI] varchar(10) NULL
 );
 GO
 
 CREATE TABLE [Socios] (
-    [Id] uniqueidentifier NOT NULL,
     [CNPJBase] varchar(10) NULL,
     [IdentificadorSocio] varchar(2) NULL,
     [NomeRazaoSocio] varchar(255) NULL,
@@ -133,13 +114,12 @@ CREATE TABLE [Socios] (
     [RepresentanteLegal] varchar(50) NULL,
     [NomeRepresentante] varchar(255) NULL,
     [QualificacaoRepresentanteLegal] varchar(4) NULL,
-    [FaixaEtaria] varchar(2) NULL,
-    CONSTRAINT [PK_Socios] PRIMARY KEY ([Id])
+    [FaixaEtaria] varchar(2) NULL
 );
 GO
 
 INSERT INTO [__EFMigrationsHistory] ([MigrationId], [ProductVersion])
-VALUES (N'20230319004117_Initial', N'7.0.4');
+VALUES (N'20230319192857_M_Initial', N'7.0.4');
 GO
 
 COMMIT;

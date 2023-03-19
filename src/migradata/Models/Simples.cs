@@ -3,7 +3,6 @@
 public class Simples
 {
     public Simples() {}
-    public Guid Id { get; set; }
     public string? CNPJBase { get; set; }
     public string? OpcaoSimples { get; set; }
     public string? DataOpcaoSimples { get; set; }

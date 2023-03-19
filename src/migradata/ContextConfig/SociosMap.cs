@@ -7,7 +7,7 @@ public class SociosMap : IEntityTypeConfiguration<Socio>
 {
     public void Configure(EntityTypeBuilder<Socio> builder)
     {
-        builder.HasKey(c => c.Id);
+        builder.HasNoKey();
         builder.Property(c => c.CNPJBase)
             .HasColumnType("varchar(10)");
         builder.Property(c => c.IdentificadorSocio)

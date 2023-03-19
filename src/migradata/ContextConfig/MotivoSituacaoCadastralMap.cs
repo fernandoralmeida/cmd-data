@@ -7,7 +7,7 @@ public class MotivoSituacaoCadastralMap : IEntityTypeConfiguration<MotivoSituaca
 {
     public void Configure(EntityTypeBuilder<MotivoSituacaoCadastral> builder)
     {
-        builder.HasKey(c => c.Id);
+        builder.HasNoKey();
         builder.Property(c => c.Codigo)
             .HasColumnType("varchar(10)");
         builder.Property(c => c.Descricao)

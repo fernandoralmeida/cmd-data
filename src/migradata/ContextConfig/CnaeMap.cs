@@ -8,7 +8,7 @@ public class CnaeMap : IEntityTypeConfiguration<Cnae>
 {
     public void Configure(EntityTypeBuilder<Cnae> builder)
     {
-        builder.HasKey(c => c.Id);
+        builder.HasNoKey();
         builder.Property(c => c.Codigo)
             .HasColumnType("varchar(10)");
         builder.Property(c => c.Descricao)

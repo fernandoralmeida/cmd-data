@@ -4,7 +4,6 @@ public class Estabelecimento
 {
 
     public Estabelecimento() { }
-    public Guid Id { get; set; }
     public string? CNPJBase { get; set; }
     public string? CNPJOrdem { get; set; }
     public string? CNPJDV { get; set; }

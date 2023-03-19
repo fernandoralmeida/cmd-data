@@ -3,7 +3,6 @@
 public class Municipio
 {
     public Municipio() {}
-    public Guid Id { get; set; }
     public string? Codigo { get; set; }
     public string? Descricao { get; set; }
 

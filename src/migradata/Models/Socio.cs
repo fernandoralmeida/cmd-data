@@ -3,7 +3,6 @@
 public class Socio
 {
     public Socio() {}
-    public Guid Id { get; set; }
     public string? CNPJBase { get; set; }
     public string? IdentificadorSocio { get; set; }
     public string? NomeRazaoSocio { get; set; }

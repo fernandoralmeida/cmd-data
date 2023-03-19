@@ -7,7 +7,7 @@ public class EmpresaMap : IEntityTypeConfiguration<Empresa>
 {
     public void Configure(EntityTypeBuilder<Empresa> builder)
     {
-        builder.HasKey(c => c.Id);
+        builder.HasNoKey();
         builder.Property(c => c.CNPJBase)
             .HasColumnType("varchar(10)");
         builder.Property(c => c.RazaoSocial)
