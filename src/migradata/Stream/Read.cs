@@ -5,15 +5,15 @@ namespace migradata.Stream;
 
 public class Read
 {
-    public async void Empresas()
+    public async Task Empresas()
     {
         int i = 0;
         using (var context = new Context())
-        {
             for (int x = 0; x < 10; x++)
             {
                 try
                 {
+                    Console.WriteLine($"File K3241.K03200Y{x}.D30211.EMPRECSV");
                     using (var reader = new StreamReader($"c:/data/K3241.K03200Y{x}.D30211.EMPRECSV"))
                         while (!reader.EndOfStream)
                         {
@@ -33,13 +33,12 @@ public class Read
                             i++;
                             await context.AddAsync(emp);
                             await context.SaveChangesAsync();
-                            Console.WriteLine($"Migration N:{i}!");
                         }
+                    Console.WriteLine($"Parte {x} ok!");
                 }
                 catch
                 { }
             }
-        }
         Console.WriteLine($"Registros Migrados {i}");
     }
 

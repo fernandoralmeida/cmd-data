@@ -12,18 +12,22 @@ class Program
         Console.WriteLine("Pressione qualquer tecla para iniciar!");
         Console.ReadKey();
         Console.WriteLine("Conectando no Banco de Dados!");
-        Console.WriteLine("Deletando Empresas!");
+        var _data = new Data();
+        _data.AddParameters("N", "n");
+        string sql = "DELETE FROM Empresas";
+        await _data.WriteAsync(sql);
+        Console.WriteLine("Tabela Empresas limpa!");
 
-        var iniciar = new Stream.Read();
+        //var iniciar = new Stream.Read();
 
-        var empresas = new REmpresas();
+        //var empresas = new REmpresas();
 
-        await empresas.RemoveAllAsync();
-        Console.WriteLine("Empresas apagadas!");
-        Console.ReadKey();
-        Console.WriteLine("Iniciando migração de Empresas!");
-        iniciar.Empresas();
-        Console.WriteLine("Migração finalizada!");
+        //await empresas.RemoveAllAsync();
+        //Console.WriteLine("Empresas apagadas!");
+        //Console.ReadKey();
+        //Console.WriteLine("Iniciando migração de Empresas!");
+        //await iniciar.Empresas();
+        //Console.WriteLine("Migração finalizada!");
         /*
         var empresa = new REstabelecimentos();
         var c = empresa.DoListAsync();
