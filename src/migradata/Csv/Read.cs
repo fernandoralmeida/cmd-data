@@ -27,9 +27,9 @@ public class Read
 
                         using (var reader = new StreamReader($"c:/data/K3241.K03200Y{x}.D30211.EMPRECSV", Encoding.GetEncoding("ISO-8859-1")))
                             while (!reader.EndOfStream)
-                            {                                
+                            {
                                 var line = reader.ReadLine();
-                                var fields = line!.Split(';');                                
+                                var fields = line!.Split(';');
 
                                 if (_data.CNPJBase!.Where(s => s == fields[0].ToString().Replace("\"", "")).Count() > 0)
                                 {
@@ -42,12 +42,16 @@ public class Read
                                     _data.AddParameters("@PorteEmpresa", fields[5].ToString().Replace("\"", ""));
                                     _data.AddParameters("@EnteFederativoResponsavel", fields[6].ToString().Replace("\"", ""));
                                     await _data.WriteAsync(_insert);
-                                    e++;
                                 }
                                 i++;
                             }
+
+                        await _data.WriteAsync(@"DELETE FROM Empresas WHERE NOT EXISTS (SELECT CNPJBase FROM Estabelecimentos)");
+                        await _data.ReadAsync(@"SELECT CNPJBase FROM Empresas");
+                        e = _data.CNPJBase!.Count();
                         _timer.Stop();
                         Console.WriteLine($"Registros verificados {i}, migrados: {e}, {_timer.Elapsed.TotalMinutes} minutes");
+
                     }
                     catch
                     { }
@@ -132,7 +136,7 @@ public class Read
                         Console.WriteLine($"File K3241.K03200Y{x}.D30211.ESTABELE");
                         var _timer = new Stopwatch();
                         _timer.Start();
-                        
+
                         using (var reader = new StreamReader($"c:/data/K3241.K03200Y{x}.D30211.ESTABELE", Encoding.GetEncoding("ISO-8859-1")))
                         {
                             while (!reader.EndOfStream)
@@ -222,29 +226,29 @@ public class Read
 
                     using (var reader = new StreamReader($"c:/data/K3241.K03200Y{x}.D30211.SOCIOCSV", Encoding.GetEncoding("ISO-8859-1")))
                         while (!reader.EndOfStream)
-                        {                            
+                        {
                             var line = reader.ReadLine();
                             var fields = line!.Split(';');
-                            if (_data.CNPJBase!.Where(s => s == fields[0].ToString().Replace("\"", "")).Count() > 0)
-                            {
-                                _data.ClearParameters();
-                                _data.AddParameters("@CNPJBase", fields[0].ToString().Replace("\"", "").Trim());
-                                _data.AddParameters("@IdentificadorSocio", fields[1].ToString().Replace("\"", "").Trim());
-                                _data.AddParameters("@NomeRazaoSocio", fields[2].ToString().Replace("\"", "").Trim());
-                                _data.AddParameters("@CnpjCpfSocio", fields[3].ToString().Replace("\"", "").Trim());
-                                _data.AddParameters("@QualificacaoSocio", fields[4].ToString().Replace("\"", "").Trim());
-                                _data.AddParameters("@DataEntradaSociedade", fields[5].ToString().Replace("\"", "").Trim());
-                                _data.AddParameters("@Pais", fields[6].ToString().Replace("\"", "").Trim());
-                                _data.AddParameters("@RepresentanteLegal", fields[7].ToString().Replace("\"", "").Trim());
-                                _data.AddParameters("@NomeRepresentante", fields[8].ToString().Replace("\"", "").Trim());
-                                _data.AddParameters("@QualificacaoRepresentanteLegal", fields[9].ToString().Replace("\"", "").Trim());
-                                _data.AddParameters("@FaixaEtaria", fields[10].ToString().Replace("\"", "").Trim());
-                                await _data.WriteAsync(_insert);
-                                s++;
-                            }
+
+                            _data.ClearParameters();
+                            _data.AddParameters("@CNPJBase", fields[0].ToString().Replace("\"", "").Trim());
+                            _data.AddParameters("@IdentificadorSocio", fields[1].ToString().Replace("\"", "").Trim());
+                            _data.AddParameters("@NomeRazaoSocio", fields[2].ToString().Replace("\"", "").Trim());
+                            _data.AddParameters("@CnpjCpfSocio", fields[3].ToString().Replace("\"", "").Trim());
+                            _data.AddParameters("@QualificacaoSocio", fields[4].ToString().Replace("\"", "").Trim());
+                            _data.AddParameters("@DataEntradaSociedade", fields[5].ToString().Replace("\"", "").Trim());
+                            _data.AddParameters("@Pais", fields[6].ToString().Replace("\"", "").Trim());
+                            _data.AddParameters("@RepresentanteLegal", fields[7].ToString().Replace("\"", "").Trim());
+                            _data.AddParameters("@NomeRepresentante", fields[8].ToString().Replace("\"", "").Trim());
+                            _data.AddParameters("@QualificacaoRepresentanteLegal", fields[9].ToString().Replace("\"", "").Trim());
+                            _data.AddParameters("@FaixaEtaria", fields[10].ToString().Replace("\"", "").Trim());
+                            await _data.WriteAsync(_insert);
                             i++;
                         }
 
+                    await _data.WriteAsync(@"DELETE FROM Socios WHERE NOT EXISTS (SELECT CNPJBase FROM Estabelecimentos)");
+                    await _data.ReadAsync(@"SELECT CNPJBase FROM Socios");
+                    s = _data.CNPJBase!.Count();
                     _timer.Stop();
                     Console.WriteLine($"Registros percorridos {i}, migrados: {s}, {_timer.Elapsed.TotalMinutes} minutes");
                 }
@@ -263,7 +267,7 @@ public class Read
             var _fields = @"(CNPJBase,OpcaoSimples,DataOpcaoSimples,DataExclusaoSimples,OpcaoMEI,DataOpcaoMEI,DataExclusaoMEI)";
             var _values = @"(@CNPJBase,@OpcaoSimples,@DataOpcaoSimples,@DataExclusaoSimples,@OpcaoMEI,@DataOpcaoMEI,@DataExclusaoMEI)";
             var _insert = $"INSERT INTO Simples {_fields} VALUES {_values}";
-            
+
             try
             {
                 Console.WriteLine($"File F.K03200$W.SIMPLES.CSV.D30211");
@@ -274,26 +278,26 @@ public class Read
 
                 using (var reader = new StreamReader($"c:/data/F.K03200$W.SIMPLES.CSV.D30211", Encoding.GetEncoding("ISO-8859-1")))
                     while (!reader.EndOfStream)
-                    {                        
+                    {
                         var line = reader.ReadLine();
                         var fields = line!.Split(';');
 
-                        if (_data.CNPJBase!.Where(s => s == fields[0].ToString().Replace("\"", "")).Count() > 0)
-                        {
-                            _data.ClearParameters();
-                            _data.AddParameters("@CNPJBase", fields[0].ToString().Replace("\"", "").Trim());
-                            _data.AddParameters("@OpcaoSimples", fields[1].ToString().Replace("\"", "").Trim());
-                            _data.AddParameters("@DataOpcaoSimples", fields[2].ToString().Replace("\"", "").Trim());
-                            _data.AddParameters("@DataExclusaoSimples", fields[3].ToString().Replace("\"", "").Trim());
-                            _data.AddParameters("@OpcaoMEI", fields[4].ToString().Replace("\"", "").Trim());
-                            _data.AddParameters("@DataOpcaoMEI", fields[5].ToString().Replace("\"", "").Trim());
-                            _data.AddParameters("@DataExclusaoMEI", fields[6].ToString().Replace("\"", "").Trim());
-                            await _data.WriteAsync(_insert);
-                            s++;
-                        }
+                        _data.ClearParameters();
+                        _data.AddParameters("@CNPJBase", fields[0].ToString().Replace("\"", "").Trim());
+                        _data.AddParameters("@OpcaoSimples", fields[1].ToString().Replace("\"", "").Trim());
+                        _data.AddParameters("@DataOpcaoSimples", fields[2].ToString().Replace("\"", "").Trim());
+                        _data.AddParameters("@DataExclusaoSimples", fields[3].ToString().Replace("\"", "").Trim());
+                        _data.AddParameters("@OpcaoMEI", fields[4].ToString().Replace("\"", "").Trim());
+                        _data.AddParameters("@DataOpcaoMEI", fields[5].ToString().Replace("\"", "").Trim());
+                        _data.AddParameters("@DataExclusaoMEI", fields[6].ToString().Replace("\"", "").Trim());
+                        await _data.WriteAsync(_insert);
+
                         i++;
                     }
 
+                await _data.WriteAsync(@"DELETE FROM Simples WHERE NOT EXISTS (SELECT CNPJBase FROM Estabelecimentos)");
+                await _data.ReadAsync(@"SELECT CNPJBase FROM Simples");
+                s = _data.CNPJBase!.Count();
                 _timer.Stop();
                 Console.WriteLine($"Registros percorridos {i}, migrados: {s}, {_timer.Elapsed.TotalMinutes} minutes");
             }
@@ -320,9 +324,9 @@ public class Read
 
                 using (var reader = new StreamReader($"c:/data/F.K03200$Z.D30311.CNAECSV", Encoding.GetEncoding("ISO-8859-1")))
                     while (!reader.EndOfStream)
-                    {                        
+                    {
                         var line = reader.ReadLine();
-                        var fields = line!.Split(';');                        
+                        var fields = line!.Split(';');
                         _data.ClearParameters();
                         _data.AddParameters("@Codigo", fields[0].ToString().Replace("\"", "").Trim());
                         _data.AddParameters("@Descricao", fields[1].ToString().Replace("\"", "").Trim());
@@ -352,7 +356,7 @@ public class Read
                 var _timer = new Stopwatch();
                 _timer.Start();
                 var _data = new Data();
-                
+
                 using (var reader = new StreamReader($"c:/data/F.K03200$Z.D30311.MOTICSV", Encoding.GetEncoding("ISO-8859-1")))
                     while (!reader.EndOfStream)
                     {
@@ -392,7 +396,7 @@ public class Read
                     while (!reader.EndOfStream)
                     {
                         var line = reader.ReadLine();
-                        var fields = line!.Split(';');                       
+                        var fields = line!.Split(';');
                         _data.ClearParameters();
                         _data.AddParameters("@Codigo", fields[0].ToString().Replace("\"", "").Trim());
                         _data.AddParameters("@Descricao", fields[1].ToString().Replace("\"", "").Trim());
@@ -427,7 +431,7 @@ public class Read
                     while (!reader.EndOfStream)
                     {
                         var line = reader.ReadLine();
-                        var fields = line!.Split(';');                        
+                        var fields = line!.Split(';');
                         _data.ClearParameters();
                         _data.AddParameters("@Codigo", fields[0].ToString().Replace("\"", "").Trim());
                         _data.AddParameters("@Descricao", fields[1].ToString().Replace("\"", "").Trim());
@@ -496,7 +500,7 @@ public class Read
                     while (!reader.EndOfStream)
                     {
                         var line = reader.ReadLine();
-                        var fields = line!.Split(';');                        
+                        var fields = line!.Split(';');
                         _data.ClearParameters();
                         _data.AddParameters("@Codigo", fields[0].ToString().Replace("\"", "").Trim());
                         _data.AddParameters("@Descricao", fields[1].ToString().Replace("\"", "").Trim());
