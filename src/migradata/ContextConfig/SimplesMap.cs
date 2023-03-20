@@ -9,19 +9,19 @@ public class SimplesMap : IEntityTypeConfiguration<Simples>
     {
         builder.HasNoKey();
         builder.Property(c => c.CNPJBase)
-            .HasColumnType("varchar(10)");
+            .HasColumnType("varchar(999)");
         builder.Property(c => c.OpcaoSimples)
-            .HasColumnType("varchar(2)");
+            .HasColumnType("varchar(999)");
         builder.Property(c => c.DataOpcaoSimples)
-            .HasColumnType("varchar(10)");
+            .HasColumnType("varchar(999)");
         builder.Property(c => c.DataExclusaoSimples)
-            .HasColumnType("varchar(10)");
+            .HasColumnType("varchar(999)");
         builder.Property(c => c.OpcaoMEI)
-            .HasColumnType("varchar(2)");
+            .HasColumnType("varchar(999)");
         builder.Property(c => c.DataOpcaoMEI)
-            .HasColumnType("varchar(10)");
+            .HasColumnType("varchar(999)");
         builder.Property(c => c.DataExclusaoMEI)
-            .HasColumnType("varchar(10)");
+            .HasColumnType("varchar(999)");
     }
 }
 

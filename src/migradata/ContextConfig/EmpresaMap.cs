@@ -9,19 +9,19 @@ public class EmpresaMap : IEntityTypeConfiguration<Empresa>
     {
         builder.HasNoKey();
         builder.Property(c => c.CNPJBase)
-            .HasColumnType("varchar(10)");
+            .HasColumnType("varchar(999)");
         builder.Property(c => c.RazaoSocial)
-            .HasColumnType("varchar(255)");
+            .HasColumnType("varchar(999)");
         builder.Property(c => c.NaturezaJuridica)
-            .HasColumnType("varchar(10)");
+            .HasColumnType("varchar(999)");
         builder.Property(c => c.QualificacaoResponsavel)
-            .HasColumnType("varchar(5)");
+            .HasColumnType("varchar(999)");
         builder.Property(c => c.CapitalSocial)
-            .HasColumnType("varchar(255)");
+            .HasColumnType("varchar(999)");
         builder.Property(c => c.PorteEmpresa)
-            .HasColumnType("varchar(5)");
+            .HasColumnType("varchar(999)");
         builder.Property(c => c.EnteFederativoResponsavel)
-            .HasColumnType("varchar(255)");
+            .HasColumnType("varchar(999)");
     }
 }
 

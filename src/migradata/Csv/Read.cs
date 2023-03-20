@@ -16,47 +16,44 @@ public class Read
 
                 var _data = new Data();
                 await _data.ReadAsync("SELECT CNPJBase FROM Estabelecimentos");
+                var _timer = new Stopwatch();
+                _timer.Start();
 
                 for (int x = 0; x < 10; x++)
                 {
                     try
                     {
                         Console.WriteLine($"File K3241.K03200Y{x}.D30211.EMPRECSV");
-                        var _timer = new Stopwatch();
-                        _timer.Start();
 
                         using (var reader = new StreamReader($"c:/data/K3241.K03200Y{x}.D30211.EMPRECSV", Encoding.GetEncoding("ISO-8859-1")))
                             while (!reader.EndOfStream)
                             {
                                 var line = reader.ReadLine();
                                 var fields = line!.Split(';');
-
-                                if (_data.CNPJBase!.Where(s => s == fields[0].ToString().Replace("\"", "")).Count() > 0)
-                                {
-                                    _data.ClearParameters();
-                                    _data.AddParameters("@CNPJBase", fields[0].ToString().Replace("\"", ""));
-                                    _data.AddParameters("@RazaoSocial", fields[1].ToString().Replace("\"", ""));
-                                    _data.AddParameters("@NaturezaJuridica", fields[2].ToString().Replace("\"", ""));
-                                    _data.AddParameters("@QualificacaoResponsavel", fields[3].ToString().Replace("\"", ""));
-                                    _data.AddParameters("@CapitalSocial", fields[4].ToString().Replace("\"", ""));
-                                    _data.AddParameters("@PorteEmpresa", fields[5].ToString().Replace("\"", ""));
-                                    _data.AddParameters("@EnteFederativoResponsavel", fields[6].ToString().Replace("\"", ""));
-                                    await _data.WriteAsync(_insert);
-                                }
+                                _data.ClearParameters();
+                                _data.AddParameters("@CNPJBase", fields[0].ToString().Replace("\"", ""));
+                                _data.AddParameters("@RazaoSocial", fields[1].ToString().Replace("\"", ""));
+                                _data.AddParameters("@NaturezaJuridica", fields[2].ToString().Replace("\"", ""));
+                                _data.AddParameters("@QualificacaoResponsavel", fields[3].ToString().Replace("\"", ""));
+                                _data.AddParameters("@CapitalSocial", fields[4].ToString().Replace("\"", ""));
+                                _data.AddParameters("@PorteEmpresa", fields[5].ToString().Replace("\"", ""));
+                                _data.AddParameters("@EnteFederativoResponsavel", fields[6].ToString().Replace("\"", ""));
+                                await _data.WriteAsync(_insert);
                                 i++;
                             }
 
-                        await _data.WriteAsync(@"DELETE FROM Empresas WHERE NOT EXISTS (SELECT CNPJBase FROM Estabelecimentos)");
-                        await _data.ReadAsync(@"SELECT CNPJBase FROM Empresas");
-                        e = _data.CNPJBase!.Count();
                         _timer.Stop();
-                        Console.WriteLine($"Registros verificados {i}, migrados: {e}, {_timer.Elapsed.TotalMinutes} minutes");
-
+                        Console.WriteLine($"Registros copiados: {i}, {_timer.Elapsed.TotalMinutes} minutes");
                     }
                     catch
                     { }
                 }
-
+                _timer.Start();
+                await _data.WriteAsync(@"DELETE FROM Empresas WHERE NOT EXISTS (SELECT CNPJBase FROM Estabelecimentos)");
+                await _data.ReadAsync(@"SELECT CNPJBase FROM Empresas");
+                e = _data.CNPJBase!.Count();
+                _timer.Stop();
+                Console.WriteLine($"Registros verificados {i}, migrados: {e}, {_timer.Elapsed.TotalMinutes} minutes");
             });
 
     public async Task MigrateEstabelecimentosAsyn()
@@ -128,14 +125,14 @@ public class Read
 
                 var _insert = $"INSERT INTO Estabelecimentos {_insertFields} VALUES {_intertValues}";
                 var _data = new Data();
+                var _timer = new Stopwatch();
+                _timer.Start();
 
                 for (int x = 0; x < 10; x++)
                 {
                     try
                     {
                         Console.WriteLine($"File K3241.K03200Y{x}.D30211.ESTABELE");
-                        var _timer = new Stopwatch();
-                        _timer.Start();
 
                         using (var reader = new StreamReader($"c:/data/K3241.K03200Y{x}.D30211.ESTABELE", Encoding.GetEncoding("ISO-8859-1")))
                         {
@@ -196,7 +193,7 @@ public class Read
                                 i++;
                             }
                         }
-                        _timer.Stop();
+                       
                         Console.WriteLine($"Registros percorridos {i}, migrados: {f}, {_timer.Elapsed.TotalMinutes} minutes");
                     }
                     catch (Exception ex)
@@ -204,6 +201,8 @@ public class Read
                         Console.WriteLine("Erro ao conectar: " + ex.Message);
                     }
                 }
+                _timer.Stop();
+                Console.WriteLine($"Registros percorridos {i}, migrados: {f}, {_timer.Elapsed.TotalMinutes} minutes");
             });
 
     public async Task MigraSociosAsync()
@@ -216,13 +215,13 @@ public class Read
             var _insert = $"INSERT INTO Socios {_fields} VALUES {_values}";
             var _data = new Data();
             await _data.ReadAsync("SELECT CNPJBase FROM Estabelecimentos");
+            var _timer = new Stopwatch();
+            _timer.Start();
 
             for (int x = 0; x < 10; x++)
                 try
                 {
                     Console.WriteLine($"File K3241.K03200Y{x}.D30211.SOCIOCSV");
-                    var _timer = new Stopwatch();
-                    _timer.Start();
 
                     using (var reader = new StreamReader($"c:/data/K3241.K03200Y{x}.D30211.SOCIOCSV", Encoding.GetEncoding("ISO-8859-1")))
                         while (!reader.EndOfStream)
@@ -246,9 +245,6 @@ public class Read
                             i++;
                         }
 
-                    await _data.WriteAsync(@"DELETE FROM Socios WHERE NOT EXISTS (SELECT CNPJBase FROM Estabelecimentos)");
-                    await _data.ReadAsync(@"SELECT CNPJBase FROM Socios");
-                    s = _data.CNPJBase!.Count();
                     _timer.Stop();
                     Console.WriteLine($"Registros percorridos {i}, migrados: {s}, {_timer.Elapsed.TotalMinutes} minutes");
                 }
@@ -257,6 +253,12 @@ public class Read
                     Console.WriteLine("Erro ao conectar: " + ex.Message);
                 }
 
+            _timer.Start();
+            await _data.WriteAsync(@"DELETE FROM Socios WHERE NOT EXISTS (SELECT CNPJBase FROM Estabelecimentos)");
+            await _data.ReadAsync(@"SELECT CNPJBase FROM Socios");
+            s = _data.CNPJBase!.Count();
+            _timer.Stop();
+            Console.WriteLine($"Registros percorridos {i}, migrados: {s}, {_timer.Elapsed.TotalMinutes} minutes");
         });
 
     public async Task MigraSimplesAsync()
