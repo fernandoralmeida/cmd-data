@@ -142,8 +142,6 @@ public class Read
                             i++;
                         }
                     }
-
-                    Console.WriteLine($"Registros percorridos {i}, migrados: {f}, {_timer.Elapsed.TotalMinutes} minutes");
                 }
                 catch (Exception ex)
                 {
