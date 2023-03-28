@@ -81,9 +81,9 @@ public class Read
             {
                 try
                 {
-                    Console.WriteLine($"File K3241.K03200Y{x}.D30211.ESTABELE");
+                    Console.WriteLine($"File K3241.K03200Y{x}.D30311.ESTABELE");
 
-                    using (var reader = new StreamReader($"c:/data/K3241.K03200Y{x}.D30211.ESTABELE", Encoding.GetEncoding("ISO-8859-1")))
+                    using (var reader = new StreamReader($"c:/data/K3241.K03200Y{x}.D30311.ESTABELE", Encoding.GetEncoding("ISO-8859-1")))
                     {
                         while (!reader.EndOfStream)
                         {
@@ -170,9 +170,9 @@ public class Read
                 {
                     try
                     {
-                        Console.WriteLine($"File K3241.K03200Y{x}.D30211.EMPRECSV");
+                        Console.WriteLine($"File K3241.K03200Y{x}.D30311.EMPRECSV");
 
-                        using (var reader = new StreamReader($"c:/data/K3241.K03200Y{x}.D30211.EMPRECSV", Encoding.GetEncoding("ISO-8859-1")))
+                        using (var reader = new StreamReader($"c:/data/K3241.K03200Y{x}.D30311.EMPRECSV", Encoding.GetEncoding("ISO-8859-1")))
                             while (!reader.EndOfStream)
                             {
                                 var line = reader.ReadLine();
@@ -188,9 +188,6 @@ public class Read
                                 await _data.WriteAsync(_insert);
                                 i++;
                             }
-
-                        _timer.Stop();
-                        Console.WriteLine($"Registros copiados: {i}, {_timer.Elapsed.TotalMinutes} minutes");
                     }
                     catch
                     { }
@@ -219,9 +216,9 @@ public class Read
             for (int x = 0; x < 10; x++)
                 try
                 {
-                    Console.WriteLine($"File K3241.K03200Y{x}.D30211.SOCIOCSV");
+                    Console.WriteLine($"File K3241.K03200Y{x}.D30311.SOCIOCSV");
 
-                    using (var reader = new StreamReader($"c:/data/K3241.K03200Y{x}.D30211.SOCIOCSV", Encoding.GetEncoding("ISO-8859-1")))
+                    using (var reader = new StreamReader($"c:/data/K3241.K03200Y{x}.D30311.SOCIOCSV", Encoding.GetEncoding("ISO-8859-1")))
                         while (!reader.EndOfStream)
                         {
                             var line = reader.ReadLine();
@@ -270,13 +267,13 @@ public class Read
 
             try
             {
-                Console.WriteLine($"File F.K03200$W.SIMPLES.CSV.D30211");
+                Console.WriteLine($"File F.K03200$W.SIMPLES.CSV.D30311");
                 var _timer = new Stopwatch();
                 _timer.Start();
                 var _data = new Data();
                 await _data.ReadAsync("SELECT CNPJBase FROM Empresas");
 
-                using (var reader = new StreamReader($"c:/data/F.K03200$W.SIMPLES.CSV.D30211", Encoding.GetEncoding("ISO-8859-1")))
+                using (var reader = new StreamReader($"c:/data/F.K03200$W.SIMPLES.CSV.D30311", Encoding.GetEncoding("ISO-8859-1")))
                     while (!reader.EndOfStream)
                     {
                         var line = reader.ReadLine();
