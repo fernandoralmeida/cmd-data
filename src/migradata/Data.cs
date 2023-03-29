@@ -85,4 +85,19 @@ public class Data
                 }
             });
 
+    public void CheckDB()
+    {
+        using (SqlConnection connection = new SqlConnection(_connectionString))
+        {
+            try
+            {
+                connection.Open();
+                Console.WriteLine("Conexão bem-sucedida!");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Erro ao conectar ao SQL Server: " + ex.Message);
+            }
+        }
+    }
 }
