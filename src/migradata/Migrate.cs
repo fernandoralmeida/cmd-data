@@ -197,173 +197,194 @@ public class Migrate
                 var _timer = new Stopwatch();
                 _timer.Start();
 
+                var _list = new List<Empresa>();
+
+                int parts = 8;
+                int size = _data.CNPJBase!.Count() / parts;
+                var _list1 = _data.CNPJBase!.Skip(0 * size).Take(size);
+                var _list2 = _data.CNPJBase!.Skip(1 * size).Take(size);
+                var _list3 = _data.CNPJBase!.Skip(2 * size).Take(size);
+                var _list4 = _data.CNPJBase!.Skip(3 * size).Take(size);
+                var _list5 = _data.CNPJBase!.Skip(4 * size).Take(size);
+                var _list6 = _data.CNPJBase!.Skip(5 * size).Take(size);
+                var _list7 = _data.CNPJBase!.Skip(6 * size).Take(size);
+                var _list8 = _data.CNPJBase!.Skip(7 * size).Take(size);
+
                 foreach (var file in await new ListFiles().DoListAync(@"C:\data", ".EMPRECSV"))
                 {
                     try
                     {
                         Console.WriteLine($"Migrando File {Path.GetFileName(file)}");
 
-                        var _list = new List<Empresa>();
-
-                        int parts = 8;
-                        int size = _data.CNPJBase!.Count() / parts;
-                        var _list1 = _data.CNPJBase!.Skip(0 * size).Take(size);
-                        var _list2 = _data.CNPJBase!.Skip(1 * size).Take(size);
-                        var _list3 = _data.CNPJBase!.Skip(2 * size).Take(size);
-                        var _list4 = _data.CNPJBase!.Skip(3 * size).Take(size);
-                        var _list5 = _data.CNPJBase!.Skip(4 * size).Take(size);
-                        var _list6 = _data.CNPJBase!.Skip(5 * size).Take(size);
-                        var _list7 = _data.CNPJBase!.Skip(6 * size).Take(size);
-                        var _list8 = _data.CNPJBase!.Skip(7 * size).Take(size);
-
                         using (var reader = new StreamReader(file, Encoding.GetEncoding("ISO-8859-1")))
                             while (!reader.EndOfStream)
                             {
                                 var line = reader.ReadLine();
                                 var fields = line!.Split(';');
-
-                                var T1 = Task.Run(async () =>
+                                _list.Add(new Empresa()
                                 {
-                                    foreach (var item in _list1.Where(s => s == fields[0].ToString().Replace("\"", "")))
-                                    {
-                                        _data.ClearParameters();
-                                        _data.AddParameters("@CNPJBase", fields[0].ToString().Replace("\"", ""));
-                                        _data.AddParameters("@RazaoSocial", fields[1].ToString().Replace("\"", ""));
-                                        _data.AddParameters("@NaturezaJuridica", fields[2].ToString().Replace("\"", ""));
-                                        _data.AddParameters("@QualificacaoResponsavel", fields[3].ToString().Replace("\"", ""));
-                                        _data.AddParameters("@CapitalSocial", fields[4].ToString().Replace("\"", ""));
-                                        _data.AddParameters("@PorteEmpresa", fields[5].ToString().Replace("\"", ""));
-                                        _data.AddParameters("@EnteFederativoResponsavel", fields[6].ToString().Replace("\"", ""));
-                                        await _data.WriteAsync(_insert);
-                                        e++;
-                                    }
+                                    CNPJBase = fields[0].ToString().Replace("\"", ""),
+                                    RazaoSocial = fields[1].ToString().Replace("\"", ""),
+                                    NaturezaJuridica = fields[2].ToString().Replace("\"", ""),
+                                    QualificacaoResponsavel = fields[3].ToString().Replace("\"", ""),
+                                    CapitalSocial = fields[4].ToString().Replace("\"", ""),
+                                    PorteEmpresa = fields[5].ToString().Replace("\"", ""),
+                                    EnteFederativoResponsavel = fields[6].ToString().Replace("\"", "")
                                 });
-
-                                var T2 = Task.Run(async () =>
-                                {
-                                    foreach (var item in _list2.Where(s => s == fields[0].ToString().Replace("\"", "")))
-                                    {
-                                        _data.ClearParameters();
-                                        _data.AddParameters("@CNPJBase", fields[0].ToString().Replace("\"", ""));
-                                        _data.AddParameters("@RazaoSocial", fields[1].ToString().Replace("\"", ""));
-                                        _data.AddParameters("@NaturezaJuridica", fields[2].ToString().Replace("\"", ""));
-                                        _data.AddParameters("@QualificacaoResponsavel", fields[3].ToString().Replace("\"", ""));
-                                        _data.AddParameters("@CapitalSocial", fields[4].ToString().Replace("\"", ""));
-                                        _data.AddParameters("@PorteEmpresa", fields[5].ToString().Replace("\"", ""));
-                                        _data.AddParameters("@EnteFederativoResponsavel", fields[6].ToString().Replace("\"", ""));
-                                        await _data.WriteAsync(_insert);
-                                        e++;
-                                    }
-                                });
-
-                                var T3 = Task.Run(async () =>
-                                {
-                                    foreach (var item in _list3.Where(s => s == fields[0].ToString().Replace("\"", "")))
-                                    {
-                                        _data.ClearParameters();
-                                        _data.AddParameters("@CNPJBase", fields[0].ToString().Replace("\"", ""));
-                                        _data.AddParameters("@RazaoSocial", fields[1].ToString().Replace("\"", ""));
-                                        _data.AddParameters("@NaturezaJuridica", fields[2].ToString().Replace("\"", ""));
-                                        _data.AddParameters("@QualificacaoResponsavel", fields[3].ToString().Replace("\"", ""));
-                                        _data.AddParameters("@CapitalSocial", fields[4].ToString().Replace("\"", ""));
-                                        _data.AddParameters("@PorteEmpresa", fields[5].ToString().Replace("\"", ""));
-                                        _data.AddParameters("@EnteFederativoResponsavel", fields[6].ToString().Replace("\"", ""));
-                                        await _data.WriteAsync(_insert);
-                                        e++;
-                                    }
-                                });
-
-                                var T4 = Task.Run(async () =>
-                                {
-                                    foreach (var item in _list4.Where(s => s == fields[0].ToString().Replace("\"", "")))
-                                    {
-                                        _data.ClearParameters();
-                                        _data.AddParameters("@CNPJBase", fields[0].ToString().Replace("\"", ""));
-                                        _data.AddParameters("@RazaoSocial", fields[1].ToString().Replace("\"", ""));
-                                        _data.AddParameters("@NaturezaJuridica", fields[2].ToString().Replace("\"", ""));
-                                        _data.AddParameters("@QualificacaoResponsavel", fields[3].ToString().Replace("\"", ""));
-                                        _data.AddParameters("@CapitalSocial", fields[4].ToString().Replace("\"", ""));
-                                        _data.AddParameters("@PorteEmpresa", fields[5].ToString().Replace("\"", ""));
-                                        _data.AddParameters("@EnteFederativoResponsavel", fields[6].ToString().Replace("\"", ""));
-                                        await _data.WriteAsync(_insert);
-                                        e++;
-                                    }
-                                });
-
-                                var T5 = Task.Run(async () =>
-                                {
-                                    foreach (var item in _list5.Where(s => s == fields[0].ToString().Replace("\"", "")))
-                                    {
-                                        _data.ClearParameters();
-                                        _data.AddParameters("@CNPJBase", fields[0].ToString().Replace("\"", ""));
-                                        _data.AddParameters("@RazaoSocial", fields[1].ToString().Replace("\"", ""));
-                                        _data.AddParameters("@NaturezaJuridica", fields[2].ToString().Replace("\"", ""));
-                                        _data.AddParameters("@QualificacaoResponsavel", fields[3].ToString().Replace("\"", ""));
-                                        _data.AddParameters("@CapitalSocial", fields[4].ToString().Replace("\"", ""));
-                                        _data.AddParameters("@PorteEmpresa", fields[5].ToString().Replace("\"", ""));
-                                        _data.AddParameters("@EnteFederativoResponsavel", fields[6].ToString().Replace("\"", ""));
-                                        await _data.WriteAsync(_insert);
-                                        e++;
-                                    }
-                                });
-
-                                var T6 = Task.Run(async () =>
-                                {
-                                    foreach (var item in _list6.Where(s => s == fields[0].ToString().Replace("\"", "")))
-                                    {
-                                        _data.ClearParameters();
-                                        _data.AddParameters("@CNPJBase", fields[0].ToString().Replace("\"", ""));
-                                        _data.AddParameters("@RazaoSocial", fields[1].ToString().Replace("\"", ""));
-                                        _data.AddParameters("@NaturezaJuridica", fields[2].ToString().Replace("\"", ""));
-                                        _data.AddParameters("@QualificacaoResponsavel", fields[3].ToString().Replace("\"", ""));
-                                        _data.AddParameters("@CapitalSocial", fields[4].ToString().Replace("\"", ""));
-                                        _data.AddParameters("@PorteEmpresa", fields[5].ToString().Replace("\"", ""));
-                                        _data.AddParameters("@EnteFederativoResponsavel", fields[6].ToString().Replace("\"", ""));
-                                        await _data.WriteAsync(_insert);
-                                        e++;
-                                    }
-                                });
-
-                                var T7 = Task.Run(async () =>
-                                {
-                                    foreach (var item in _list7.Where(s => s == fields[0].ToString().Replace("\"", "")))
-                                    {
-                                        _data.ClearParameters();
-                                        _data.AddParameters("@CNPJBase", fields[0].ToString().Replace("\"", ""));
-                                        _data.AddParameters("@RazaoSocial", fields[1].ToString().Replace("\"", ""));
-                                        _data.AddParameters("@NaturezaJuridica", fields[2].ToString().Replace("\"", ""));
-                                        _data.AddParameters("@QualificacaoResponsavel", fields[3].ToString().Replace("\"", ""));
-                                        _data.AddParameters("@CapitalSocial", fields[4].ToString().Replace("\"", ""));
-                                        _data.AddParameters("@PorteEmpresa", fields[5].ToString().Replace("\"", ""));
-                                        _data.AddParameters("@EnteFederativoResponsavel", fields[6].ToString().Replace("\"", ""));
-                                        await _data.WriteAsync(_insert);
-                                        e++;
-                                    }
-                                });
-
-                                var T8 = Task.Run(async () =>
-                                {
-                                    foreach (var item in _list8.Where(s => s == fields[0].ToString().Replace("\"", "")))
-                                    {
-                                        _data.ClearParameters();
-                                        _data.AddParameters("@CNPJBase", fields[0].ToString().Replace("\"", ""));
-                                        _data.AddParameters("@RazaoSocial", fields[1].ToString().Replace("\"", ""));
-                                        _data.AddParameters("@NaturezaJuridica", fields[2].ToString().Replace("\"", ""));
-                                        _data.AddParameters("@QualificacaoResponsavel", fields[3].ToString().Replace("\"", ""));
-                                        _data.AddParameters("@CapitalSocial", fields[4].ToString().Replace("\"", ""));
-                                        _data.AddParameters("@PorteEmpresa", fields[5].ToString().Replace("\"", ""));
-                                        _data.AddParameters("@EnteFederativoResponsavel", fields[6].ToString().Replace("\"", ""));
-                                        await _data.WriteAsync(_insert);
-                                        e++;
-                                    }
-                                });
-
-                                await Task.WhenAll(T1, T2, T3, T4, T5, T6, T7, T8);
-
+                                i++;
                             }
                     }
                     catch
-                    { }
+                    { Console.WriteLine($"File Not Found"); }
+                }
+
+                foreach (var ep in _list)
+                {
+                    var T1 = Task.Run(async () =>
+                    {
+                        foreach (var item in _list1.Where(s => s == ep.CNPJBase))
+                        {
+                            _data.ClearParameters();
+                            _data.AddParameters("@CNPJBase", ep.CNPJBase!);
+                            _data.AddParameters("@RazaoSocial", ep.RazaoSocial!);
+                            _data.AddParameters("@NaturezaJuridica", ep.NaturezaJuridica!);
+                            _data.AddParameters("@QualificacaoResponsavel", ep.QualificacaoResponsavel!);
+                            _data.AddParameters("@CapitalSocial", ep.CapitalSocial!);
+                            _data.AddParameters("@PorteEmpresa", ep.PorteEmpresa!);
+                            _data.AddParameters("@EnteFederativoResponsavel", ep.EnteFederativoResponsavel!);
+                            await _data.WriteAsync(_insert);
+                            e++;
+                            Console.WriteLine($"Item {e} migrado!");
+                        }
+                    });
+
+                    var T2 = Task.Run(async () =>
+                    {
+                        foreach (var item in _list2.Where(s => s == ep.CNPJBase))
+                        {
+                            _data.ClearParameters();
+                            _data.AddParameters("@CNPJBase", ep.CNPJBase!);
+                            _data.AddParameters("@RazaoSocial", ep.RazaoSocial!);
+                            _data.AddParameters("@NaturezaJuridica", ep.NaturezaJuridica!);
+                            _data.AddParameters("@QualificacaoResponsavel", ep.QualificacaoResponsavel!);
+                            _data.AddParameters("@CapitalSocial", ep.CapitalSocial!);
+                            _data.AddParameters("@PorteEmpresa", ep.PorteEmpresa!);
+                            _data.AddParameters("@EnteFederativoResponsavel", ep.EnteFederativoResponsavel!);
+                            await _data.WriteAsync(_insert);
+                            e++;
+                            Console.WriteLine($"Item {e} migrado!");
+                        }
+                    });
+
+                    var T3 = Task.Run(async () =>
+                    {
+                        foreach (var item in _list3.Where(s => s == ep.CNPJBase))
+                        {
+                            _data.ClearParameters();
+                            _data.AddParameters("@CNPJBase", ep.CNPJBase!);
+                            _data.AddParameters("@RazaoSocial", ep.RazaoSocial!);
+                            _data.AddParameters("@NaturezaJuridica", ep.NaturezaJuridica!);
+                            _data.AddParameters("@QualificacaoResponsavel", ep.QualificacaoResponsavel!);
+                            _data.AddParameters("@CapitalSocial", ep.CapitalSocial!);
+                            _data.AddParameters("@PorteEmpresa", ep.PorteEmpresa!);
+                            _data.AddParameters("@EnteFederativoResponsavel", ep.EnteFederativoResponsavel!);
+                            await _data.WriteAsync(_insert);
+                            e++;
+                            Console.WriteLine($"Item {e} migrado!");
+                        }
+                    });
+
+                    var T4 = Task.Run(async () =>
+                    {
+                        foreach (var item in _list4.Where(s => s == ep.CNPJBase))
+                        {
+                            _data.ClearParameters();
+                            _data.AddParameters("@CNPJBase", ep.CNPJBase!);
+                            _data.AddParameters("@RazaoSocial", ep.RazaoSocial!);
+                            _data.AddParameters("@NaturezaJuridica", ep.NaturezaJuridica!);
+                            _data.AddParameters("@QualificacaoResponsavel", ep.QualificacaoResponsavel!);
+                            _data.AddParameters("@CapitalSocial", ep.CapitalSocial!);
+                            _data.AddParameters("@PorteEmpresa", ep.PorteEmpresa!);
+                            _data.AddParameters("@EnteFederativoResponsavel", ep.EnteFederativoResponsavel!);
+                            await _data.WriteAsync(_insert);
+                            e++;
+                            Console.WriteLine($"Item {e} migrado!");
+                        }
+                    });
+
+                    var T5 = Task.Run(async () =>
+                    {
+                        foreach (var item in _list5.Where(s => s == ep.CNPJBase))
+                        {
+                            _data.ClearParameters();
+                            _data.AddParameters("@CNPJBase", ep.CNPJBase!);
+                            _data.AddParameters("@RazaoSocial", ep.RazaoSocial!);
+                            _data.AddParameters("@NaturezaJuridica", ep.NaturezaJuridica!);
+                            _data.AddParameters("@QualificacaoResponsavel", ep.QualificacaoResponsavel!);
+                            _data.AddParameters("@CapitalSocial", ep.CapitalSocial!);
+                            _data.AddParameters("@PorteEmpresa", ep.PorteEmpresa!);
+                            _data.AddParameters("@EnteFederativoResponsavel", ep.EnteFederativoResponsavel!);
+                            await _data.WriteAsync(_insert);
+                            e++;
+                            Console.WriteLine($"Item {e} migrado!");
+                        }
+                    });
+
+                    var T6 = Task.Run(async () =>
+                    {
+                        foreach (var item in _list6.Where(s => s == ep.CNPJBase))
+                        {
+                            _data.ClearParameters();
+                            _data.AddParameters("@CNPJBase", ep.CNPJBase!);
+                            _data.AddParameters("@RazaoSocial", ep.RazaoSocial!);
+                            _data.AddParameters("@NaturezaJuridica", ep.NaturezaJuridica!);
+                            _data.AddParameters("@QualificacaoResponsavel", ep.QualificacaoResponsavel!);
+                            _data.AddParameters("@CapitalSocial", ep.CapitalSocial!);
+                            _data.AddParameters("@PorteEmpresa", ep.PorteEmpresa!);
+                            _data.AddParameters("@EnteFederativoResponsavel", ep.EnteFederativoResponsavel!);
+                            await _data.WriteAsync(_insert);
+                            e++;
+                            Console.WriteLine($"Item {e} migrado!");
+                        }
+                    });
+
+                    var T7 = Task.Run(async () =>
+                    {
+                        foreach (var item in _list7.Where(s => s == ep.CNPJBase))
+                        {
+                            _data.ClearParameters();
+                            _data.AddParameters("@CNPJBase", ep.CNPJBase!);
+                            _data.AddParameters("@RazaoSocial", ep.RazaoSocial!);
+                            _data.AddParameters("@NaturezaJuridica", ep.NaturezaJuridica!);
+                            _data.AddParameters("@QualificacaoResponsavel", ep.QualificacaoResponsavel!);
+                            _data.AddParameters("@CapitalSocial", ep.CapitalSocial!);
+                            _data.AddParameters("@PorteEmpresa", ep.PorteEmpresa!);
+                            _data.AddParameters("@EnteFederativoResponsavel", ep.EnteFederativoResponsavel!);
+                            await _data.WriteAsync(_insert);
+                            e++;
+                            Console.WriteLine($"Item {e} migrado!");
+                        }
+                    });
+
+                    var T8 = Task.Run(async () =>
+                    {
+                        foreach (var item in _list8.Where(s => s == ep.CNPJBase))
+                        {
+                            _data.ClearParameters();
+                            _data.AddParameters("@CNPJBase", ep.CNPJBase!);
+                            _data.AddParameters("@RazaoSocial", ep.RazaoSocial!);
+                            _data.AddParameters("@NaturezaJuridica", ep.NaturezaJuridica!);
+                            _data.AddParameters("@QualificacaoResponsavel", ep.QualificacaoResponsavel!);
+                            _data.AddParameters("@CapitalSocial", ep.CapitalSocial!);
+                            _data.AddParameters("@PorteEmpresa", ep.PorteEmpresa!);
+                            _data.AddParameters("@EnteFederativoResponsavel", ep.EnteFederativoResponsavel!);
+                            await _data.WriteAsync(_insert);
+                            e++;
+                            Console.WriteLine($"Item {e} migrado!");
+                        }
+                    });
+
+                    await Task.WhenAll(T1, T2, T3, T4, T5, T6, T7, T8);
                 }
 
                 _timer.Stop();
@@ -382,22 +403,23 @@ public class Migrate
             var _timer = new Stopwatch();
             _timer.Start();
 
+            var _list = new List<Socio>();
+            int parts = 8;
+            int size = _data.CNPJBase!.Count() / parts;
+            var _list1 = _data.CNPJBase!.Skip(0 * size).Take(size);
+            var _list2 = _data.CNPJBase!.Skip(1 * size).Take(size);
+            var _list3 = _data.CNPJBase!.Skip(2 * size).Take(size);
+            var _list4 = _data.CNPJBase!.Skip(3 * size).Take(size);
+            var _list5 = _data.CNPJBase!.Skip(4 * size).Take(size);
+            var _list6 = _data.CNPJBase!.Skip(5 * size).Take(size);
+            var _list7 = _data.CNPJBase!.Skip(6 * size).Take(size);
+            var _list8 = _data.CNPJBase!.Skip(7 * size).Take(size);
+
             foreach (var file in await new ListFiles().DoListAync(@"C:\data", ".SOCIOCSV"))
             {
                 try
                 {
                     Console.WriteLine($"Migrando File {Path.GetFileName(file)}");
-
-                    int parts = 8;
-                    int size = _data.CNPJBase!.Count() / parts;
-                    var _list1 = _data.CNPJBase!.Skip(0 * size).Take(size);
-                    var _list2 = _data.CNPJBase!.Skip(1 * size).Take(size);
-                    var _list3 = _data.CNPJBase!.Skip(2 * size).Take(size);
-                    var _list4 = _data.CNPJBase!.Skip(3 * size).Take(size);
-                    var _list5 = _data.CNPJBase!.Skip(4 * size).Take(size);
-                    var _list6 = _data.CNPJBase!.Skip(5 * size).Take(size);
-                    var _list7 = _data.CNPJBase!.Skip(6 * size).Take(size);
-                    var _list8 = _data.CNPJBase!.Skip(7 * size).Take(size);
 
                     using (var reader = new StreamReader(file, Encoding.GetEncoding("ISO-8859-1")))
                         while (!reader.EndOfStream)
@@ -405,186 +427,212 @@ public class Migrate
                             var line = reader.ReadLine();
                             var fields = line!.Split(';');
 
-                            var T1 = Task.Run(async () =>
+                            _list.Add(new Socio()
                             {
-                                foreach (var item in _list1.Where(s => s == fields[0].ToString().Replace("\"", "")))
-                                {
-                                    _data.ClearParameters();
-                                    _data.AddParameters("@CNPJBase", fields[0].ToString().Replace("\"", "").Trim());
-                                    _data.AddParameters("@IdentificadorSocio", fields[1].ToString().Replace("\"", "").Trim());
-                                    _data.AddParameters("@NomeRazaoSocio", fields[2].ToString().Replace("\"", "").Trim());
-                                    _data.AddParameters("@CnpjCpfSocio", fields[3].ToString().Replace("\"", "").Trim());
-                                    _data.AddParameters("@QualificacaoSocio", fields[4].ToString().Replace("\"", "").Trim());
-                                    _data.AddParameters("@DataEntradaSociedade", fields[5].ToString().Replace("\"", "").Trim());
-                                    _data.AddParameters("@Pais", fields[6].ToString().Replace("\"", "").Trim());
-                                    _data.AddParameters("@RepresentanteLegal", fields[7].ToString().Replace("\"", "").Trim());
-                                    _data.AddParameters("@NomeRepresentante", fields[8].ToString().Replace("\"", "").Trim());
-                                    _data.AddParameters("@QualificacaoRepresentanteLegal", fields[9].ToString().Replace("\"", "").Trim());
-                                    _data.AddParameters("@FaixaEtaria", fields[10].ToString().Replace("\"", "").Trim());
-                                    await _data.WriteAsync(_insert);
-                                    e++;
-                                }
+                                CNPJBase = fields[0].ToString().Replace("\"", "").Trim(),
+                                IdentificadorSocio = fields[1].ToString().Replace("\"", "").Trim(),
+                                NomeRazaoSocio = fields[2].ToString().Replace("\"", "").Trim(),
+                                CnpjCpfSocio = fields[3].ToString().Replace("\"", "").Trim(),
+                                QualificacaoSocio = fields[4].ToString().Replace("\"", "").Trim(),
+                                DataEntradaSociedade = fields[5].ToString().Replace("\"", "").Trim(),
+                                Pais = fields[6].ToString().Replace("\"", "").Trim(),
+                                RepresentanteLegal = fields[7].ToString().Replace("\"", "").Trim(),
+                                NomeRepresentante = fields[8].ToString().Replace("\"", "").Trim(),
+                                QualificacaoRepresentanteLegal = fields[9].ToString().Replace("\"", "").Trim(),
+                                FaixaEtaria = fields[10].ToString().Replace("\"", "").Trim()
                             });
-
-                            var T2 = Task.Run(async () =>
-                            {
-                                foreach (var item in _list2.Where(s => s == fields[0].ToString().Replace("\"", "")))
-                                {
-                                    _data.ClearParameters();
-                                    _data.AddParameters("@CNPJBase", fields[0].ToString().Replace("\"", "").Trim());
-                                    _data.AddParameters("@IdentificadorSocio", fields[1].ToString().Replace("\"", "").Trim());
-                                    _data.AddParameters("@NomeRazaoSocio", fields[2].ToString().Replace("\"", "").Trim());
-                                    _data.AddParameters("@CnpjCpfSocio", fields[3].ToString().Replace("\"", "").Trim());
-                                    _data.AddParameters("@QualificacaoSocio", fields[4].ToString().Replace("\"", "").Trim());
-                                    _data.AddParameters("@DataEntradaSociedade", fields[5].ToString().Replace("\"", "").Trim());
-                                    _data.AddParameters("@Pais", fields[6].ToString().Replace("\"", "").Trim());
-                                    _data.AddParameters("@RepresentanteLegal", fields[7].ToString().Replace("\"", "").Trim());
-                                    _data.AddParameters("@NomeRepresentante", fields[8].ToString().Replace("\"", "").Trim());
-                                    _data.AddParameters("@QualificacaoRepresentanteLegal", fields[9].ToString().Replace("\"", "").Trim());
-                                    _data.AddParameters("@FaixaEtaria", fields[10].ToString().Replace("\"", "").Trim());
-                                    await _data.WriteAsync(_insert);
-                                    e++;
-                                }
-                            });
-
-                            var T3 = Task.Run(async () =>
-                            {
-                                foreach (var item in _list3.Where(s => s == fields[0].ToString().Replace("\"", "")))
-                                {
-                                    _data.ClearParameters();
-                                    _data.AddParameters("@CNPJBase", fields[0].ToString().Replace("\"", "").Trim());
-                                    _data.AddParameters("@IdentificadorSocio", fields[1].ToString().Replace("\"", "").Trim());
-                                    _data.AddParameters("@NomeRazaoSocio", fields[2].ToString().Replace("\"", "").Trim());
-                                    _data.AddParameters("@CnpjCpfSocio", fields[3].ToString().Replace("\"", "").Trim());
-                                    _data.AddParameters("@QualificacaoSocio", fields[4].ToString().Replace("\"", "").Trim());
-                                    _data.AddParameters("@DataEntradaSociedade", fields[5].ToString().Replace("\"", "").Trim());
-                                    _data.AddParameters("@Pais", fields[6].ToString().Replace("\"", "").Trim());
-                                    _data.AddParameters("@RepresentanteLegal", fields[7].ToString().Replace("\"", "").Trim());
-                                    _data.AddParameters("@NomeRepresentante", fields[8].ToString().Replace("\"", "").Trim());
-                                    _data.AddParameters("@QualificacaoRepresentanteLegal", fields[9].ToString().Replace("\"", "").Trim());
-                                    _data.AddParameters("@FaixaEtaria", fields[10].ToString().Replace("\"", "").Trim());
-                                    await _data.WriteAsync(_insert);
-                                    e++;
-                                }
-                            });
-
-                            var T4 = Task.Run(async () =>
-                            {
-                                foreach (var item in _list4.Where(s => s == fields[0].ToString().Replace("\"", "")))
-                                {
-                                    _data.ClearParameters();
-                                    _data.AddParameters("@CNPJBase", fields[0].ToString().Replace("\"", "").Trim());
-                                    _data.AddParameters("@IdentificadorSocio", fields[1].ToString().Replace("\"", "").Trim());
-                                    _data.AddParameters("@NomeRazaoSocio", fields[2].ToString().Replace("\"", "").Trim());
-                                    _data.AddParameters("@CnpjCpfSocio", fields[3].ToString().Replace("\"", "").Trim());
-                                    _data.AddParameters("@QualificacaoSocio", fields[4].ToString().Replace("\"", "").Trim());
-                                    _data.AddParameters("@DataEntradaSociedade", fields[5].ToString().Replace("\"", "").Trim());
-                                    _data.AddParameters("@Pais", fields[6].ToString().Replace("\"", "").Trim());
-                                    _data.AddParameters("@RepresentanteLegal", fields[7].ToString().Replace("\"", "").Trim());
-                                    _data.AddParameters("@NomeRepresentante", fields[8].ToString().Replace("\"", "").Trim());
-                                    _data.AddParameters("@QualificacaoRepresentanteLegal", fields[9].ToString().Replace("\"", "").Trim());
-                                    _data.AddParameters("@FaixaEtaria", fields[10].ToString().Replace("\"", "").Trim());
-                                    await _data.WriteAsync(_insert);
-                                    e++;
-                                }
-                            });
-
-                            var T5 = Task.Run(async () =>
-                            {
-                                foreach (var item in _list5.Where(s => s == fields[0].ToString().Replace("\"", "")))
-                                {
-                                    _data.ClearParameters();
-                                    _data.AddParameters("@CNPJBase", fields[0].ToString().Replace("\"", "").Trim());
-                                    _data.AddParameters("@IdentificadorSocio", fields[1].ToString().Replace("\"", "").Trim());
-                                    _data.AddParameters("@NomeRazaoSocio", fields[2].ToString().Replace("\"", "").Trim());
-                                    _data.AddParameters("@CnpjCpfSocio", fields[3].ToString().Replace("\"", "").Trim());
-                                    _data.AddParameters("@QualificacaoSocio", fields[4].ToString().Replace("\"", "").Trim());
-                                    _data.AddParameters("@DataEntradaSociedade", fields[5].ToString().Replace("\"", "").Trim());
-                                    _data.AddParameters("@Pais", fields[6].ToString().Replace("\"", "").Trim());
-                                    _data.AddParameters("@RepresentanteLegal", fields[7].ToString().Replace("\"", "").Trim());
-                                    _data.AddParameters("@NomeRepresentante", fields[8].ToString().Replace("\"", "").Trim());
-                                    _data.AddParameters("@QualificacaoRepresentanteLegal", fields[9].ToString().Replace("\"", "").Trim());
-                                    _data.AddParameters("@FaixaEtaria", fields[10].ToString().Replace("\"", "").Trim());
-                                    await _data.WriteAsync(_insert);
-                                    e++;
-                                }
-                            });
-
-                            var T6 = Task.Run(async () =>
-                            {
-                                foreach (var item in _list6.Where(s => s == fields[0].ToString().Replace("\"", "")))
-                                {
-                                    _data.ClearParameters();
-                                    _data.AddParameters("@CNPJBase", fields[0].ToString().Replace("\"", "").Trim());
-                                    _data.AddParameters("@IdentificadorSocio", fields[1].ToString().Replace("\"", "").Trim());
-                                    _data.AddParameters("@NomeRazaoSocio", fields[2].ToString().Replace("\"", "").Trim());
-                                    _data.AddParameters("@CnpjCpfSocio", fields[3].ToString().Replace("\"", "").Trim());
-                                    _data.AddParameters("@QualificacaoSocio", fields[4].ToString().Replace("\"", "").Trim());
-                                    _data.AddParameters("@DataEntradaSociedade", fields[5].ToString().Replace("\"", "").Trim());
-                                    _data.AddParameters("@Pais", fields[6].ToString().Replace("\"", "").Trim());
-                                    _data.AddParameters("@RepresentanteLegal", fields[7].ToString().Replace("\"", "").Trim());
-                                    _data.AddParameters("@NomeRepresentante", fields[8].ToString().Replace("\"", "").Trim());
-                                    _data.AddParameters("@QualificacaoRepresentanteLegal", fields[9].ToString().Replace("\"", "").Trim());
-                                    _data.AddParameters("@FaixaEtaria", fields[10].ToString().Replace("\"", "").Trim());
-                                    await _data.WriteAsync(_insert);
-                                    e++;
-                                }
-                            });
-
-                            var T7 = Task.Run(async () =>
-                            {
-                                foreach (var item in _list7.Where(s => s == fields[0].ToString().Replace("\"", "")))
-                                {
-                                    _data.ClearParameters();
-                                    _data.AddParameters("@CNPJBase", fields[0].ToString().Replace("\"", "").Trim());
-                                    _data.AddParameters("@IdentificadorSocio", fields[1].ToString().Replace("\"", "").Trim());
-                                    _data.AddParameters("@NomeRazaoSocio", fields[2].ToString().Replace("\"", "").Trim());
-                                    _data.AddParameters("@CnpjCpfSocio", fields[3].ToString().Replace("\"", "").Trim());
-                                    _data.AddParameters("@QualificacaoSocio", fields[4].ToString().Replace("\"", "").Trim());
-                                    _data.AddParameters("@DataEntradaSociedade", fields[5].ToString().Replace("\"", "").Trim());
-                                    _data.AddParameters("@Pais", fields[6].ToString().Replace("\"", "").Trim());
-                                    _data.AddParameters("@RepresentanteLegal", fields[7].ToString().Replace("\"", "").Trim());
-                                    _data.AddParameters("@NomeRepresentante", fields[8].ToString().Replace("\"", "").Trim());
-                                    _data.AddParameters("@QualificacaoRepresentanteLegal", fields[9].ToString().Replace("\"", "").Trim());
-                                    _data.AddParameters("@FaixaEtaria", fields[10].ToString().Replace("\"", "").Trim());
-                                    await _data.WriteAsync(_insert);
-                                    e++;
-                                }
-                            });
-
-                            var T8 = Task.Run(async () =>
-                            {
-                                foreach (var item in _list8.Where(s => s == fields[0].ToString().Replace("\"", "")))
-                                {
-                                    _data.ClearParameters();
-                                    _data.AddParameters("@CNPJBase", fields[0].ToString().Replace("\"", "").Trim());
-                                    _data.AddParameters("@IdentificadorSocio", fields[1].ToString().Replace("\"", "").Trim());
-                                    _data.AddParameters("@NomeRazaoSocio", fields[2].ToString().Replace("\"", "").Trim());
-                                    _data.AddParameters("@CnpjCpfSocio", fields[3].ToString().Replace("\"", "").Trim());
-                                    _data.AddParameters("@QualificacaoSocio", fields[4].ToString().Replace("\"", "").Trim());
-                                    _data.AddParameters("@DataEntradaSociedade", fields[5].ToString().Replace("\"", "").Trim());
-                                    _data.AddParameters("@Pais", fields[6].ToString().Replace("\"", "").Trim());
-                                    _data.AddParameters("@RepresentanteLegal", fields[7].ToString().Replace("\"", "").Trim());
-                                    _data.AddParameters("@NomeRepresentante", fields[8].ToString().Replace("\"", "").Trim());
-                                    _data.AddParameters("@QualificacaoRepresentanteLegal", fields[9].ToString().Replace("\"", "").Trim());
-                                    _data.AddParameters("@FaixaEtaria", fields[10].ToString().Replace("\"", "").Trim());
-                                    await _data.WriteAsync(_insert);
-                                    e++;
-                                }
-                            });
-                            await Task.WhenAll(T1, T2, T3, T4, T5, T6, T7, T8);
-                            i++;
                         }
-
                 }
                 catch (Exception ex)
                 {
                     Console.WriteLine("Erro ao conectar: " + ex.Message);
                 }
-
-                _timer.Stop();
-                Console.WriteLine($"Registros percorridos {i}, migrados: {e}, {_timer.Elapsed.TotalMinutes} minutes");
             }
+
+            foreach (var sc in _list)
+            {
+                var T1 = Task.Run(async () =>
+                {
+                    foreach (var item in _list1.Where(s => s == sc.CNPJBase))
+                    {
+                        _data.ClearParameters();
+                        _data.AddParameters("@CNPJBase", sc.CNPJBase!);
+                        _data.AddParameters("@IdentificadorSocio", sc.IdentificadorSocio!);
+                        _data.AddParameters("@NomeRazaoSocio", sc.NomeRazaoSocio!);
+                        _data.AddParameters("@CnpjCpfSocio", sc.CnpjCpfSocio!);
+                        _data.AddParameters("@QualificacaoSocio", sc.QualificacaoSocio!);
+                        _data.AddParameters("@DataEntradaSociedade", sc.DataEntradaSociedade!);
+                        _data.AddParameters("@Pais", sc.Pais!);
+                        _data.AddParameters("@RepresentanteLegal", sc.RepresentanteLegal!);
+                        _data.AddParameters("@NomeRepresentante", sc.NomeRepresentante!);
+                        _data.AddParameters("@QualificacaoRepresentanteLegal", sc.QualificacaoRepresentanteLegal!);
+                        _data.AddParameters("@FaixaEtaria", sc.FaixaEtaria!);
+                        await _data.WriteAsync(_insert);
+                        e++;
+                        Console.WriteLine($"Item {e} migrado!");
+                    }
+                });
+
+                var T2 = Task.Run(async () =>
+                {
+                    foreach (var item in _list2.Where(s => s == sc.CNPJBase))
+                    {
+                        _data.ClearParameters();
+                        _data.AddParameters("@CNPJBase", sc.CNPJBase!);
+                        _data.AddParameters("@IdentificadorSocio", sc.IdentificadorSocio!);
+                        _data.AddParameters("@NomeRazaoSocio", sc.NomeRazaoSocio!);
+                        _data.AddParameters("@CnpjCpfSocio", sc.CnpjCpfSocio!);
+                        _data.AddParameters("@QualificacaoSocio", sc.QualificacaoSocio!);
+                        _data.AddParameters("@DataEntradaSociedade", sc.DataEntradaSociedade!);
+                        _data.AddParameters("@Pais", sc.Pais!);
+                        _data.AddParameters("@RepresentanteLegal", sc.RepresentanteLegal!);
+                        _data.AddParameters("@NomeRepresentante", sc.NomeRepresentante!);
+                        _data.AddParameters("@QualificacaoRepresentanteLegal", sc.QualificacaoRepresentanteLegal!);
+                        _data.AddParameters("@FaixaEtaria", sc.FaixaEtaria!);
+                        await _data.WriteAsync(_insert);
+                        e++;
+                        Console.WriteLine($"Item {e} migrado!");
+                    }
+                });
+
+                var T3 = Task.Run(async () =>
+                {
+                    foreach (var item in _list3.Where(s => s == sc.CNPJBase))
+                    {
+                        _data.ClearParameters();
+                        _data.AddParameters("@CNPJBase", sc.CNPJBase!);
+                        _data.AddParameters("@IdentificadorSocio", sc.IdentificadorSocio!);
+                        _data.AddParameters("@NomeRazaoSocio", sc.NomeRazaoSocio!);
+                        _data.AddParameters("@CnpjCpfSocio", sc.CnpjCpfSocio!);
+                        _data.AddParameters("@QualificacaoSocio", sc.QualificacaoSocio!);
+                        _data.AddParameters("@DataEntradaSociedade", sc.DataEntradaSociedade!);
+                        _data.AddParameters("@Pais", sc.Pais!);
+                        _data.AddParameters("@RepresentanteLegal", sc.RepresentanteLegal!);
+                        _data.AddParameters("@NomeRepresentante", sc.NomeRepresentante!);
+                        _data.AddParameters("@QualificacaoRepresentanteLegal", sc.QualificacaoRepresentanteLegal!);
+                        _data.AddParameters("@FaixaEtaria", sc.FaixaEtaria!);
+                        await _data.WriteAsync(_insert);
+                        e++;
+                        Console.WriteLine($"Item {e} migrado!");
+                    }
+                });
+
+                var T4 = Task.Run(async () =>
+                {
+                    foreach (var item in _list4.Where(s => s == sc.CNPJBase))
+                    {
+                        _data.ClearParameters();
+                        _data.AddParameters("@CNPJBase", sc.CNPJBase!);
+                        _data.AddParameters("@IdentificadorSocio", sc.IdentificadorSocio!);
+                        _data.AddParameters("@NomeRazaoSocio", sc.NomeRazaoSocio!);
+                        _data.AddParameters("@CnpjCpfSocio", sc.CnpjCpfSocio!);
+                        _data.AddParameters("@QualificacaoSocio", sc.QualificacaoSocio!);
+                        _data.AddParameters("@DataEntradaSociedade", sc.DataEntradaSociedade!);
+                        _data.AddParameters("@Pais", sc.Pais!);
+                        _data.AddParameters("@RepresentanteLegal", sc.RepresentanteLegal!);
+                        _data.AddParameters("@NomeRepresentante", sc.NomeRepresentante!);
+                        _data.AddParameters("@QualificacaoRepresentanteLegal", sc.QualificacaoRepresentanteLegal!);
+                        _data.AddParameters("@FaixaEtaria", sc.FaixaEtaria!);
+                        await _data.WriteAsync(_insert);
+                        e++;
+                        Console.WriteLine($"Item {e} migrado!");
+                    }
+                });
+
+                var T5 = Task.Run(async () =>
+                {
+                    foreach (var item in _list5.Where(s => s == sc.CNPJBase))
+                    {
+                        _data.ClearParameters();
+                        _data.AddParameters("@CNPJBase", sc.CNPJBase!);
+                        _data.AddParameters("@IdentificadorSocio", sc.IdentificadorSocio!);
+                        _data.AddParameters("@NomeRazaoSocio", sc.NomeRazaoSocio!);
+                        _data.AddParameters("@CnpjCpfSocio", sc.CnpjCpfSocio!);
+                        _data.AddParameters("@QualificacaoSocio", sc.QualificacaoSocio!);
+                        _data.AddParameters("@DataEntradaSociedade", sc.DataEntradaSociedade!);
+                        _data.AddParameters("@Pais", sc.Pais!);
+                        _data.AddParameters("@RepresentanteLegal", sc.RepresentanteLegal!);
+                        _data.AddParameters("@NomeRepresentante", sc.NomeRepresentante!);
+                        _data.AddParameters("@QualificacaoRepresentanteLegal", sc.QualificacaoRepresentanteLegal!);
+                        _data.AddParameters("@FaixaEtaria", sc.FaixaEtaria!);
+                        await _data.WriteAsync(_insert);
+                        e++;
+                        Console.WriteLine($"Item {e} migrado!");
+                    }
+                });
+
+                var T6 = Task.Run(async () =>
+                {
+                    foreach (var item in _list6.Where(s => s == sc.CNPJBase))
+                    {
+                        _data.ClearParameters();
+                        _data.AddParameters("@CNPJBase", sc.CNPJBase!);
+                        _data.AddParameters("@IdentificadorSocio", sc.IdentificadorSocio!);
+                        _data.AddParameters("@NomeRazaoSocio", sc.NomeRazaoSocio!);
+                        _data.AddParameters("@CnpjCpfSocio", sc.CnpjCpfSocio!);
+                        _data.AddParameters("@QualificacaoSocio", sc.QualificacaoSocio!);
+                        _data.AddParameters("@DataEntradaSociedade", sc.DataEntradaSociedade!);
+                        _data.AddParameters("@Pais", sc.Pais!);
+                        _data.AddParameters("@RepresentanteLegal", sc.RepresentanteLegal!);
+                        _data.AddParameters("@NomeRepresentante", sc.NomeRepresentante!);
+                        _data.AddParameters("@QualificacaoRepresentanteLegal", sc.QualificacaoRepresentanteLegal!);
+                        _data.AddParameters("@FaixaEtaria", sc.FaixaEtaria!);
+                        await _data.WriteAsync(_insert);
+                        e++;
+                        Console.WriteLine($"Item {e} migrado!");
+                    }
+                });
+
+                var T7 = Task.Run(async () =>
+                {
+                    foreach (var item in _list7.Where(s => s == sc.CNPJBase))
+                    {
+                        _data.ClearParameters();
+                        _data.AddParameters("@CNPJBase", sc.CNPJBase!);
+                        _data.AddParameters("@IdentificadorSocio", sc.IdentificadorSocio!);
+                        _data.AddParameters("@NomeRazaoSocio", sc.NomeRazaoSocio!);
+                        _data.AddParameters("@CnpjCpfSocio", sc.CnpjCpfSocio!);
+                        _data.AddParameters("@QualificacaoSocio", sc.QualificacaoSocio!);
+                        _data.AddParameters("@DataEntradaSociedade", sc.DataEntradaSociedade!);
+                        _data.AddParameters("@Pais", sc.Pais!);
+                        _data.AddParameters("@RepresentanteLegal", sc.RepresentanteLegal!);
+                        _data.AddParameters("@NomeRepresentante", sc.NomeRepresentante!);
+                        _data.AddParameters("@QualificacaoRepresentanteLegal", sc.QualificacaoRepresentanteLegal!);
+                        _data.AddParameters("@FaixaEtaria", sc.FaixaEtaria!);
+                        await _data.WriteAsync(_insert);
+                        e++;
+                        Console.WriteLine($"Item {e} migrado!");
+                    }
+                });
+
+                var T8 = Task.Run(async () =>
+                {
+                    foreach (var item in _list8.Where(s => s == sc.CNPJBase))
+                    {
+                        _data.ClearParameters();
+                        _data.AddParameters("@CNPJBase", sc.CNPJBase!);
+                        _data.AddParameters("@IdentificadorSocio", sc.IdentificadorSocio!);
+                        _data.AddParameters("@NomeRazaoSocio", sc.NomeRazaoSocio!);
+                        _data.AddParameters("@CnpjCpfSocio", sc.CnpjCpfSocio!);
+                        _data.AddParameters("@QualificacaoSocio", sc.QualificacaoSocio!);
+                        _data.AddParameters("@DataEntradaSociedade", sc.DataEntradaSociedade!);
+                        _data.AddParameters("@Pais", sc.Pais!);
+                        _data.AddParameters("@RepresentanteLegal", sc.RepresentanteLegal!);
+                        _data.AddParameters("@NomeRepresentante", sc.NomeRepresentante!);
+                        _data.AddParameters("@QualificacaoRepresentanteLegal", sc.QualificacaoRepresentanteLegal!);
+                        _data.AddParameters("@FaixaEtaria", sc.FaixaEtaria!);
+                        await _data.WriteAsync(_insert);
+                        e++;
+                        Console.WriteLine($"Item {e} migrado!");
+                    }
+                });
+                await Task.WhenAll(T1, T2, T3, T4, T5, T6, T7, T8);
+                i++;
+            }
+
+            _timer.Stop();
+            Console.WriteLine($"Registros percorridos {i}, migrados: {e}, {_timer.Elapsed.TotalMinutes} minutes");
+
         });
     public async Task SimplesAsync()
         => await Task.Run(async () =>
@@ -600,22 +648,23 @@ public class Migrate
             var _data = new Data();
             await _data.ReadAsync("SELECT CNPJBase FROM Empresas");
 
-            foreach (var file in await new ListFiles().DoListAync(@"C:\data", ".D30311"))
+            var _list = new List<Simples>();
 
+            int parts = 8;
+            int size = _data.CNPJBase!.Count() / parts;
+            var _list1 = _data.CNPJBase!.Skip(0 * size).Take(size);
+            var _list2 = _data.CNPJBase!.Skip(1 * size).Take(size);
+            var _list3 = _data.CNPJBase!.Skip(2 * size).Take(size);
+            var _list4 = _data.CNPJBase!.Skip(3 * size).Take(size);
+            var _list5 = _data.CNPJBase!.Skip(4 * size).Take(size);
+            var _list6 = _data.CNPJBase!.Skip(5 * size).Take(size);
+            var _list7 = _data.CNPJBase!.Skip(6 * size).Take(size);
+            var _list8 = _data.CNPJBase!.Skip(7 * size).Take(size);
+
+            foreach (var file in await new ListFiles().DoListAync(@"C:\data", ".D30311"))
                 try
                 {
                     Console.WriteLine($"Migrando File {Path.GetFileName(file)}");
-
-                    int parts = 8;
-                    int size = _data.CNPJBase!.Count() / parts;
-                    var _list1 = _data.CNPJBase!.Skip(0 * size).Take(size);
-                    var _list2 = _data.CNPJBase!.Skip(1 * size).Take(size);
-                    var _list3 = _data.CNPJBase!.Skip(2 * size).Take(size);
-                    var _list4 = _data.CNPJBase!.Skip(3 * size).Take(size);
-                    var _list5 = _data.CNPJBase!.Skip(4 * size).Take(size);
-                    var _list6 = _data.CNPJBase!.Skip(5 * size).Take(size);
-                    var _list7 = _data.CNPJBase!.Skip(6 * size).Take(size);
-                    var _list8 = _data.CNPJBase!.Skip(7 * size).Take(size);
 
                     using (var reader = new StreamReader(file, Encoding.GetEncoding("ISO-8859-1")))
                         while (!reader.EndOfStream)
@@ -623,155 +672,176 @@ public class Migrate
                             var line = reader.ReadLine();
                             var fields = line!.Split(';');
 
-                            var T1 = Task.Run(async () =>
+                            _list.Add(new Simples()
                             {
-                                foreach (var item in _list1.Where(s => s == fields[0].ToString().Replace("\"", "")))
-                                {
-                                    _data.ClearParameters();
-                                    _data.AddParameters("@CNPJBase", fields[0].ToString().Replace("\"", "").Trim());
-                                    _data.AddParameters("@OpcaoSimples", fields[1].ToString().Replace("\"", "").Trim());
-                                    _data.AddParameters("@DataOpcaoSimples", fields[2].ToString().Replace("\"", "").Trim());
-                                    _data.AddParameters("@DataExclusaoSimples", fields[3].ToString().Replace("\"", "").Trim());
-                                    _data.AddParameters("@OpcaoMEI", fields[4].ToString().Replace("\"", "").Trim());
-                                    _data.AddParameters("@DataOpcaoMEI", fields[5].ToString().Replace("\"", "").Trim());
-                                    _data.AddParameters("@DataExclusaoMEI", fields[6].ToString().Replace("\"", "").Trim());
-                                    await _data.WriteAsync(_insert);
-                                    e++;
-                                }
+                                CNPJBase = fields[0].ToString().Replace("\"", "").Trim(),
+                                OpcaoSimples = fields[1].ToString().Replace("\"", "").Trim(),
+                                DataOpcaoSimples = fields[2].ToString().Replace("\"", "").Trim(),
+                                DataExclusaoSimples = fields[3].ToString().Replace("\"", "").Trim(),
+                                OpcaoMEI = fields[4].ToString().Replace("\"", "").Trim(),
+                                DataOpcaoMEI = fields[5].ToString().Replace("\"", "").Trim(),
+                                DataExclusaoMEI = fields[6].ToString().Replace("\"", "").Trim()
                             });
-
-                            var T2 = Task.Run(async () =>
-                            {
-                                foreach (var item in _list2.Where(s => s == fields[0].ToString().Replace("\"", "")))
-                                {
-                                    _data.ClearParameters();
-                                    _data.AddParameters("@CNPJBase", fields[0].ToString().Replace("\"", "").Trim());
-                                    _data.AddParameters("@OpcaoSimples", fields[1].ToString().Replace("\"", "").Trim());
-                                    _data.AddParameters("@DataOpcaoSimples", fields[2].ToString().Replace("\"", "").Trim());
-                                    _data.AddParameters("@DataExclusaoSimples", fields[3].ToString().Replace("\"", "").Trim());
-                                    _data.AddParameters("@OpcaoMEI", fields[4].ToString().Replace("\"", "").Trim());
-                                    _data.AddParameters("@DataOpcaoMEI", fields[5].ToString().Replace("\"", "").Trim());
-                                    _data.AddParameters("@DataExclusaoMEI", fields[6].ToString().Replace("\"", "").Trim());
-                                    await _data.WriteAsync(_insert);
-                                    e++;
-                                }
-                            });
-
-                            var T3 = Task.Run(async () =>
-                            {
-                                foreach (var item in _list3.Where(s => s == fields[0].ToString().Replace("\"", "")))
-                                {
-                                    _data.ClearParameters();
-                                    _data.AddParameters("@CNPJBase", fields[0].ToString().Replace("\"", "").Trim());
-                                    _data.AddParameters("@OpcaoSimples", fields[1].ToString().Replace("\"", "").Trim());
-                                    _data.AddParameters("@DataOpcaoSimples", fields[2].ToString().Replace("\"", "").Trim());
-                                    _data.AddParameters("@DataExclusaoSimples", fields[3].ToString().Replace("\"", "").Trim());
-                                    _data.AddParameters("@OpcaoMEI", fields[4].ToString().Replace("\"", "").Trim());
-                                    _data.AddParameters("@DataOpcaoMEI", fields[5].ToString().Replace("\"", "").Trim());
-                                    _data.AddParameters("@DataExclusaoMEI", fields[6].ToString().Replace("\"", "").Trim());
-                                    await _data.WriteAsync(_insert);
-                                    e++;
-                                }
-                            });
-
-                            var T4 = Task.Run(async () =>
-                            {
-                                foreach (var item in _list4.Where(s => s == fields[0].ToString().Replace("\"", "")))
-                                {
-                                    _data.ClearParameters();
-                                    _data.AddParameters("@CNPJBase", fields[0].ToString().Replace("\"", "").Trim());
-                                    _data.AddParameters("@OpcaoSimples", fields[1].ToString().Replace("\"", "").Trim());
-                                    _data.AddParameters("@DataOpcaoSimples", fields[2].ToString().Replace("\"", "").Trim());
-                                    _data.AddParameters("@DataExclusaoSimples", fields[3].ToString().Replace("\"", "").Trim());
-                                    _data.AddParameters("@OpcaoMEI", fields[4].ToString().Replace("\"", "").Trim());
-                                    _data.AddParameters("@DataOpcaoMEI", fields[5].ToString().Replace("\"", "").Trim());
-                                    _data.AddParameters("@DataExclusaoMEI", fields[6].ToString().Replace("\"", "").Trim());
-                                    await _data.WriteAsync(_insert);
-                                    e++;
-                                }
-                            });
-
-                            var T5 = Task.Run(async () =>
-                            {
-                                foreach (var item in _list5.Where(s => s == fields[0].ToString().Replace("\"", "")))
-                                {
-                                    _data.ClearParameters();
-                                    _data.AddParameters("@CNPJBase", fields[0].ToString().Replace("\"", "").Trim());
-                                    _data.AddParameters("@OpcaoSimples", fields[1].ToString().Replace("\"", "").Trim());
-                                    _data.AddParameters("@DataOpcaoSimples", fields[2].ToString().Replace("\"", "").Trim());
-                                    _data.AddParameters("@DataExclusaoSimples", fields[3].ToString().Replace("\"", "").Trim());
-                                    _data.AddParameters("@OpcaoMEI", fields[4].ToString().Replace("\"", "").Trim());
-                                    _data.AddParameters("@DataOpcaoMEI", fields[5].ToString().Replace("\"", "").Trim());
-                                    _data.AddParameters("@DataExclusaoMEI", fields[6].ToString().Replace("\"", "").Trim());
-                                    await _data.WriteAsync(_insert);
-                                    e++;
-                                }
-                            });
-
-                            var T6 = Task.Run(async () =>
-                            {
-                                foreach (var item in _list6.Where(s => s == fields[0].ToString().Replace("\"", "")))
-                                {
-                                    _data.ClearParameters();
-                                    _data.AddParameters("@CNPJBase", fields[0].ToString().Replace("\"", "").Trim());
-                                    _data.AddParameters("@OpcaoSimples", fields[1].ToString().Replace("\"", "").Trim());
-                                    _data.AddParameters("@DataOpcaoSimples", fields[2].ToString().Replace("\"", "").Trim());
-                                    _data.AddParameters("@DataExclusaoSimples", fields[3].ToString().Replace("\"", "").Trim());
-                                    _data.AddParameters("@OpcaoMEI", fields[4].ToString().Replace("\"", "").Trim());
-                                    _data.AddParameters("@DataOpcaoMEI", fields[5].ToString().Replace("\"", "").Trim());
-                                    _data.AddParameters("@DataExclusaoMEI", fields[6].ToString().Replace("\"", "").Trim());
-                                    await _data.WriteAsync(_insert);
-                                    e++;
-                                }
-                            });
-
-                            var T7 = Task.Run(async () =>
-                            {
-                                foreach (var item in _list7.Where(s => s == fields[0].ToString().Replace("\"", "")))
-                                {
-                                    _data.ClearParameters();
-                                    _data.AddParameters("@CNPJBase", fields[0].ToString().Replace("\"", "").Trim());
-                                    _data.AddParameters("@OpcaoSimples", fields[1].ToString().Replace("\"", "").Trim());
-                                    _data.AddParameters("@DataOpcaoSimples", fields[2].ToString().Replace("\"", "").Trim());
-                                    _data.AddParameters("@DataExclusaoSimples", fields[3].ToString().Replace("\"", "").Trim());
-                                    _data.AddParameters("@OpcaoMEI", fields[4].ToString().Replace("\"", "").Trim());
-                                    _data.AddParameters("@DataOpcaoMEI", fields[5].ToString().Replace("\"", "").Trim());
-                                    _data.AddParameters("@DataExclusaoMEI", fields[6].ToString().Replace("\"", "").Trim());
-                                    await _data.WriteAsync(_insert);
-                                    e++;
-                                }
-                            });
-
-                            var T8 = Task.Run(async () =>
-                            {
-                                foreach (var item in _list8.Where(s => s == fields[0].ToString().Replace("\"", "")))
-                                {
-                                    _data.ClearParameters();
-                                    _data.AddParameters("@CNPJBase", fields[0].ToString().Replace("\"", "").Trim());
-                                    _data.AddParameters("@OpcaoSimples", fields[1].ToString().Replace("\"", "").Trim());
-                                    _data.AddParameters("@DataOpcaoSimples", fields[2].ToString().Replace("\"", "").Trim());
-                                    _data.AddParameters("@DataExclusaoSimples", fields[3].ToString().Replace("\"", "").Trim());
-                                    _data.AddParameters("@OpcaoMEI", fields[4].ToString().Replace("\"", "").Trim());
-                                    _data.AddParameters("@DataOpcaoMEI", fields[5].ToString().Replace("\"", "").Trim());
-                                    _data.AddParameters("@DataExclusaoMEI", fields[6].ToString().Replace("\"", "").Trim());
-                                    await _data.WriteAsync(_insert);
-                                    e++;
-                                }
-                            });
-
-                            await Task.WhenAll(T1, T2, T3, T4, T5, T6, T7, T8);
-
-                            i++;
                         }
 
-                    _timer.Stop();
-                    Console.WriteLine($"Registros percorridos {i}, migrados: {e}, {_timer.Elapsed.TotalMinutes} minutes");
                 }
                 catch (Exception ex)
                 {
                     Console.WriteLine("Erro ao conectar: " + ex.Message);
                 }
 
+            foreach (var sn in _list)
+            {
+
+                var T1 = Task.Run(async () =>
+                {
+                    foreach (var item in _list1.Where(s => s == sn.CNPJBase))
+                    {
+                        _data.ClearParameters();
+                        _data.AddParameters("@CNPJBase", sn.CNPJBase!);
+                        _data.AddParameters("@OpcaoSimples", sn.OpcaoSimples!);
+                        _data.AddParameters("@DataOpcaoSimples", sn.DataOpcaoSimples!);
+                        _data.AddParameters("@DataExclusaoSimples", sn.DataExclusaoSimples!);
+                        _data.AddParameters("@OpcaoMEI", sn.OpcaoMEI!);
+                        _data.AddParameters("@DataOpcaoMEI", sn.DataOpcaoMEI!);
+                        _data.AddParameters("@DataExclusaoMEI", sn.DataExclusaoMEI!);
+                        await _data.WriteAsync(_insert);
+                        e++;
+                        Console.WriteLine($"Item {e} migrado!");
+                    }
+                });
+
+                var T2 = Task.Run(async () =>
+                {
+                    foreach (var item in _list2.Where(s => s == sn.CNPJBase))
+                    {
+                        _data.ClearParameters();
+                        _data.AddParameters("@CNPJBase", sn.CNPJBase!);
+                        _data.AddParameters("@OpcaoSimples", sn.OpcaoSimples!);
+                        _data.AddParameters("@DataOpcaoSimples", sn.DataOpcaoSimples!);
+                        _data.AddParameters("@DataExclusaoSimples", sn.DataExclusaoSimples!);
+                        _data.AddParameters("@OpcaoMEI", sn.OpcaoMEI!);
+                        _data.AddParameters("@DataOpcaoMEI", sn.DataOpcaoMEI!);
+                        _data.AddParameters("@DataExclusaoMEI", sn.DataExclusaoMEI!);
+                        await _data.WriteAsync(_insert);
+                        e++;
+                        Console.WriteLine($"Item {e} migrado!");
+                    }
+                });
+
+                var T3 = Task.Run(async () =>
+                {
+                    foreach (var item in _list3.Where(s => s == sn.CNPJBase))
+                    {
+                        _data.ClearParameters();
+                        _data.AddParameters("@CNPJBase", sn.CNPJBase!);
+                        _data.AddParameters("@OpcaoSimples", sn.OpcaoSimples!);
+                        _data.AddParameters("@DataOpcaoSimples", sn.DataOpcaoSimples!);
+                        _data.AddParameters("@DataExclusaoSimples", sn.DataExclusaoSimples!);
+                        _data.AddParameters("@OpcaoMEI", sn.OpcaoMEI!);
+                        _data.AddParameters("@DataOpcaoMEI", sn.DataOpcaoMEI!);
+                        _data.AddParameters("@DataExclusaoMEI", sn.DataExclusaoMEI!);
+                        await _data.WriteAsync(_insert);
+                        e++;
+                        Console.WriteLine($"Item {e} migrado!");
+                    }
+                });
+
+                var T4 = Task.Run(async () =>
+                {
+                    foreach (var item in _list4.Where(s => s == sn.CNPJBase))
+                    {
+                        _data.ClearParameters();
+                        _data.AddParameters("@CNPJBase", sn.CNPJBase!);
+                        _data.AddParameters("@OpcaoSimples", sn.OpcaoSimples!);
+                        _data.AddParameters("@DataOpcaoSimples", sn.DataOpcaoSimples!);
+                        _data.AddParameters("@DataExclusaoSimples", sn.DataExclusaoSimples!);
+                        _data.AddParameters("@OpcaoMEI", sn.OpcaoMEI!);
+                        _data.AddParameters("@DataOpcaoMEI", sn.DataOpcaoMEI!);
+                        _data.AddParameters("@DataExclusaoMEI", sn.DataExclusaoMEI!);
+                        await _data.WriteAsync(_insert);
+                        e++;
+                        Console.WriteLine($"Item {e} migrado!");
+                    }
+                });
+
+                var T5 = Task.Run(async () =>
+                {
+                    foreach (var item in _list5.Where(s => s == sn.CNPJBase))
+                    {
+                        _data.ClearParameters();
+                        _data.AddParameters("@CNPJBase", sn.CNPJBase!);
+                        _data.AddParameters("@OpcaoSimples", sn.OpcaoSimples!);
+                        _data.AddParameters("@DataOpcaoSimples", sn.DataOpcaoSimples!);
+                        _data.AddParameters("@DataExclusaoSimples", sn.DataExclusaoSimples!);
+                        _data.AddParameters("@OpcaoMEI", sn.OpcaoMEI!);
+                        _data.AddParameters("@DataOpcaoMEI", sn.DataOpcaoMEI!);
+                        _data.AddParameters("@DataExclusaoMEI", sn.DataExclusaoMEI!);
+                        await _data.WriteAsync(_insert);
+                        e++;
+                        Console.WriteLine($"Item {e} migrado!");
+                    }
+                });
+
+                var T6 = Task.Run(async () =>
+                {
+                    foreach (var item in _list6.Where(s => s == sn.CNPJBase))
+                    {
+                        _data.ClearParameters();
+                        _data.AddParameters("@CNPJBase", sn.CNPJBase!);
+                        _data.AddParameters("@OpcaoSimples", sn.OpcaoSimples!);
+                        _data.AddParameters("@DataOpcaoSimples", sn.DataOpcaoSimples!);
+                        _data.AddParameters("@DataExclusaoSimples", sn.DataExclusaoSimples!);
+                        _data.AddParameters("@OpcaoMEI", sn.OpcaoMEI!);
+                        _data.AddParameters("@DataOpcaoMEI", sn.DataOpcaoMEI!);
+                        _data.AddParameters("@DataExclusaoMEI", sn.DataExclusaoMEI!);
+                        await _data.WriteAsync(_insert);
+                        e++;
+                        Console.WriteLine($"Item {e} migrado!");
+                    }
+                });
+
+                var T7 = Task.Run(async () =>
+                {
+                    foreach (var item in _list7.Where(s => s == sn.CNPJBase))
+                    {
+                        _data.ClearParameters();
+                        _data.AddParameters("@CNPJBase", sn.CNPJBase!);
+                        _data.AddParameters("@OpcaoSimples", sn.OpcaoSimples!);
+                        _data.AddParameters("@DataOpcaoSimples", sn.DataOpcaoSimples!);
+                        _data.AddParameters("@DataExclusaoSimples", sn.DataExclusaoSimples!);
+                        _data.AddParameters("@OpcaoMEI", sn.OpcaoMEI!);
+                        _data.AddParameters("@DataOpcaoMEI", sn.DataOpcaoMEI!);
+                        _data.AddParameters("@DataExclusaoMEI", sn.DataExclusaoMEI!);
+                        await _data.WriteAsync(_insert);
+                        e++;
+                        Console.WriteLine($"Item {e} migrado!");
+                    }
+                });
+
+                var T8 = Task.Run(async () =>
+                {
+                    foreach (var item in _list8.Where(s => s == sn.CNPJBase))
+                    {
+                        _data.ClearParameters();
+                        _data.AddParameters("@CNPJBase", sn.CNPJBase!);
+                        _data.AddParameters("@OpcaoSimples", sn.OpcaoSimples!);
+                        _data.AddParameters("@DataOpcaoSimples", sn.DataOpcaoSimples!);
+                        _data.AddParameters("@DataExclusaoSimples", sn.DataExclusaoSimples!);
+                        _data.AddParameters("@OpcaoMEI", sn.OpcaoMEI!);
+                        _data.AddParameters("@DataOpcaoMEI", sn.DataOpcaoMEI!);
+                        _data.AddParameters("@DataExclusaoMEI", sn.DataExclusaoMEI!);
+                        await _data.WriteAsync(_insert);
+                        e++;
+                        Console.WriteLine($"Item {e} migrado!");
+                    }
+                });
+                await Task.WhenAll(T1, T2, T3, T4, T5, T6, T7, T8);
+                i++;
+            }
+
+            _timer.Stop();
+            Console.WriteLine($"Registros percorridos {i}, migrados: {e}, {_timer.Elapsed.TotalMinutes} minutes");
         });
 
 
