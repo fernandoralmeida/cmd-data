@@ -1,7 +1,7 @@
 using System.IO.Compression;
 using System.IO;
 
-namespace migradata;
+namespace migradata.Helpers;
 
 public class ListFiles
 {

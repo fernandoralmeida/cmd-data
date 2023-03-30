@@ -1,12 +1,13 @@
 using System.Data;
 using System.Data.SqlClient;
 
-namespace migradata;
+namespace migradata.Repositories;
 
-public class Data
+//Classe generica para acesso simplicado via Sql Native Client
+public class Generic
 {
 
-    private readonly string _connectionString = Environment.GetEnvironmentVariable("connection_string_migradata")!;
+    private readonly string _connectionString = Environment.GetEnvironmentVariable("connection_string_sim_RFB")!;
 
     private SqlParameterCollection ParameterCollection = new SqlCommand().Parameters;
 

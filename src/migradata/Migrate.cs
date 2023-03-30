@@ -1,15 +1,17 @@
 using System.Diagnostics;
 using System.Text;
 using migradata.Models;
+using migradata.Repositories;
+using migradata.Helpers;
 
 namespace migradata;
 
-public class Migrate
+public class Migratesss
 {
 
     public async Task Normalize()
     {
-        var data = new Data();
+        var data = new Generic();
         Console.WriteLine("Verificando Conexões...");
         Thread.Sleep(3000);
         data.CheckDB();
@@ -105,7 +107,7 @@ public class Migrate
                                                 @DataSitucaoEspecial)";
 
                 var _insert = $"INSERT INTO Estabelecimentos {_insertFields} VALUES {_intertValues}";
-                var _data = new Data();
+                var _data = new Generic();
                 var _timer = new Stopwatch();
                 _timer.Start();
 
@@ -192,7 +194,7 @@ public class Migrate
                 var _intertValues = @"(@CNPJBase,@RazaoSocial,@NaturezaJuridica,@QualificacaoResponsavel,@CapitalSocial,@PorteEmpresa,@EnteFederativoResponsavel)";
                 var _insert = $"INSERT INTO Empresas {_insertFields} VALUES {_intertValues}";
 
-                var _data = new Data();
+                var _data = new Generic();
                 await _data.ReadAsync("SELECT CNPJBase FROM Estabelecimentos");
                 var _timer = new Stopwatch();
                 //_timer.Start();
@@ -401,7 +403,7 @@ public class Migrate
             var _fields = @"(CNPJBase,IdentificadorSocio,NomeRazaoSocio,CnpjCpfSocio,QualificacaoSocio,DataEntradaSociedade,Pais,RepresentanteLegal,NomeRepresentante,QualificacaoRepresentanteLegal,FaixaEtaria)";
             var _values = @"(@CNPJBase,@IdentificadorSocio,@NomeRazaoSocio,@CnpjCpfSocio,@QualificacaoSocio,@DataEntradaSociedade,@Pais,@RepresentanteLegal,@NomeRepresentante,@QualificacaoRepresentanteLegal,@FaixaEtaria)";
             var _insert = $"INSERT INTO Socios {_fields} VALUES {_values}";
-            var _data = new Data();
+            var _data = new Generic();
             await _data.ReadAsync("SELECT CNPJBase FROM Empresas");
             var _timer = new Stopwatch();
             _timer.Start();
@@ -650,7 +652,7 @@ public class Migrate
 
             var _timer = new Stopwatch();
             _timer.Start();
-            var _data = new Data();
+            var _data = new Generic();
             await _data.ReadAsync("SELECT CNPJBase FROM Empresas");
 
             var _list = new List<Simples>();
@@ -865,7 +867,7 @@ public class Migrate
                 {
                     Console.WriteLine($"Migrando File {Path.GetFileName(file)}");
 
-                    var _data = new Data();
+                    var _data = new Generic();
 
                     using (var reader = new StreamReader(file, Encoding.GetEncoding("ISO-8859-1")))
                         while (!reader.EndOfStream)
@@ -904,7 +906,7 @@ public class Migrate
                 {
                     Console.WriteLine($"Migrando File {Path.GetFileName(file)}");
 
-                    var _data = new Data();
+                    var _data = new Generic();
 
                     using (var reader = new StreamReader(file, Encoding.GetEncoding("ISO-8859-1")))
                         while (!reader.EndOfStream)
@@ -943,7 +945,7 @@ public class Migrate
                 {
                     Console.WriteLine($"Migrando File {Path.GetFileName(file)}");
 
-                    var _data = new Data();
+                    var _data = new Generic();
 
                     using (var reader = new StreamReader(file, Encoding.GetEncoding("ISO-8859-1")))
                         while (!reader.EndOfStream)
@@ -981,7 +983,7 @@ public class Migrate
                 {
                     Console.WriteLine($"Migrando File {Path.GetFileName(file)}");
 
-                    var _data = new Data();
+                    var _data = new Generic();
 
                     using (var reader = new StreamReader(file, Encoding.GetEncoding("ISO-8859-1")))
                         while (!reader.EndOfStream)
@@ -1020,7 +1022,7 @@ public class Migrate
                 {
                     Console.WriteLine($"Migrando File {Path.GetFileName(file)}");
 
-                    var _data = new Data();
+                    var _data = new Generic();
 
                     using (var reader = new StreamReader(file, Encoding.GetEncoding("ISO-8859-1")))
                         while (!reader.EndOfStream)
@@ -1059,7 +1061,7 @@ public class Migrate
                 {
                     Console.WriteLine($"Migrando File {Path.GetFileName(file)}");
 
-                    var _data = new Data();
+                    var _data = new Generic();
 
                     using (var reader = new StreamReader(file, Encoding.GetEncoding("ISO-8859-1")))
                         while (!reader.EndOfStream)

@@ -1,6 +1,8 @@
 using System.Diagnostics;
 using System.Text;
 using migradata.Models;
+using migradata.Repositories;
+using migradata.Helpers;
 
 namespace migradata;
 
@@ -8,7 +10,7 @@ public class Migrate3
 {
     public async Task Normalize()
     {
-        var data = new Data();
+        var data = new Generic();
         Console.WriteLine("Verificando Conexões...");
         Thread.Sleep(3000);
         data.CheckDB();
@@ -53,7 +55,7 @@ public class Migrate3
             var _intertValues = @"(@CNPJBase,@RazaoSocial,@NaturezaJuridica,@QualificacaoResponsavel,@CapitalSocial,@PorteEmpresa,@EnteFederativoResponsavel)";
             var _insert = $"INSERT INTO Empresas {_insertFields} VALUES {_intertValues}";
 
-            var _data = new Data();
+            var _data = new Generic();
             await _data.ReadAsync("SELECT CNPJBase FROM Estabelecimentos");
             var _timer = new Stopwatch();
 
@@ -102,7 +104,7 @@ public class Migrate3
                         {
                             foreach (var ep in _data.CNPJBase!.Where(s => s == item.CNPJBase))
                             {
-                                var _migra = new Data();
+                                var _migra = new Generic();
                                 _migra.ClearParameters();
                                 _migra.AddParameters("@CNPJBase", item.CNPJBase!);
                                 _migra.AddParameters("@RazaoSocial", item.RazaoSocial!);
@@ -123,7 +125,7 @@ public class Migrate3
                         {
                             foreach (var ep in _data.CNPJBase!.Where(s => s == item.CNPJBase))
                             {
-                                var _migra = new Data();
+                                var _migra = new Generic();
                                 _migra.ClearParameters();
                                 _migra.AddParameters("@CNPJBase", item.CNPJBase!);
                                 _migra.AddParameters("@RazaoSocial", item.RazaoSocial!);
@@ -144,7 +146,7 @@ public class Migrate3
                         {
                             foreach (var ep in _data.CNPJBase!.Where(s => s == item.CNPJBase))
                             {
-                                var _migra = new Data();
+                                var _migra = new Generic();
                                 _migra.ClearParameters();
                                 _migra.AddParameters("@CNPJBase", item.CNPJBase!);
                                 _migra.AddParameters("@RazaoSocial", item.RazaoSocial!);
@@ -165,7 +167,7 @@ public class Migrate3
                         {
                             foreach (var ep in _data.CNPJBase!.Where(s => s == item.CNPJBase))
                             {
-                                var _migra = new Data();
+                                var _migra = new Generic();
                                 _migra.ClearParameters();
                                 _migra.AddParameters("@CNPJBase", item.CNPJBase!);
                                 _migra.AddParameters("@RazaoSocial", item.RazaoSocial!);
@@ -186,7 +188,7 @@ public class Migrate3
                         {
                             foreach (var ep in _data.CNPJBase!.Where(s => s == item.CNPJBase))
                             {
-                                var _migra = new Data();
+                                var _migra = new Generic();
                                 _migra.ClearParameters();
                                 _migra.AddParameters("@CNPJBase", item.CNPJBase!);
                                 _migra.AddParameters("@RazaoSocial", item.RazaoSocial!);
@@ -207,7 +209,7 @@ public class Migrate3
                         {
                             foreach (var ep in _data.CNPJBase!.Where(s => s == item.CNPJBase))
                             {
-                                var _migra = new Data();
+                                var _migra = new Generic();
                                 _migra.ClearParameters();
                                 _migra.AddParameters("@CNPJBase", item.CNPJBase!);
                                 _migra.AddParameters("@RazaoSocial", item.RazaoSocial!);
@@ -228,7 +230,7 @@ public class Migrate3
                         {
                             foreach (var ep in _data.CNPJBase!.Where(s => s == item.CNPJBase))
                             {
-                                var _migra = new Data();
+                                var _migra = new Generic();
                                 _migra.ClearParameters();
                                 _migra.AddParameters("@CNPJBase", item.CNPJBase!);
                                 _migra.AddParameters("@RazaoSocial", item.RazaoSocial!);
@@ -249,7 +251,7 @@ public class Migrate3
                         {
                             foreach (var ep in _data.CNPJBase!.Where(s => s == item.CNPJBase))
                             {
-                                var _migra = new Data();
+                                var _migra = new Generic();
                                 _migra.ClearParameters();
                                 _migra.AddParameters("@CNPJBase", item.CNPJBase!);
                                 _migra.AddParameters("@RazaoSocial", item.RazaoSocial!);
@@ -291,7 +293,7 @@ public class Migrate3
             var _fields = @"(CNPJBase,IdentificadorSocio,NomeRazaoSocio,CnpjCpfSocio,QualificacaoSocio,DataEntradaSociedade,Pais,RepresentanteLegal,NomeRepresentante,QualificacaoRepresentanteLegal,FaixaEtaria)";
             var _values = @"(@CNPJBase,@IdentificadorSocio,@NomeRazaoSocio,@CnpjCpfSocio,@QualificacaoSocio,@DataEntradaSociedade,@Pais,@RepresentanteLegal,@NomeRepresentante,@QualificacaoRepresentanteLegal,@FaixaEtaria)";
             var _insert = $"INSERT INTO Socios {_fields} VALUES {_values}";
-            var _data = new Data();
+            var _data = new Generic();
             await _data.ReadAsync("SELECT CNPJBase FROM Empresas");
             var _timer = new Stopwatch();
             _timer.Start();
@@ -342,7 +344,7 @@ public class Migrate3
                         {
                             foreach (var sc in _data.CNPJBase!.Where(s => s == item.CNPJBase))
                             {
-                                var _migra = new Data();
+                                var _migra = new Generic();
                                 _migra.ClearParameters();
                                 _migra.AddParameters("@CNPJBase", item.CNPJBase!);
                                 _migra.AddParameters("@IdentificadorSocio", item.IdentificadorSocio!);
@@ -367,7 +369,7 @@ public class Migrate3
                         {
                             foreach (var sc in _data.CNPJBase!.Where(s => s == item.CNPJBase))
                             {
-                                var _migra = new Data();
+                                var _migra = new Generic();
                                 _migra.ClearParameters();
                                 _migra.AddParameters("@CNPJBase", item.CNPJBase!);
                                 _migra.AddParameters("@IdentificadorSocio", item.IdentificadorSocio!);
@@ -392,7 +394,7 @@ public class Migrate3
                         {
                             foreach (var sc in _data.CNPJBase!.Where(s => s == item.CNPJBase))
                             {
-                                var _migra = new Data();
+                                var _migra = new Generic();
                                 _migra.ClearParameters();
                                 _migra.AddParameters("@CNPJBase", item.CNPJBase!);
                                 _migra.AddParameters("@IdentificadorSocio", item.IdentificadorSocio!);
@@ -417,7 +419,7 @@ public class Migrate3
                         {
                             foreach (var sc in _data.CNPJBase!.Where(s => s == item.CNPJBase))
                             {
-                                var _migra = new Data();
+                                var _migra = new Generic();
                                 _migra.ClearParameters();
                                 _migra.AddParameters("@CNPJBase", item.CNPJBase!);
                                 _migra.AddParameters("@IdentificadorSocio", item.IdentificadorSocio!);
@@ -442,7 +444,7 @@ public class Migrate3
                         {
                             foreach (var sc in _data.CNPJBase!.Where(s => s == item.CNPJBase))
                             {
-                                var _migra = new Data();
+                                var _migra = new Generic();
                                 _migra.ClearParameters();
                                 _migra.AddParameters("@CNPJBase", item.CNPJBase!);
                                 _migra.AddParameters("@IdentificadorSocio", item.IdentificadorSocio!);
@@ -467,7 +469,7 @@ public class Migrate3
                         {
                             foreach (var sc in _data.CNPJBase!.Where(s => s == item.CNPJBase))
                             {
-                                var _migra = new Data();
+                                var _migra = new Generic();
                                 _migra.ClearParameters();
                                 _migra.AddParameters("@CNPJBase", item.CNPJBase!);
                                 _migra.AddParameters("@IdentificadorSocio", item.IdentificadorSocio!);
@@ -492,7 +494,7 @@ public class Migrate3
                         {
                             foreach (var sc in _data.CNPJBase!.Where(s => s == item.CNPJBase))
                             {
-                                var _migra = new Data();
+                                var _migra = new Generic();
                                 _migra.ClearParameters();
                                 _migra.AddParameters("@CNPJBase", item.CNPJBase!);
                                 _migra.AddParameters("@IdentificadorSocio", item.IdentificadorSocio!);
@@ -517,7 +519,7 @@ public class Migrate3
                         {
                             foreach (var sc in _data.CNPJBase!.Where(s => s == item.CNPJBase))
                             {
-                                var _migra = new Data();
+                                var _migra = new Generic();
                                 _migra.ClearParameters();
                                 _migra.AddParameters("@CNPJBase", item.CNPJBase!);
                                 _migra.AddParameters("@IdentificadorSocio", item.IdentificadorSocio!);
@@ -564,13 +566,11 @@ public class Migrate3
             var _fields = @"(CNPJBase,OpcaoSimples,DataOpcaoSimples,DataExclusaoSimples,OpcaoMEI,DataOpcaoMEI,DataExclusaoMEI)";
             var _values = @"(@CNPJBase,@OpcaoSimples,@DataOpcaoSimples,@DataExclusaoSimples,@OpcaoMEI,@DataOpcaoMEI,@DataExclusaoMEI)";
             var _insert = $"INSERT INTO Simples {_fields} VALUES {_values}";
-
+ 
             var _timer = new Stopwatch();
             _timer.Start();
-            var _data = new Data();
+            var _data = new Generic();
             await _data.ReadAsync("SELECT CNPJBase FROM Empresas");
-
-
 
             foreach (var file in await new ListFiles().DoListAync(@"C:\data", ".D30311"))
                 try
@@ -615,7 +615,7 @@ public class Migrate3
                            {
                                foreach (var sn in _data.CNPJBase!.Where(s => s == item.CNPJBase))
                                {
-                                   var _migra = new Data();
+                                   var _migra = new Generic();
                                    _migra.ClearParameters();
                                    _migra.AddParameters("@CNPJBase", item.CNPJBase!);
                                    _migra.AddParameters("@OpcaoSimples", item.OpcaoSimples!);
@@ -636,7 +636,7 @@ public class Migrate3
                         {
                             foreach (var sn in _data.CNPJBase!.Where(s => s == item.CNPJBase))
                             {
-                                var _migra = new Data();
+                                var _migra = new Generic();
                                 _migra.ClearParameters();
                                 _migra.AddParameters("@CNPJBase", item.CNPJBase!);
                                 _migra.AddParameters("@OpcaoSimples", item.OpcaoSimples!);
@@ -657,7 +657,7 @@ public class Migrate3
                         {
                             foreach (var sn in _data.CNPJBase!.Where(s => s == item.CNPJBase))
                             {
-                                var _migra = new Data();
+                                var _migra = new Generic();
                                 _migra.ClearParameters();
                                 _migra.AddParameters("@CNPJBase", item.CNPJBase!);
                                 _migra.AddParameters("@OpcaoSimples", item.OpcaoSimples!);
@@ -678,7 +678,7 @@ public class Migrate3
                         {
                             foreach (var sn in _data.CNPJBase!.Where(s => s == item.CNPJBase))
                             {
-                                var _migra = new Data();
+                                var _migra = new Generic();
                                 _migra.ClearParameters();
                                 _migra.AddParameters("@CNPJBase", item.CNPJBase!);
                                 _migra.AddParameters("@OpcaoSimples", item.OpcaoSimples!);
@@ -699,7 +699,7 @@ public class Migrate3
                         {
                             foreach (var sn in _data.CNPJBase!.Where(s => s == item.CNPJBase))
                             {
-                                var _migra = new Data();
+                                var _migra = new Generic();
                                 _migra.ClearParameters();
                                 _migra.AddParameters("@CNPJBase", item.CNPJBase!);
                                 _migra.AddParameters("@OpcaoSimples", item.OpcaoSimples!);
@@ -720,7 +720,7 @@ public class Migrate3
                         {
                             foreach (var sn in _data.CNPJBase!.Where(s => s == item.CNPJBase))
                             {
-                                var _migra = new Data();
+                                var _migra = new Generic();
                                 _migra.ClearParameters();
                                 _migra.AddParameters("@CNPJBase", item.CNPJBase!);
                                 _migra.AddParameters("@OpcaoSimples", item.OpcaoSimples!);
@@ -741,7 +741,7 @@ public class Migrate3
                         {
                             foreach (var sn in _data.CNPJBase!.Where(s => s == item.CNPJBase))
                             {
-                                var _migra = new Data();
+                                var _migra = new Generic();
                                 _migra.ClearParameters();
                                 _migra.AddParameters("@CNPJBase", item.CNPJBase!);
                                 _migra.AddParameters("@OpcaoSimples", item.OpcaoSimples!);
@@ -762,7 +762,7 @@ public class Migrate3
                         {
                             foreach (var sn in _data.CNPJBase!.Where(s => s == item.CNPJBase))
                             {
-                                var _migra = new Data();
+                                var _migra = new Generic();
                                 _migra.ClearParameters();
                                 _migra.AddParameters("@CNPJBase", item.CNPJBase!);
                                 _migra.AddParameters("@OpcaoSimples", item.OpcaoSimples!);

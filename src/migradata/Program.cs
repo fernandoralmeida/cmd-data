@@ -20,20 +20,21 @@ class Program
             switch (choice)
             {
                 case 1:
-                    Console.WriteLine("Normalize Files");
-                    await new ListFiles().NormalizeFile(@"C:\data");
-                    await new Migrate().Normalize();
-                    Console.WriteLine("Iniciando migração...");
-                    await new Migrate().CnaesAsync();
-                    await new Migrate().MotivoAsync();
-                    await new Migrate().MunicipioAsync();
-                    await new Migrate().NaturezaAsync();
-                    await new Migrate().PaisesAsync();
-                    await new Migrate().QualificaAsync();
-                    await new Migrate().EstabelecimentosAsyn();
-                    await new Migrate3().EmpresasAsync();
-                    await new Migrate3().SociosAsync();
-                    await new Migrate3().SimplesAsync();
+                    //Console.WriteLine("Normalize Files");
+                    //await new ListFiles().NormalizeFile(@"C:\data");
+                    //await new Migrate().Normalize();
+                    //Console.WriteLine("Iniciando migração...");
+                    //await new Migrate().CnaesAsync();
+                    //await new Migrate().MotivoAsync();
+                    //await new Migrate().MunicipioAsync();
+                    //await new Migrate().NaturezaAsync();
+                    //await new Migrate().PaisesAsync();
+                    //await new Migrate().QualificaAsync();
+                    //await new Migratesss().EstabelecimentosAsyn();
+                    //await new Migrate3().EmpresasAsync();
+                    //await new Migrate3().SociosAsync();
+                    //await new Migrate3().SimplesAsync();
+                    await Migrate.Empresas.StartAsync();
                     break;
                 case 5:
                     Console.WriteLine("Encerrando a aplicação...");

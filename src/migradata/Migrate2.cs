@@ -1,6 +1,8 @@
 using System.Diagnostics;
 using System.Text;
 using migradata.Models;
+using migradata.Repositories;
+using migradata.Helpers;
 
 namespace migradata;
 
@@ -15,7 +17,7 @@ public class Migrate2
             var _intertValues = @"(@CNPJBase,@RazaoSocial,@NaturezaJuridica,@QualificacaoResponsavel,@CapitalSocial,@PorteEmpresa,@EnteFederativoResponsavel)";
             var _insert = $"INSERT INTO Empresas {_insertFields} VALUES {_intertValues}";
 
-            var _data = new Data();
+            var _data = new Generic();
             await _data.ReadAsync("SELECT CNPJBase FROM Estabelecimentos");
             var _timer = new Stopwatch();
             

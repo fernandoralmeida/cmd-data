@@ -1,6 +1,8 @@
 using System.Diagnostics;
 using System.Text;
 using migradata.Models;
+using migradata.Repositories;
+using migradata.Helpers;
 
 namespace migradata;
 
@@ -24,7 +26,7 @@ public class Migrate4
             var _intertValues = @"(@CNPJBase,@RazaoSocial,@NaturezaJuridica,@QualificacaoResponsavel,@CapitalSocial,@PorteEmpresa,@EnteFederativoResponsavel)";
             var _insert = $"INSERT INTO Empresas {_insertFields} VALUES {_intertValues}";
 
-            var _data = new Data();
+            var _data = new Generic();
             await _data.ReadAsync("SELECT CNPJBase FROM Estabelecimentos");
             var _timer = new Stopwatch();
 
@@ -72,7 +74,7 @@ public class Migrate4
                     {
                         foreach (var item in _list1)
                         {
-                            var _migra = new Data();
+                            var _migra = new Generic();
                             _migra.ClearParameters();
                             _migra.AddParameters("@CNPJBase", item.CNPJBase!);
                             _migra.AddParameters("@RazaoSocial", item.RazaoSocial!);
@@ -93,7 +95,7 @@ public class Migrate4
                         foreach (var item in _list2)
                         {
 
-                            var _migra = new Data();
+                            var _migra = new Generic();
                             _migra.ClearParameters();
                             _migra.AddParameters("@CNPJBase", item.CNPJBase!);
                             _migra.AddParameters("@RazaoSocial", item.RazaoSocial!);
@@ -113,7 +115,7 @@ public class Migrate4
                         foreach (var item in _list3)
                         {
 
-                            var _migra = new Data();
+                            var _migra = new Generic();
                             _migra.ClearParameters();
                             _migra.AddParameters("@CNPJBase", item.CNPJBase!);
                             _migra.AddParameters("@RazaoSocial", item.RazaoSocial!);
@@ -134,7 +136,7 @@ public class Migrate4
                         foreach (var item in _list4)
                         {
 
-                            var _migra = new Data();
+                            var _migra = new Generic();
                             _migra.ClearParameters();
                             _migra.AddParameters("@CNPJBase", item.CNPJBase!);
                             _migra.AddParameters("@RazaoSocial", item.RazaoSocial!);
@@ -155,7 +157,7 @@ public class Migrate4
                         foreach (var item in _list5)
                         {
 
-                            var _migra = new Data();
+                            var _migra = new Generic();
                             _migra.ClearParameters();
                             _migra.AddParameters("@CNPJBase", item.CNPJBase!);
                             _migra.AddParameters("@RazaoSocial", item.RazaoSocial!);
@@ -176,7 +178,7 @@ public class Migrate4
                         foreach (var item in _list6)
                         {
 
-                            var _migra = new Data();
+                            var _migra = new Generic();
                             _migra.ClearParameters();
                             _migra.AddParameters("@CNPJBase", item.CNPJBase!);
                             _migra.AddParameters("@RazaoSocial", item.RazaoSocial!);
@@ -197,7 +199,7 @@ public class Migrate4
                         foreach (var item in _list7)
                         {
 
-                            var _migra = new Data();
+                            var _migra = new Generic();
                             _migra.ClearParameters();
                             _migra.AddParameters("@CNPJBase", item.CNPJBase!);
                             _migra.AddParameters("@RazaoSocial", item.RazaoSocial!);
@@ -218,7 +220,7 @@ public class Migrate4
                         foreach (var item in _list8)
                         {
 
-                            var _migra = new Data();
+                            var _migra = new Generic();
                             _migra.ClearParameters();
                             _migra.AddParameters("@CNPJBase", item.CNPJBase!);
                             _migra.AddParameters("@RazaoSocial", item.RazaoSocial!);
