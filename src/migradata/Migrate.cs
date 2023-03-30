@@ -27,8 +27,8 @@ public class Migrate
         Console.WriteLine("Tebela Paises Normalizado!");
         await data.WriteAsync(@"DELETE FROM QualificacaoSocios");
         Console.WriteLine("Tebela QualificacaoSocios Normalizado!");
-        //await data.WriteAsync(@"DELETE FROM Estabelecimentos");
-        //Console.WriteLine("Tebela Estabelecimentos Normalizado!");
+        await data.WriteAsync(@"DELETE FROM Estabelecimentos");
+        Console.WriteLine("Tebela Estabelecimentos Normalizado!");
         await data.WriteAsync(@"DELETE FROM Empresas");
         Console.WriteLine("Tebela Empresas Normalizado!");
         await data.WriteAsync(@"DELETE FROM Socios");
@@ -195,9 +195,7 @@ public class Migrate
                 var _data = new Data();
                 await _data.ReadAsync("SELECT CNPJBase FROM Estabelecimentos");
                 var _timer = new Stopwatch();
-                _timer.Start();
-
-                var _list = new List<Empresa>();
+                //_timer.Start();
 
                 int parts = 8;
                 int size = _data.CNPJBase!.Count() / parts;
@@ -215,7 +213,7 @@ public class Migrate
                     try
                     {
                         Console.WriteLine($"Migrando File {Path.GetFileName(file)}");
-
+                        var _list = new List<Empresa>();
                         using (var reader = new StreamReader(file, Encoding.GetEncoding("ISO-8859-1")))
                             while (!reader.EndOfStream)
                             {
@@ -233,158 +231,163 @@ public class Migrate
                                 });
                                 i++;
                             }
+
+                        _timer.Start();
+                        foreach (var ep in _list)
+                        {
+                            if (_timer.Elapsed.TotalSeconds <= 10)
+                            {
+
+                                var T1 = Task.Run(() =>
+                                {
+                                    foreach (var item in _list1.Where(s => s == ep.CNPJBase))
+                                    {
+                                        _data.ClearParameters();
+                                        _data.AddParameters("@CNPJBase", ep.CNPJBase!);
+                                        _data.AddParameters("@RazaoSocial", ep.RazaoSocial!);
+                                        _data.AddParameters("@NaturezaJuridica", ep.NaturezaJuridica!);
+                                        _data.AddParameters("@QualificacaoResponsavel", ep.QualificacaoResponsavel!);
+                                        _data.AddParameters("@CapitalSocial", ep.CapitalSocial!);
+                                        _data.AddParameters("@PorteEmpresa", ep.PorteEmpresa!);
+                                        _data.AddParameters("@EnteFederativoResponsavel", ep.EnteFederativoResponsavel!);
+                                        //await _data.WriteAsync(_insert);
+                                        e++;
+                                        Console.WriteLine($"Item {e} migrado!");
+                                    }
+                                });
+
+                                var T2 = Task.Run(() =>
+                                {
+                                    foreach (var item in _list2.Where(s => s == ep.CNPJBase))
+                                    {
+                                        _data.ClearParameters();
+                                        _data.AddParameters("@CNPJBase", ep.CNPJBase!);
+                                        _data.AddParameters("@RazaoSocial", ep.RazaoSocial!);
+                                        _data.AddParameters("@NaturezaJuridica", ep.NaturezaJuridica!);
+                                        _data.AddParameters("@QualificacaoResponsavel", ep.QualificacaoResponsavel!);
+                                        _data.AddParameters("@CapitalSocial", ep.CapitalSocial!);
+                                        _data.AddParameters("@PorteEmpresa", ep.PorteEmpresa!);
+                                        _data.AddParameters("@EnteFederativoResponsavel", ep.EnteFederativoResponsavel!);
+                                        //await _data.WriteAsync(_insert);
+                                        e++;
+                                        Console.WriteLine($"Item {e} migrado!");
+                                    }
+                                });
+
+                                var T3 = Task.Run(() =>
+                                {
+                                    foreach (var item in _list3.Where(s => s == ep.CNPJBase))
+                                    {
+                                        _data.ClearParameters();
+                                        _data.AddParameters("@CNPJBase", ep.CNPJBase!);
+                                        _data.AddParameters("@RazaoSocial", ep.RazaoSocial!);
+                                        _data.AddParameters("@NaturezaJuridica", ep.NaturezaJuridica!);
+                                        _data.AddParameters("@QualificacaoResponsavel", ep.QualificacaoResponsavel!);
+                                        _data.AddParameters("@CapitalSocial", ep.CapitalSocial!);
+                                        _data.AddParameters("@PorteEmpresa", ep.PorteEmpresa!);
+                                        _data.AddParameters("@EnteFederativoResponsavel", ep.EnteFederativoResponsavel!);
+                                        //await _data.WriteAsync(_insert);
+                                        e++;
+                                        Console.WriteLine($"Item {e} migrado!");
+                                    }
+                                });
+
+                                var T4 = Task.Run(() =>
+                                {
+                                    foreach (var item in _list4.Where(s => s == ep.CNPJBase))
+                                    {
+                                        _data.ClearParameters();
+                                        _data.AddParameters("@CNPJBase", ep.CNPJBase!);
+                                        _data.AddParameters("@RazaoSocial", ep.RazaoSocial!);
+                                        _data.AddParameters("@NaturezaJuridica", ep.NaturezaJuridica!);
+                                        _data.AddParameters("@QualificacaoResponsavel", ep.QualificacaoResponsavel!);
+                                        _data.AddParameters("@CapitalSocial", ep.CapitalSocial!);
+                                        _data.AddParameters("@PorteEmpresa", ep.PorteEmpresa!);
+                                        _data.AddParameters("@EnteFederativoResponsavel", ep.EnteFederativoResponsavel!);
+                                        //await _data.WriteAsync(_insert);
+                                        e++;
+                                        Console.WriteLine($"Item {e} migrado!");
+                                    }
+                                });
+
+                                var T5 = Task.Run(() =>
+                                {
+                                    foreach (var item in _list5.Where(s => s == ep.CNPJBase))
+                                    {
+                                        _data.ClearParameters();
+                                        _data.AddParameters("@CNPJBase", ep.CNPJBase!);
+                                        _data.AddParameters("@RazaoSocial", ep.RazaoSocial!);
+                                        _data.AddParameters("@NaturezaJuridica", ep.NaturezaJuridica!);
+                                        _data.AddParameters("@QualificacaoResponsavel", ep.QualificacaoResponsavel!);
+                                        _data.AddParameters("@CapitalSocial", ep.CapitalSocial!);
+                                        _data.AddParameters("@PorteEmpresa", ep.PorteEmpresa!);
+                                        _data.AddParameters("@EnteFederativoResponsavel", ep.EnteFederativoResponsavel!);
+                                        //await _data.WriteAsync(_insert);
+                                        e++;
+                                        Console.WriteLine($"Item {e} migrado!");
+                                    }
+                                });
+
+                                var T6 = Task.Run(() =>
+                                {
+                                    foreach (var item in _list6.Where(s => s == ep.CNPJBase))
+                                    {
+                                        _data.ClearParameters();
+                                        _data.AddParameters("@CNPJBase", ep.CNPJBase!);
+                                        _data.AddParameters("@RazaoSocial", ep.RazaoSocial!);
+                                        _data.AddParameters("@NaturezaJuridica", ep.NaturezaJuridica!);
+                                        _data.AddParameters("@QualificacaoResponsavel", ep.QualificacaoResponsavel!);
+                                        _data.AddParameters("@CapitalSocial", ep.CapitalSocial!);
+                                        _data.AddParameters("@PorteEmpresa", ep.PorteEmpresa!);
+                                        _data.AddParameters("@EnteFederativoResponsavel", ep.EnteFederativoResponsavel!);
+                                        //await _data.WriteAsync(_insert);
+                                        e++;
+                                        Console.WriteLine($"Item {e} migrado!");
+                                    }
+                                });
+
+                                var T7 = Task.Run(() =>
+                                {
+                                    foreach (var item in _list7.Where(s => s == ep.CNPJBase))
+                                    {
+                                        _data.ClearParameters();
+                                        _data.AddParameters("@CNPJBase", ep.CNPJBase!);
+                                        _data.AddParameters("@RazaoSocial", ep.RazaoSocial!);
+                                        _data.AddParameters("@NaturezaJuridica", ep.NaturezaJuridica!);
+                                        _data.AddParameters("@QualificacaoResponsavel", ep.QualificacaoResponsavel!);
+                                        _data.AddParameters("@CapitalSocial", ep.CapitalSocial!);
+                                        _data.AddParameters("@PorteEmpresa", ep.PorteEmpresa!);
+                                        _data.AddParameters("@EnteFederativoResponsavel", ep.EnteFederativoResponsavel!);
+                                        //await _data.WriteAsync(_insert);
+                                        e++;
+                                        Console.WriteLine($"Item {e} migrado!");
+                                    }
+                                });
+
+                                var T8 = Task.Run(() =>
+                                {
+                                    foreach (var item in _list8.Where(s => s == ep.CNPJBase))
+                                    {
+                                        _data.ClearParameters();
+                                        _data.AddParameters("@CNPJBase", ep.CNPJBase!);
+                                        _data.AddParameters("@RazaoSocial", ep.RazaoSocial!);
+                                        _data.AddParameters("@NaturezaJuridica", ep.NaturezaJuridica!);
+                                        _data.AddParameters("@QualificacaoResponsavel", ep.QualificacaoResponsavel!);
+                                        _data.AddParameters("@CapitalSocial", ep.CapitalSocial!);
+                                        _data.AddParameters("@PorteEmpresa", ep.PorteEmpresa!);
+                                        _data.AddParameters("@EnteFederativoResponsavel", ep.EnteFederativoResponsavel!);
+                                        //await _data.WriteAsync(_insert);
+                                        e++;
+                                        Console.WriteLine($"Item {e} migrado!");
+                                    }
+                                });
+
+                                await Task.WhenAll(T1, T2, T3, T4, T5, T6, T7, T8);
+                            }
+                        }
                     }
                     catch
                     { Console.WriteLine($"File Not Found"); }
-                }
-
-                foreach (var ep in _list)
-                {
-                    var T1 = Task.Run(async () =>
-                    {
-                        foreach (var item in _list1.Where(s => s == ep.CNPJBase))
-                        {
-                            _data.ClearParameters();
-                            _data.AddParameters("@CNPJBase", ep.CNPJBase!);
-                            _data.AddParameters("@RazaoSocial", ep.RazaoSocial!);
-                            _data.AddParameters("@NaturezaJuridica", ep.NaturezaJuridica!);
-                            _data.AddParameters("@QualificacaoResponsavel", ep.QualificacaoResponsavel!);
-                            _data.AddParameters("@CapitalSocial", ep.CapitalSocial!);
-                            _data.AddParameters("@PorteEmpresa", ep.PorteEmpresa!);
-                            _data.AddParameters("@EnteFederativoResponsavel", ep.EnteFederativoResponsavel!);
-                            await _data.WriteAsync(_insert);
-                            e++;
-                            Console.WriteLine($"Item {e} migrado!");
-                        }
-                    });
-
-                    var T2 = Task.Run(async () =>
-                    {
-                        foreach (var item in _list2.Where(s => s == ep.CNPJBase))
-                        {
-                            _data.ClearParameters();
-                            _data.AddParameters("@CNPJBase", ep.CNPJBase!);
-                            _data.AddParameters("@RazaoSocial", ep.RazaoSocial!);
-                            _data.AddParameters("@NaturezaJuridica", ep.NaturezaJuridica!);
-                            _data.AddParameters("@QualificacaoResponsavel", ep.QualificacaoResponsavel!);
-                            _data.AddParameters("@CapitalSocial", ep.CapitalSocial!);
-                            _data.AddParameters("@PorteEmpresa", ep.PorteEmpresa!);
-                            _data.AddParameters("@EnteFederativoResponsavel", ep.EnteFederativoResponsavel!);
-                            await _data.WriteAsync(_insert);
-                            e++;
-                            Console.WriteLine($"Item {e} migrado!");
-                        }
-                    });
-
-                    var T3 = Task.Run(async () =>
-                    {
-                        foreach (var item in _list3.Where(s => s == ep.CNPJBase))
-                        {
-                            _data.ClearParameters();
-                            _data.AddParameters("@CNPJBase", ep.CNPJBase!);
-                            _data.AddParameters("@RazaoSocial", ep.RazaoSocial!);
-                            _data.AddParameters("@NaturezaJuridica", ep.NaturezaJuridica!);
-                            _data.AddParameters("@QualificacaoResponsavel", ep.QualificacaoResponsavel!);
-                            _data.AddParameters("@CapitalSocial", ep.CapitalSocial!);
-                            _data.AddParameters("@PorteEmpresa", ep.PorteEmpresa!);
-                            _data.AddParameters("@EnteFederativoResponsavel", ep.EnteFederativoResponsavel!);
-                            await _data.WriteAsync(_insert);
-                            e++;
-                            Console.WriteLine($"Item {e} migrado!");
-                        }
-                    });
-
-                    var T4 = Task.Run(async () =>
-                    {
-                        foreach (var item in _list4.Where(s => s == ep.CNPJBase))
-                        {
-                            _data.ClearParameters();
-                            _data.AddParameters("@CNPJBase", ep.CNPJBase!);
-                            _data.AddParameters("@RazaoSocial", ep.RazaoSocial!);
-                            _data.AddParameters("@NaturezaJuridica", ep.NaturezaJuridica!);
-                            _data.AddParameters("@QualificacaoResponsavel", ep.QualificacaoResponsavel!);
-                            _data.AddParameters("@CapitalSocial", ep.CapitalSocial!);
-                            _data.AddParameters("@PorteEmpresa", ep.PorteEmpresa!);
-                            _data.AddParameters("@EnteFederativoResponsavel", ep.EnteFederativoResponsavel!);
-                            await _data.WriteAsync(_insert);
-                            e++;
-                            Console.WriteLine($"Item {e} migrado!");
-                        }
-                    });
-
-                    var T5 = Task.Run(async () =>
-                    {
-                        foreach (var item in _list5.Where(s => s == ep.CNPJBase))
-                        {
-                            _data.ClearParameters();
-                            _data.AddParameters("@CNPJBase", ep.CNPJBase!);
-                            _data.AddParameters("@RazaoSocial", ep.RazaoSocial!);
-                            _data.AddParameters("@NaturezaJuridica", ep.NaturezaJuridica!);
-                            _data.AddParameters("@QualificacaoResponsavel", ep.QualificacaoResponsavel!);
-                            _data.AddParameters("@CapitalSocial", ep.CapitalSocial!);
-                            _data.AddParameters("@PorteEmpresa", ep.PorteEmpresa!);
-                            _data.AddParameters("@EnteFederativoResponsavel", ep.EnteFederativoResponsavel!);
-                            await _data.WriteAsync(_insert);
-                            e++;
-                            Console.WriteLine($"Item {e} migrado!");
-                        }
-                    });
-
-                    var T6 = Task.Run(async () =>
-                    {
-                        foreach (var item in _list6.Where(s => s == ep.CNPJBase))
-                        {
-                            _data.ClearParameters();
-                            _data.AddParameters("@CNPJBase", ep.CNPJBase!);
-                            _data.AddParameters("@RazaoSocial", ep.RazaoSocial!);
-                            _data.AddParameters("@NaturezaJuridica", ep.NaturezaJuridica!);
-                            _data.AddParameters("@QualificacaoResponsavel", ep.QualificacaoResponsavel!);
-                            _data.AddParameters("@CapitalSocial", ep.CapitalSocial!);
-                            _data.AddParameters("@PorteEmpresa", ep.PorteEmpresa!);
-                            _data.AddParameters("@EnteFederativoResponsavel", ep.EnteFederativoResponsavel!);
-                            await _data.WriteAsync(_insert);
-                            e++;
-                            Console.WriteLine($"Item {e} migrado!");
-                        }
-                    });
-
-                    var T7 = Task.Run(async () =>
-                    {
-                        foreach (var item in _list7.Where(s => s == ep.CNPJBase))
-                        {
-                            _data.ClearParameters();
-                            _data.AddParameters("@CNPJBase", ep.CNPJBase!);
-                            _data.AddParameters("@RazaoSocial", ep.RazaoSocial!);
-                            _data.AddParameters("@NaturezaJuridica", ep.NaturezaJuridica!);
-                            _data.AddParameters("@QualificacaoResponsavel", ep.QualificacaoResponsavel!);
-                            _data.AddParameters("@CapitalSocial", ep.CapitalSocial!);
-                            _data.AddParameters("@PorteEmpresa", ep.PorteEmpresa!);
-                            _data.AddParameters("@EnteFederativoResponsavel", ep.EnteFederativoResponsavel!);
-                            await _data.WriteAsync(_insert);
-                            e++;
-                            Console.WriteLine($"Item {e} migrado!");
-                        }
-                    });
-
-                    var T8 = Task.Run(async () =>
-                    {
-                        foreach (var item in _list8.Where(s => s == ep.CNPJBase))
-                        {
-                            _data.ClearParameters();
-                            _data.AddParameters("@CNPJBase", ep.CNPJBase!);
-                            _data.AddParameters("@RazaoSocial", ep.RazaoSocial!);
-                            _data.AddParameters("@NaturezaJuridica", ep.NaturezaJuridica!);
-                            _data.AddParameters("@QualificacaoResponsavel", ep.QualificacaoResponsavel!);
-                            _data.AddParameters("@CapitalSocial", ep.CapitalSocial!);
-                            _data.AddParameters("@PorteEmpresa", ep.PorteEmpresa!);
-                            _data.AddParameters("@EnteFederativoResponsavel", ep.EnteFederativoResponsavel!);
-                            await _data.WriteAsync(_insert);
-                            e++;
-                            Console.WriteLine($"Item {e} migrado!");
-                        }
-                    });
-
-                    await Task.WhenAll(T1, T2, T3, T4, T5, T6, T7, T8);
                 }
 
                 _timer.Stop();
@@ -403,7 +406,7 @@ public class Migrate
             var _timer = new Stopwatch();
             _timer.Start();
 
-            var _list = new List<Socio>();
+
             int parts = 8;
             int size = _data.CNPJBase!.Count() / parts;
             var _list1 = _data.CNPJBase!.Skip(0 * size).Take(size);
@@ -420,7 +423,7 @@ public class Migrate
                 try
                 {
                     Console.WriteLine($"Migrando File {Path.GetFileName(file)}");
-
+                    var _list = new List<Socio>();
                     using (var reader = new StreamReader(file, Encoding.GetEncoding("ISO-8859-1")))
                         while (!reader.EndOfStream)
                         {
@@ -442,192 +445,194 @@ public class Migrate
                                 FaixaEtaria = fields[10].ToString().Replace("\"", "").Trim()
                             });
                         }
+
+
+                    foreach (var sc in _list)
+                    {
+
+                        var T1 = Task.Run(async () =>
+                        {
+                            foreach (var item in _list1.Where(s => s == sc.CNPJBase))
+                            {
+                                _data.ClearParameters();
+                                _data.AddParameters("@CNPJBase", sc.CNPJBase!);
+                                _data.AddParameters("@IdentificadorSocio", sc.IdentificadorSocio!);
+                                _data.AddParameters("@NomeRazaoSocio", sc.NomeRazaoSocio!);
+                                _data.AddParameters("@CnpjCpfSocio", sc.CnpjCpfSocio!);
+                                _data.AddParameters("@QualificacaoSocio", sc.QualificacaoSocio!);
+                                _data.AddParameters("@DataEntradaSociedade", sc.DataEntradaSociedade!);
+                                _data.AddParameters("@Pais", sc.Pais!);
+                                _data.AddParameters("@RepresentanteLegal", sc.RepresentanteLegal!);
+                                _data.AddParameters("@NomeRepresentante", sc.NomeRepresentante!);
+                                _data.AddParameters("@QualificacaoRepresentanteLegal", sc.QualificacaoRepresentanteLegal!);
+                                _data.AddParameters("@FaixaEtaria", sc.FaixaEtaria!);
+                                await _data.WriteAsync(_insert);
+                                e++;
+                                Console.WriteLine($"Item {e} migrado!");
+                            }
+                        });
+
+                        var T2 = Task.Run(async () =>
+                        {
+                            foreach (var item in _list2.Where(s => s == sc.CNPJBase))
+                            {
+                                _data.ClearParameters();
+                                _data.AddParameters("@CNPJBase", sc.CNPJBase!);
+                                _data.AddParameters("@IdentificadorSocio", sc.IdentificadorSocio!);
+                                _data.AddParameters("@NomeRazaoSocio", sc.NomeRazaoSocio!);
+                                _data.AddParameters("@CnpjCpfSocio", sc.CnpjCpfSocio!);
+                                _data.AddParameters("@QualificacaoSocio", sc.QualificacaoSocio!);
+                                _data.AddParameters("@DataEntradaSociedade", sc.DataEntradaSociedade!);
+                                _data.AddParameters("@Pais", sc.Pais!);
+                                _data.AddParameters("@RepresentanteLegal", sc.RepresentanteLegal!);
+                                _data.AddParameters("@NomeRepresentante", sc.NomeRepresentante!);
+                                _data.AddParameters("@QualificacaoRepresentanteLegal", sc.QualificacaoRepresentanteLegal!);
+                                _data.AddParameters("@FaixaEtaria", sc.FaixaEtaria!);
+                                await _data.WriteAsync(_insert);
+                                e++;
+                                Console.WriteLine($"Item {e} migrado!");
+                            }
+                        });
+
+                        var T3 = Task.Run(async () =>
+                        {
+                            foreach (var item in _list3.Where(s => s == sc.CNPJBase))
+                            {
+                                _data.ClearParameters();
+                                _data.AddParameters("@CNPJBase", sc.CNPJBase!);
+                                _data.AddParameters("@IdentificadorSocio", sc.IdentificadorSocio!);
+                                _data.AddParameters("@NomeRazaoSocio", sc.NomeRazaoSocio!);
+                                _data.AddParameters("@CnpjCpfSocio", sc.CnpjCpfSocio!);
+                                _data.AddParameters("@QualificacaoSocio", sc.QualificacaoSocio!);
+                                _data.AddParameters("@DataEntradaSociedade", sc.DataEntradaSociedade!);
+                                _data.AddParameters("@Pais", sc.Pais!);
+                                _data.AddParameters("@RepresentanteLegal", sc.RepresentanteLegal!);
+                                _data.AddParameters("@NomeRepresentante", sc.NomeRepresentante!);
+                                _data.AddParameters("@QualificacaoRepresentanteLegal", sc.QualificacaoRepresentanteLegal!);
+                                _data.AddParameters("@FaixaEtaria", sc.FaixaEtaria!);
+                                await _data.WriteAsync(_insert);
+                                e++;
+                                Console.WriteLine($"Item {e} migrado!");
+                            }
+                        });
+
+                        var T4 = Task.Run(async () =>
+                        {
+                            foreach (var item in _list4.Where(s => s == sc.CNPJBase))
+                            {
+                                _data.ClearParameters();
+                                _data.AddParameters("@CNPJBase", sc.CNPJBase!);
+                                _data.AddParameters("@IdentificadorSocio", sc.IdentificadorSocio!);
+                                _data.AddParameters("@NomeRazaoSocio", sc.NomeRazaoSocio!);
+                                _data.AddParameters("@CnpjCpfSocio", sc.CnpjCpfSocio!);
+                                _data.AddParameters("@QualificacaoSocio", sc.QualificacaoSocio!);
+                                _data.AddParameters("@DataEntradaSociedade", sc.DataEntradaSociedade!);
+                                _data.AddParameters("@Pais", sc.Pais!);
+                                _data.AddParameters("@RepresentanteLegal", sc.RepresentanteLegal!);
+                                _data.AddParameters("@NomeRepresentante", sc.NomeRepresentante!);
+                                _data.AddParameters("@QualificacaoRepresentanteLegal", sc.QualificacaoRepresentanteLegal!);
+                                _data.AddParameters("@FaixaEtaria", sc.FaixaEtaria!);
+                                await _data.WriteAsync(_insert);
+                                e++;
+                                Console.WriteLine($"Item {e} migrado!");
+                            }
+                        });
+
+                        var T5 = Task.Run(async () =>
+                        {
+                            foreach (var item in _list5.Where(s => s == sc.CNPJBase))
+                            {
+                                _data.ClearParameters();
+                                _data.AddParameters("@CNPJBase", sc.CNPJBase!);
+                                _data.AddParameters("@IdentificadorSocio", sc.IdentificadorSocio!);
+                                _data.AddParameters("@NomeRazaoSocio", sc.NomeRazaoSocio!);
+                                _data.AddParameters("@CnpjCpfSocio", sc.CnpjCpfSocio!);
+                                _data.AddParameters("@QualificacaoSocio", sc.QualificacaoSocio!);
+                                _data.AddParameters("@DataEntradaSociedade", sc.DataEntradaSociedade!);
+                                _data.AddParameters("@Pais", sc.Pais!);
+                                _data.AddParameters("@RepresentanteLegal", sc.RepresentanteLegal!);
+                                _data.AddParameters("@NomeRepresentante", sc.NomeRepresentante!);
+                                _data.AddParameters("@QualificacaoRepresentanteLegal", sc.QualificacaoRepresentanteLegal!);
+                                _data.AddParameters("@FaixaEtaria", sc.FaixaEtaria!);
+                                await _data.WriteAsync(_insert);
+                                e++;
+                                Console.WriteLine($"Item {e} migrado!");
+                            }
+                        });
+
+                        var T6 = Task.Run(async () =>
+                        {
+                            foreach (var item in _list6.Where(s => s == sc.CNPJBase))
+                            {
+                                _data.ClearParameters();
+                                _data.AddParameters("@CNPJBase", sc.CNPJBase!);
+                                _data.AddParameters("@IdentificadorSocio", sc.IdentificadorSocio!);
+                                _data.AddParameters("@NomeRazaoSocio", sc.NomeRazaoSocio!);
+                                _data.AddParameters("@CnpjCpfSocio", sc.CnpjCpfSocio!);
+                                _data.AddParameters("@QualificacaoSocio", sc.QualificacaoSocio!);
+                                _data.AddParameters("@DataEntradaSociedade", sc.DataEntradaSociedade!);
+                                _data.AddParameters("@Pais", sc.Pais!);
+                                _data.AddParameters("@RepresentanteLegal", sc.RepresentanteLegal!);
+                                _data.AddParameters("@NomeRepresentante", sc.NomeRepresentante!);
+                                _data.AddParameters("@QualificacaoRepresentanteLegal", sc.QualificacaoRepresentanteLegal!);
+                                _data.AddParameters("@FaixaEtaria", sc.FaixaEtaria!);
+                                await _data.WriteAsync(_insert);
+                                e++;
+                                Console.WriteLine($"Item {e} migrado!");
+                            }
+                        });
+
+                        var T7 = Task.Run(async () =>
+                        {
+                            foreach (var item in _list7.Where(s => s == sc.CNPJBase))
+                            {
+                                _data.ClearParameters();
+                                _data.AddParameters("@CNPJBase", sc.CNPJBase!);
+                                _data.AddParameters("@IdentificadorSocio", sc.IdentificadorSocio!);
+                                _data.AddParameters("@NomeRazaoSocio", sc.NomeRazaoSocio!);
+                                _data.AddParameters("@CnpjCpfSocio", sc.CnpjCpfSocio!);
+                                _data.AddParameters("@QualificacaoSocio", sc.QualificacaoSocio!);
+                                _data.AddParameters("@DataEntradaSociedade", sc.DataEntradaSociedade!);
+                                _data.AddParameters("@Pais", sc.Pais!);
+                                _data.AddParameters("@RepresentanteLegal", sc.RepresentanteLegal!);
+                                _data.AddParameters("@NomeRepresentante", sc.NomeRepresentante!);
+                                _data.AddParameters("@QualificacaoRepresentanteLegal", sc.QualificacaoRepresentanteLegal!);
+                                _data.AddParameters("@FaixaEtaria", sc.FaixaEtaria!);
+                                await _data.WriteAsync(_insert);
+                                e++;
+                                Console.WriteLine($"Item {e} migrado!");
+                            }
+                        });
+
+                        var T8 = Task.Run(async () =>
+                        {
+                            foreach (var item in _list8.Where(s => s == sc.CNPJBase))
+                            {
+                                _data.ClearParameters();
+                                _data.AddParameters("@CNPJBase", sc.CNPJBase!);
+                                _data.AddParameters("@IdentificadorSocio", sc.IdentificadorSocio!);
+                                _data.AddParameters("@NomeRazaoSocio", sc.NomeRazaoSocio!);
+                                _data.AddParameters("@CnpjCpfSocio", sc.CnpjCpfSocio!);
+                                _data.AddParameters("@QualificacaoSocio", sc.QualificacaoSocio!);
+                                _data.AddParameters("@DataEntradaSociedade", sc.DataEntradaSociedade!);
+                                _data.AddParameters("@Pais", sc.Pais!);
+                                _data.AddParameters("@RepresentanteLegal", sc.RepresentanteLegal!);
+                                _data.AddParameters("@NomeRepresentante", sc.NomeRepresentante!);
+                                _data.AddParameters("@QualificacaoRepresentanteLegal", sc.QualificacaoRepresentanteLegal!);
+                                _data.AddParameters("@FaixaEtaria", sc.FaixaEtaria!);
+                                await _data.WriteAsync(_insert);
+                                e++;
+                                Console.WriteLine($"Item {e} migrado!");
+                            }
+                        });
+                        await Task.WhenAll(T1, T2, T3, T4, T5, T6, T7, T8);
+                        i++;
+                    }
                 }
                 catch (Exception ex)
                 {
                     Console.WriteLine("Erro ao conectar: " + ex.Message);
                 }
-            }
-
-            foreach (var sc in _list)
-            {
-                var T1 = Task.Run(async () =>
-                {
-                    foreach (var item in _list1.Where(s => s == sc.CNPJBase))
-                    {
-                        _data.ClearParameters();
-                        _data.AddParameters("@CNPJBase", sc.CNPJBase!);
-                        _data.AddParameters("@IdentificadorSocio", sc.IdentificadorSocio!);
-                        _data.AddParameters("@NomeRazaoSocio", sc.NomeRazaoSocio!);
-                        _data.AddParameters("@CnpjCpfSocio", sc.CnpjCpfSocio!);
-                        _data.AddParameters("@QualificacaoSocio", sc.QualificacaoSocio!);
-                        _data.AddParameters("@DataEntradaSociedade", sc.DataEntradaSociedade!);
-                        _data.AddParameters("@Pais", sc.Pais!);
-                        _data.AddParameters("@RepresentanteLegal", sc.RepresentanteLegal!);
-                        _data.AddParameters("@NomeRepresentante", sc.NomeRepresentante!);
-                        _data.AddParameters("@QualificacaoRepresentanteLegal", sc.QualificacaoRepresentanteLegal!);
-                        _data.AddParameters("@FaixaEtaria", sc.FaixaEtaria!);
-                        await _data.WriteAsync(_insert);
-                        e++;
-                        Console.WriteLine($"Item {e} migrado!");
-                    }
-                });
-
-                var T2 = Task.Run(async () =>
-                {
-                    foreach (var item in _list2.Where(s => s == sc.CNPJBase))
-                    {
-                        _data.ClearParameters();
-                        _data.AddParameters("@CNPJBase", sc.CNPJBase!);
-                        _data.AddParameters("@IdentificadorSocio", sc.IdentificadorSocio!);
-                        _data.AddParameters("@NomeRazaoSocio", sc.NomeRazaoSocio!);
-                        _data.AddParameters("@CnpjCpfSocio", sc.CnpjCpfSocio!);
-                        _data.AddParameters("@QualificacaoSocio", sc.QualificacaoSocio!);
-                        _data.AddParameters("@DataEntradaSociedade", sc.DataEntradaSociedade!);
-                        _data.AddParameters("@Pais", sc.Pais!);
-                        _data.AddParameters("@RepresentanteLegal", sc.RepresentanteLegal!);
-                        _data.AddParameters("@NomeRepresentante", sc.NomeRepresentante!);
-                        _data.AddParameters("@QualificacaoRepresentanteLegal", sc.QualificacaoRepresentanteLegal!);
-                        _data.AddParameters("@FaixaEtaria", sc.FaixaEtaria!);
-                        await _data.WriteAsync(_insert);
-                        e++;
-                        Console.WriteLine($"Item {e} migrado!");
-                    }
-                });
-
-                var T3 = Task.Run(async () =>
-                {
-                    foreach (var item in _list3.Where(s => s == sc.CNPJBase))
-                    {
-                        _data.ClearParameters();
-                        _data.AddParameters("@CNPJBase", sc.CNPJBase!);
-                        _data.AddParameters("@IdentificadorSocio", sc.IdentificadorSocio!);
-                        _data.AddParameters("@NomeRazaoSocio", sc.NomeRazaoSocio!);
-                        _data.AddParameters("@CnpjCpfSocio", sc.CnpjCpfSocio!);
-                        _data.AddParameters("@QualificacaoSocio", sc.QualificacaoSocio!);
-                        _data.AddParameters("@DataEntradaSociedade", sc.DataEntradaSociedade!);
-                        _data.AddParameters("@Pais", sc.Pais!);
-                        _data.AddParameters("@RepresentanteLegal", sc.RepresentanteLegal!);
-                        _data.AddParameters("@NomeRepresentante", sc.NomeRepresentante!);
-                        _data.AddParameters("@QualificacaoRepresentanteLegal", sc.QualificacaoRepresentanteLegal!);
-                        _data.AddParameters("@FaixaEtaria", sc.FaixaEtaria!);
-                        await _data.WriteAsync(_insert);
-                        e++;
-                        Console.WriteLine($"Item {e} migrado!");
-                    }
-                });
-
-                var T4 = Task.Run(async () =>
-                {
-                    foreach (var item in _list4.Where(s => s == sc.CNPJBase))
-                    {
-                        _data.ClearParameters();
-                        _data.AddParameters("@CNPJBase", sc.CNPJBase!);
-                        _data.AddParameters("@IdentificadorSocio", sc.IdentificadorSocio!);
-                        _data.AddParameters("@NomeRazaoSocio", sc.NomeRazaoSocio!);
-                        _data.AddParameters("@CnpjCpfSocio", sc.CnpjCpfSocio!);
-                        _data.AddParameters("@QualificacaoSocio", sc.QualificacaoSocio!);
-                        _data.AddParameters("@DataEntradaSociedade", sc.DataEntradaSociedade!);
-                        _data.AddParameters("@Pais", sc.Pais!);
-                        _data.AddParameters("@RepresentanteLegal", sc.RepresentanteLegal!);
-                        _data.AddParameters("@NomeRepresentante", sc.NomeRepresentante!);
-                        _data.AddParameters("@QualificacaoRepresentanteLegal", sc.QualificacaoRepresentanteLegal!);
-                        _data.AddParameters("@FaixaEtaria", sc.FaixaEtaria!);
-                        await _data.WriteAsync(_insert);
-                        e++;
-                        Console.WriteLine($"Item {e} migrado!");
-                    }
-                });
-
-                var T5 = Task.Run(async () =>
-                {
-                    foreach (var item in _list5.Where(s => s == sc.CNPJBase))
-                    {
-                        _data.ClearParameters();
-                        _data.AddParameters("@CNPJBase", sc.CNPJBase!);
-                        _data.AddParameters("@IdentificadorSocio", sc.IdentificadorSocio!);
-                        _data.AddParameters("@NomeRazaoSocio", sc.NomeRazaoSocio!);
-                        _data.AddParameters("@CnpjCpfSocio", sc.CnpjCpfSocio!);
-                        _data.AddParameters("@QualificacaoSocio", sc.QualificacaoSocio!);
-                        _data.AddParameters("@DataEntradaSociedade", sc.DataEntradaSociedade!);
-                        _data.AddParameters("@Pais", sc.Pais!);
-                        _data.AddParameters("@RepresentanteLegal", sc.RepresentanteLegal!);
-                        _data.AddParameters("@NomeRepresentante", sc.NomeRepresentante!);
-                        _data.AddParameters("@QualificacaoRepresentanteLegal", sc.QualificacaoRepresentanteLegal!);
-                        _data.AddParameters("@FaixaEtaria", sc.FaixaEtaria!);
-                        await _data.WriteAsync(_insert);
-                        e++;
-                        Console.WriteLine($"Item {e} migrado!");
-                    }
-                });
-
-                var T6 = Task.Run(async () =>
-                {
-                    foreach (var item in _list6.Where(s => s == sc.CNPJBase))
-                    {
-                        _data.ClearParameters();
-                        _data.AddParameters("@CNPJBase", sc.CNPJBase!);
-                        _data.AddParameters("@IdentificadorSocio", sc.IdentificadorSocio!);
-                        _data.AddParameters("@NomeRazaoSocio", sc.NomeRazaoSocio!);
-                        _data.AddParameters("@CnpjCpfSocio", sc.CnpjCpfSocio!);
-                        _data.AddParameters("@QualificacaoSocio", sc.QualificacaoSocio!);
-                        _data.AddParameters("@DataEntradaSociedade", sc.DataEntradaSociedade!);
-                        _data.AddParameters("@Pais", sc.Pais!);
-                        _data.AddParameters("@RepresentanteLegal", sc.RepresentanteLegal!);
-                        _data.AddParameters("@NomeRepresentante", sc.NomeRepresentante!);
-                        _data.AddParameters("@QualificacaoRepresentanteLegal", sc.QualificacaoRepresentanteLegal!);
-                        _data.AddParameters("@FaixaEtaria", sc.FaixaEtaria!);
-                        await _data.WriteAsync(_insert);
-                        e++;
-                        Console.WriteLine($"Item {e} migrado!");
-                    }
-                });
-
-                var T7 = Task.Run(async () =>
-                {
-                    foreach (var item in _list7.Where(s => s == sc.CNPJBase))
-                    {
-                        _data.ClearParameters();
-                        _data.AddParameters("@CNPJBase", sc.CNPJBase!);
-                        _data.AddParameters("@IdentificadorSocio", sc.IdentificadorSocio!);
-                        _data.AddParameters("@NomeRazaoSocio", sc.NomeRazaoSocio!);
-                        _data.AddParameters("@CnpjCpfSocio", sc.CnpjCpfSocio!);
-                        _data.AddParameters("@QualificacaoSocio", sc.QualificacaoSocio!);
-                        _data.AddParameters("@DataEntradaSociedade", sc.DataEntradaSociedade!);
-                        _data.AddParameters("@Pais", sc.Pais!);
-                        _data.AddParameters("@RepresentanteLegal", sc.RepresentanteLegal!);
-                        _data.AddParameters("@NomeRepresentante", sc.NomeRepresentante!);
-                        _data.AddParameters("@QualificacaoRepresentanteLegal", sc.QualificacaoRepresentanteLegal!);
-                        _data.AddParameters("@FaixaEtaria", sc.FaixaEtaria!);
-                        await _data.WriteAsync(_insert);
-                        e++;
-                        Console.WriteLine($"Item {e} migrado!");
-                    }
-                });
-
-                var T8 = Task.Run(async () =>
-                {
-                    foreach (var item in _list8.Where(s => s == sc.CNPJBase))
-                    {
-                        _data.ClearParameters();
-                        _data.AddParameters("@CNPJBase", sc.CNPJBase!);
-                        _data.AddParameters("@IdentificadorSocio", sc.IdentificadorSocio!);
-                        _data.AddParameters("@NomeRazaoSocio", sc.NomeRazaoSocio!);
-                        _data.AddParameters("@CnpjCpfSocio", sc.CnpjCpfSocio!);
-                        _data.AddParameters("@QualificacaoSocio", sc.QualificacaoSocio!);
-                        _data.AddParameters("@DataEntradaSociedade", sc.DataEntradaSociedade!);
-                        _data.AddParameters("@Pais", sc.Pais!);
-                        _data.AddParameters("@RepresentanteLegal", sc.RepresentanteLegal!);
-                        _data.AddParameters("@NomeRepresentante", sc.NomeRepresentante!);
-                        _data.AddParameters("@QualificacaoRepresentanteLegal", sc.QualificacaoRepresentanteLegal!);
-                        _data.AddParameters("@FaixaEtaria", sc.FaixaEtaria!);
-                        await _data.WriteAsync(_insert);
-                        e++;
-                        Console.WriteLine($"Item {e} migrado!");
-                    }
-                });
-                await Task.WhenAll(T1, T2, T3, T4, T5, T6, T7, T8);
-                i++;
             }
 
             _timer.Stop();
@@ -999,7 +1004,7 @@ public class Migrate
                 }
         });
 
-    public async Task PaiesesAsync()
+    public async Task PaisesAsync()
         => await Task.Run(async () =>
         {
             int i = 0;

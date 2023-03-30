@@ -24,8 +24,16 @@ class Program
                     await new ListFiles().NormalizeFile(@"C:\data");
                     await new Migrate().Normalize();
                     Console.WriteLine("Iniciando migração...");
+                    await new Migrate().CnaesAsync();
+                    await new Migrate().MotivoAsync();
+                    await new Migrate().MunicipioAsync();
+                    await new Migrate().NaturezaAsync();
+                    await new Migrate().PaisesAsync();
+                    await new Migrate().QualificaAsync();
                     await new Migrate().EstabelecimentosAsyn();
-                    await new Migrate().EmpresasAsync();
+                    await new Migrate3().EmpresasAsync();
+                    await new Migrate3().SociosAsync();
+                    await new Migrate3().SimplesAsync();
                     break;
                 case 5:
                     Console.WriteLine("Encerrando a aplicação...");
