@@ -119,12 +119,12 @@ public static class MgSocios
                 });
 
                 await Task.WhenAll(T1, T2, T3, T4, T5, T6, T7, T8);
-                f += c1 + c2 + c3 + c4 + c5 + c6 + c7 + c8;
                 Console.WriteLine($"Read: {i}, migrated: {c1 + c2 + c3 + c4 + c5 + c6 + c7 + c8}, {_timer.Elapsed.TotalMinutes} minutes");
             }
             Console.WriteLine("Analyzing data!");
             var db = new Generic();
             await db.WriteAsync(SqlCommands.DeleteNotExist("Socios", "Empresas"));
+            await db.ReadAsync(SqlCommands.SelectCommand("Socios"));
             f = db.CNPJBase!.Count();
             Console.WriteLine("Reading data!");
             _timer.Stop();
