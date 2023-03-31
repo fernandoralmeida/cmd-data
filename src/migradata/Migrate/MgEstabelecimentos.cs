@@ -68,59 +68,59 @@ public static class MgEstabelecimentos
 
                 var T1 = Task.Run(async () =>
                 {
-                    var _data = new Generic();
+                    var _db = new Generic();
                     foreach (var item in _list1)
-                        await DoList(_insert, _data, item, c1++);
+                        await DoList(_insert, _db, item, c1++);
 
                 });
 
                 var T2 = Task.Run(async () =>
                 {
-                    var _data = new Generic();
+                    var _db = new Generic();
                     foreach (var item in _list2)
-                        await DoList(_insert, _data, item, c2++);
+                        await DoList(_insert, _db, item, c2++);
                 });
 
                 var T3 = Task.Run(async () =>
                 {
-                    var _data = new Generic();
+                    var _db = new Generic();
                     foreach (var item in _list3)
-                        await DoList(_insert, _data, item, c3++);
+                        await DoList(_insert, _db, item, c3++);
                 });
 
                 var T4 = Task.Run(async () =>
                 {
-                    var _data = new Generic();
+                    var _db = new Generic();
                     foreach (var item in _list4)
-                        await DoList(_insert, _data, item, c4++);
+                        await DoList(_insert, _db, item, c4++);
                 });
 
                 var T5 = Task.Run(async () =>
                 {
-                    var _data = new Generic();
+                    var _db = new Generic();
                     foreach (var item in _list5)
-                        await DoList(_insert, _data, item, c5++);
+                        await DoList(_insert, _db, item, c5++);
                 });
 
                 var T6 = Task.Run(async () =>
                 {
-                    var _data = new Generic();
+                    var _db = new Generic();
                     foreach (var item in _list6)
-                        await DoList(_insert, _data, item, c6++);
+                        await DoList(_insert, _db, item, c6++);
                 });
 
                 var T7 = Task.Run(async () =>
                 {
-                    var _data = new Generic();
+                    var _db = new Generic();
                     foreach (var item in _list7)
-                        await DoList(_insert, _data, item, c7++);
+                        await DoList(_insert, _db, item, c7++);
                 });
 
                 var T8 = Task.Run(async () =>
                 {
-                    var _data = new Generic();
+                    var _db = new Generic();
                     foreach (var item in _list8)
-                        await DoList(_insert, _data, item, c8++);
+                        await DoList(_insert, _db, item, c8++);
                 });
 
                 await Task.WhenAll(T1, T2, T3, T4, T5, T6, T7, T8);
@@ -135,6 +135,7 @@ public static class MgEstabelecimentos
             Console.WriteLine($"Erro: {ex.Message}");
         }
     });
+    
     private static Estabelecimento DoFields(string[] fields)
     => new Estabelecimento()
     {
@@ -164,7 +165,9 @@ public static class MgEstabelecimentos
         DDD2 = fields[23].ToString().Replace("\"", "").Trim(),
         Telefone2 = fields[24].ToString().Replace("\"", "").Trim(),
         DDDFax = fields[25].ToString().Replace("\"", "").Trim(),
-        CorreioEletronico = fields[28].ToString().Replace("\"", "").Trim(),
+        Fax = fields[26].ToString().Replace("\"", "").Trim(),
+        CorreioEletronico = fields[27].ToString().Replace("\"", "").Trim(),
+        SituacaoEspecial = fields[28].ToString().Replace("\"", "").Trim(),
         DataSitucaoEspecial = fields[29].ToString().Replace("\"", "").Trim()
     };
     

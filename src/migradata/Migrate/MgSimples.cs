@@ -65,56 +65,56 @@ public static class MgSimples
                 var T1 = Task.Run(async () =>
                 {
                     var _db = new Generic();
-                    foreach (var item in _list1.Take(1))
+                    foreach (var item in _list1)
                         await DoList(_insert, _db, item, c1++);
                 });
 
                 var T2 = Task.Run(async () =>
                 {
                     var _db = new Generic();
-                    foreach (var item in _list2.Take(1))
+                    foreach (var item in _list2)
                         await DoList(_insert, _db, item, c2++);
                 });
 
                 var T3 = Task.Run(async () =>
                 {
                     var _db = new Generic();
-                    foreach (var item in _list3.Take(1))
+                    foreach (var item in _list3)
                         await DoList(_insert, _db, item, c3++);
                 });
 
                 var T4 = Task.Run(async () =>
                 {
                     var _db = new Generic();
-                    foreach (var item in _list4.Take(1))
+                    foreach (var item in _list4)
                         await DoList(_insert, _db, item, c4++);
                 });
 
                 var T5 = Task.Run(async () =>
                 {
                     var _db = new Generic();
-                    foreach (var item in _list5.Take(1))
+                    foreach (var item in _list5)
                         await DoList(_insert, _db, item, c5++);
                 });
 
                 var T6 = Task.Run(async () =>
                 {
                     var _db = new Generic();
-                    foreach (var item in _list6.Take(1))
+                    foreach (var item in _list6)
                         await DoList(_insert, _db, item, c6++);
                 });
 
                 var T7 = Task.Run(async () =>
                 {
                     var _db = new Generic();
-                    foreach (var item in _list7.Take(1))
+                    foreach (var item in _list7)
                         await DoList(_insert, _db, item, c7++);
                 });
 
                 var T8 = Task.Run(async () =>
                 {
                     var _db = new Generic();
-                    foreach (var item in _list8.Take(1))
+                    foreach (var item in _list8)
                         await DoList(_insert, _db, item, c8++);
                 });
 
