@@ -7,7 +7,7 @@ namespace migradata.Repositories;
 public class Generic
 {
 
-    private readonly string _connectionString = Environment.GetEnvironmentVariable("connection_string_sim_RFB")!;
+    private readonly string _connectionString = Environment.GetEnvironmentVariable("connection_string_migradata")!;
 
     private SqlParameterCollection ParameterCollection = new SqlCommand().Parameters;
 

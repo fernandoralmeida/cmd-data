@@ -1,15 +1,17 @@
-﻿namespace migradata;
+﻿using migradata.Helpers;
+
+namespace migradata;
 class Program
 {
     static async Task Main(string[] args)
-    {        
+    {
         Console.WriteLine(Environment.GetEnvironmentVariable("connection_string_migradata"));
         while (true)
         {
-            Console.WriteLine("Iniciando Sistema!");
+            Console.WriteLine("Start System!");
             Thread.Sleep(3000);
             Console.WriteLine("MigraData V1.0");
-            Console.WriteLine("Escolha a opção desejada!");
+            Console.WriteLine("Choose Options!");
             Console.WriteLine("----------");
             Console.WriteLine("1. Migrate");
             Console.WriteLine("----------");
@@ -20,27 +22,29 @@ class Program
             switch (choice)
             {
                 case 1:
-                    //Console.WriteLine("Normalize Files");
-                    //await new ListFiles().NormalizeFile(@"C:\data");
-                    //await new Migrate().Normalize();
-                    //Console.WriteLine("Iniciando migração...");
-                    //await new Migrate().CnaesAsync();
-                    //await new Migrate().MotivoAsync();
-                    //await new Migrate().MunicipioAsync();
-                    //await new Migrate().NaturezaAsync();
-                    //await new Migrate().PaisesAsync();
-                    //await new Migrate().QualificaAsync();
-                    //await new Migratesss().EstabelecimentosAsyn();
-                    //await new Migrate3().EmpresasAsync();
-                    //await new Migrate3().SociosAsync();
-                    //await new Migrate3().SimplesAsync();
-                    await Migrate.Empresas.StartAsync();
+                    Console.WriteLine("Normalize Files");
+                    await new ListFiles().NormalizeFile(@"C:\data");
+                    await Migrate.MgNormalize.StartAsync();
+                    Console.WriteLine("Start migration...");
+                   
+                    await Task.WhenAll(
+                        Migrate.MgCnaes.StartAsync(),
+                        Migrate.MgMotivos.StartAsync(),
+                        Migrate.MgMunicipios.StartAsync(),
+                        Migrate.MgNatureza.StartAsync(),
+                        Migrate.MgPaises.StartAsync(),
+                        Migrate.MgQualifica.StartAsync());                    
+                    
+                    await Migrate.MgEstabelecimentos.StartAsync();
+                    await Migrate.MgEmpresas.StartAsync();
+                    await Migrate.MgSocios.StartAsync();
+                    await Migrate.MgSimples.StartAsync();
                     break;
                 case 5:
-                    Console.WriteLine("Encerrando a aplicação...");
+                    Console.WriteLine("Closing App...");
                     return;
                 default:
-                    Console.WriteLine("Opção inválida. Tente novamente.");
+                    Console.WriteLine("Invalid option. Try again!");
                     break;
             }
 

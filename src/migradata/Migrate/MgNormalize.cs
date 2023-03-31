@@ -2,9 +2,9 @@ using migradata.Repositories;
 
 namespace migradata.Migrate;
 
-public static class Normalize
+public static class MgNormalize
 {
-    public static async Task Start()
+    public static async Task StartAsync()
     {
         var data = new Generic();
         Console.WriteLine("Verificando Conexões...");

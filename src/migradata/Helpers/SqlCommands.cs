@@ -73,6 +73,10 @@ public static class SqlCommands
     public static readonly string Values_Simples = @"(@CNPJBase,@OpcaoSimples,@DataOpcaoSimples,@DataExclusaoSimples,@OpcaoMEI,@DataOpcaoMEI,@DataExclusaoMEI)";
     public static readonly string Fields_Generic = @"(Codigo,Descricao)";
     public static readonly string Values_Generic = @"(@Codigo,@Descricao)";
+
+    public static string DeleteNotExist(string tablename, string tablenameref)
+        => $"DELETE FROM {tablename} WHERE NOT EXISTS (SELECT 1 FROM {tablenameref} WHERE {tablenameref}.CNPJBase = {tablename}.CNPJBase)";
+
     public static string InsertCommand(string tablename, string fields, string values)
         => $"INSERT INTO {tablename} {fields} VALUES {values}";
 
