@@ -5,9 +5,9 @@ namespace migradata.Migrate;
 
 public static class MgNormalize
 {
-    public static async Task StartAsync()
+    public static async Task StartAsync(TServer server)
     {
-        var data = new Data();
+        var data = IoC.Data(server);
         Console.WriteLine("Checking Connections...");
         Thread.Sleep(3000);
         data.CheckDB();

@@ -5,7 +5,6 @@ class Program
 {
     static async Task Main(string[] args)
     {
-        Console.WriteLine(Environment.GetEnvironmentVariable("connection_string_migradata"));
         while (true)
         {
             Console.WriteLine("Start System!");
@@ -13,7 +12,9 @@ class Program
             Console.WriteLine("MigraData V1.0");
             Console.WriteLine("Choose Options!");
             Console.WriteLine("----------");
-            Console.WriteLine("1. Migrate");
+            Console.WriteLine("1. Migrate To SqlServer");
+            Console.WriteLine("2. Migrate To MySql");
+            Console.WriteLine("3. Create In SqlServer");
             Console.WriteLine("----------");
             Console.WriteLine("5. Close");
 
@@ -24,21 +25,25 @@ class Program
                 case 1:
                     Console.WriteLine("Normalize Files");
                     await new NormalizeFiles().Start(@"C:\data");
-                    await Migrate.MgNormalize.StartAsync();
+                    await Migrate.MgNormalize.StartAsync(TServer.SqlServer);
                     Console.WriteLine("Start migration...");
                    
                     await Task.WhenAll(
-                        Migrate.MgCnaes.StartAsync(),
-                        Migrate.MgMotivos.StartAsync(),
-                        Migrate.MgMunicipios.StartAsync(),
-                        Migrate.MgNatureza.StartAsync(),
-                        Migrate.MgPaises.StartAsync(),
-                        Migrate.MgQualifica.StartAsync());                    
+                        Migrate.MgCnaes.StartAsync(TServer.SqlServer),
+                        Migrate.MgMotivos.StartAsync(TServer.SqlServer),
+                        Migrate.MgMunicipios.StartAsync(TServer.SqlServer),
+                        Migrate.MgNatureza.StartAsync(TServer.SqlServer),
+                        Migrate.MgPaises.StartAsync(TServer.SqlServer),
+                        Migrate.MgQualifica.StartAsync(TServer.SqlServer));                    
                     
-                    await Migrate.MgEstabelecimentos.StartAsync();
-                    await Migrate.MgEmpresas.StartAsync();
-                    await Migrate.MgSocios.StartAsync();
-                    await Migrate.MgSimples.StartAsync();
+                    await Migrate.MgEstabelecimentos.StartAsync(TServer.SqlServer);
+                    await Migrate.MgEmpresas.StartAsync(TServer.SqlServer);
+                    await Migrate.MgSocios.StartAsync(TServer.SqlServer);
+                    await Migrate.MgSimples.StartAsync(TServer.SqlServer);
+                    break;
+                case 3:
+                    Helpers.DataBase.CreateInSqlServer();
+                    await Helpers.CreateTables.StartAsync(TServer.SqlServer);
                     break;
                 case 5:
                     Console.WriteLine("Closing App...");

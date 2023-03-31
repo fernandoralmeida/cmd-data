@@ -7,7 +7,7 @@ namespace migradata.Migrate;
 
 public static class MgMotivos
 {
-    public static async Task StartAsync()
+    public static async Task StartAsync(TServer server)
         => await Task.Run(async () =>
         {
             int i = 0;
@@ -21,7 +21,7 @@ public static class MgMotivos
                 {
                     Console.WriteLine($"Migration File {Path.GetFileName(file)}");
 
-                    var _data = new Data();
+                    var _data = IoC.Data(server);
 
                     using (var reader = new StreamReader(file, Encoding.GetEncoding("ISO-8859-1")))
                         while (!reader.EndOfStream)

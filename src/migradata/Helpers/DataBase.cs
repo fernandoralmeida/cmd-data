@@ -6,23 +6,28 @@ namespace migradata.Helpers;
 public static class DataBase
 {
 
-    public static void CreteInSqlServer()
+    public static void CreateInSqlServer()
     {
+
         string connectionString = Environment.GetEnvironmentVariable("sqlserver_default")!;
-        SqlConnection conn = new SqlConnection(connectionString);
 
-        conn.Open();
-
-        SqlCommand cmd = new SqlCommand($"SELECT COUNT(*) FROM sys.databases WHERE name='{SqlCommands.DataBaseName}'", conn);
-        int result = (int)cmd.ExecuteScalar();
-        if (result == 0)
+        using (SqlConnection connection = new SqlConnection(connectionString))
         {
-            SqlCommand createCmd = new SqlCommand($"CREATE DATABASE {SqlCommands.DataBaseName}", conn);
-            if( createCmd.ExecuteNonQuery() == 1)
-                Console.WriteLine($"{SqlCommands.DataBaseName} successfully created!");
-        }
+            connection.Open();
 
-        conn.Close();
+            var cmd = new SqlCommand($"SELECT database_id FROM sys.databases WHERE Name = '{SqlCommands.DataBaseName}'", connection);
+
+            var databaseId = cmd.ExecuteScalar();
+
+            if (databaseId == null)
+            {
+                cmd = new SqlCommand($"CREATE DATABASE {SqlCommands.DataBaseName}", connection);
+                if (cmd.ExecuteNonQuery() < 1)
+                    Console.WriteLine($"{SqlCommands.DataBaseName} successfully created!");
+            }            
+
+            connection.Close();
+        }        
     }
 
     public static void CreateInMySql()

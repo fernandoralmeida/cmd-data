@@ -1,28 +1,29 @@
 using System.Data;
 using migradata.Helpers;
+using migradata.Interfaces;
 using MySql.Data.MySqlClient;
 
 namespace migradata.MySql;
 
-public static class Data
+public class Data : IData
 {
-    private static readonly string _connectionString = SqlCommands.ConnectionString_MySql;
+    private readonly string _connectionString = SqlCommands.ConnectionString_MySql;
 
-    private static MySqlParameterCollection ParameterCollection = new MySqlCommand().Parameters;
+    private MySqlParameterCollection ParameterCollection = new MySqlCommand().Parameters;
 
-    public static void ClearParameters()
+    public void ClearParameters()
     {
         ParameterCollection.Clear();
     }
 
-    public static void AddParameters(string parameterName, object parameterValue)
+    public void AddParameters(string parameterName, object parameterValue)
     {
         ParameterCollection.Add(new MySqlParameter(parameterName, parameterValue));
     }
 
-    public static IEnumerable<string>? CNPJBase { get; set; }
+    public IEnumerable<string>? CNPJBase { get; set; }
 
-    public static async Task ReadAsync(string querySelect)
+    public async Task ReadAsync(string query)
      => await Task.Run(() =>
         {
             using (MySqlConnection connection = new MySqlConnection(_connectionString))
@@ -33,7 +34,7 @@ public static class Data
 
                     MySqlCommand _command = connection.CreateCommand();
                     _command.CommandType = CommandType.Text;
-                    _command.CommandText = querySelect;
+                    _command.CommandText = query;
                     _command.CommandTimeout = 0;
 
                     foreach (MySqlParameter p in ParameterCollection)
@@ -53,12 +54,12 @@ public static class Data
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine("Erro ao conectar: " + ex.Message);
+                    Console.WriteLine("Error: " + ex.Message);
                 }
             }
         });
 
-    public static async Task WriteAsync(string queryWrite)
+    public async Task WriteAsync(string query)
         => await Task.Run(() =>
             {
                 using (MySqlConnection connection = new MySqlConnection(_connectionString))
@@ -68,7 +69,7 @@ public static class Data
                         connection.Open();
                         MySqlCommand _command = connection.CreateCommand();
                         _command.CommandType = CommandType.Text;
-                        _command.CommandText = queryWrite;
+                        _command.CommandText = query;
                         _command.CommandTimeout = 0;
 
                         foreach (MySqlParameter p in ParameterCollection)
@@ -80,23 +81,23 @@ public static class Data
                     }
                     catch (Exception ex)
                     {
-                        Console.WriteLine("Erro ao conectar: " + ex.Message);
+                        Console.WriteLine("Error: " + ex.Message);
                     }
                 }
             });
 
-    public static void CheckDB()
+    public void CheckDB()
     {
         using (MySqlConnection connection = new MySqlConnection(_connectionString))
         {
             try
             {
                 connection.Open();
-                Console.WriteLine("Conexão bem-sucedida!");
+                Console.WriteLine("Successful Connection!");
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Erro ao conectar ao SQL Server: " + ex.Message);
+                Console.WriteLine("Error: " + ex.Message);
             }
         }
     }

@@ -3,12 +3,13 @@ using System.Text;
 using migradata.Helpers;
 using migradata.SqlServer;
 using migradata.Models;
+using migradata.Interfaces;
 
 namespace migradata.Migrate;
 
 public static class MgEstabelecimentos
 {
-    public static async Task StartAsync()
+    public static async Task StartAsync(TServer server)
     => await Task.Run(async () =>
     {
         int i = 0;
@@ -32,7 +33,7 @@ public static class MgEstabelecimentos
         {
             foreach (var file in await new NormalizeFiles().DoListAync(@"C:\data", ".ESTABELE"))
             {
-                var _data = new Data();
+                var _data = IoC.Data(server);
                 var _list = new List<MEstabelecimento>();
                 Console.WriteLine($"Migration File {Path.GetFileName(file)}");
                 using (var reader = new StreamReader(file, Encoding.GetEncoding("ISO-8859-1")))
@@ -68,59 +69,59 @@ public static class MgEstabelecimentos
 
                 var T1 = Task.Run(async () =>
                 {
-                    var _db = new Data();
+                    var _db = IoC.Data(server);
                     foreach (var item in _list1)
-                        await DoList(_insert, _db, item, c1++);
+                        await DoInsert(_insert, _db, item, c1++);
 
                 });
 
                 var T2 = Task.Run(async () =>
                 {
-                    var _db = new Data();
+                    var _db = IoC.Data(server);
                     foreach (var item in _list2)
-                        await DoList(_insert, _db, item, c2++);
+                        await DoInsert(_insert, _db, item, c2++);
                 });
 
                 var T3 = Task.Run(async () =>
                 {
-                    var _db = new Data();
+                    var _db = IoC.Data(server);
                     foreach (var item in _list3)
-                        await DoList(_insert, _db, item, c3++);
+                        await DoInsert(_insert, _db, item, c3++);
                 });
 
                 var T4 = Task.Run(async () =>
                 {
-                    var _db = new Data();
+                    var _db = IoC.Data(server);
                     foreach (var item in _list4)
-                        await DoList(_insert, _db, item, c4++);
+                        await DoInsert(_insert, _db, item, c4++);
                 });
 
                 var T5 = Task.Run(async () =>
                 {
-                    var _db = new Data();
+                    var _db = IoC.Data(server);
                     foreach (var item in _list5)
-                        await DoList(_insert, _db, item, c5++);
+                        await DoInsert(_insert, _db, item, c5++);
                 });
 
                 var T6 = Task.Run(async () =>
                 {
-                    var _db = new Data();
+                    var _db = IoC.Data(server);
                     foreach (var item in _list6)
-                        await DoList(_insert, _db, item, c6++);
+                        await DoInsert(_insert, _db, item, c6++);
                 });
 
                 var T7 = Task.Run(async () =>
                 {
-                    var _db = new Data();
+                    var _db = IoC.Data(server);
                     foreach (var item in _list7)
-                        await DoList(_insert, _db, item, c7++);
+                        await DoInsert(_insert, _db, item, c7++);
                 });
 
                 var T8 = Task.Run(async () =>
                 {
-                    var _db = new Data();
+                    var _db = IoC.Data(server);
                     foreach (var item in _list8)
-                        await DoList(_insert, _db, item, c8++);
+                        await DoInsert(_insert, _db, item, c8++);
                 });
 
                 await Task.WhenAll(T1, T2, T3, T4, T5, T6, T7, T8);
@@ -173,7 +174,7 @@ public static class MgEstabelecimentos
         DataSitucaoEspecial = fields[29].ToString().Replace("\"", "").Trim()
     };
     
-    private static async Task DoList(string sqlcommand, Data data, MEstabelecimento est, int cont)
+    private static async Task DoInsert(string sqlcommand, IData data, MEstabelecimento est, int cont)
     {
         data.ClearParameters();
         data.AddParameters("@CNPJBase", est.CNPJBase!);

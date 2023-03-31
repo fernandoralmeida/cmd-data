@@ -1,10 +1,11 @@
 using System.Data;
 using System.Data.SqlClient;
 using migradata.Helpers;
+using migradata.Interfaces;
 
 namespace migradata.SqlServer;
 
-public class Data
+public class Data : IData
 {
 
     private readonly string _connectionString = SqlCommands.ConnectionString_SqlServer;
@@ -21,7 +22,7 @@ public class Data
         ParameterCollection.Add(new SqlParameter(parameterName, parameterValue));
     }
 
-    public IEnumerable<string>? CNPJBase {get; set;}
+    public IEnumerable<string>? CNPJBase { get; set; }
 
     public async Task ReadAsync(string querySelect)
      => await Task.Run(() =>
@@ -93,13 +94,12 @@ public class Data
             try
             {
                 connection.Open();
-                Console.WriteLine("Conexão bem-sucedida!");
+                Console.WriteLine("Successful Connection!");
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Erro ao conectar ao SQL Server: " + ex.Message);
+                Console.WriteLine("Error: " + ex.Message);
             }
         }
     }
-
 }

@@ -9,7 +9,7 @@ public static class CreateTables
                 await new SqlServer.Data().WriteAsync(ScritpDB());
 
             if (server == TServer.MySql)
-                await MySql.Data.WriteAsync(ScritpDB());
+                await new MySql.Data().WriteAsync(ScritpDB());
         });
 
 
@@ -52,11 +52,11 @@ CREATE TABLE [Estabelecimentos] (
     [CEP] varchar(10) NULL,
     [UF] varchar(2) NULL,
     [Municipio] varchar(10) NULL,
-    [DDD1] varchar(3) NULL,
+    [DDD1] varchar(4) NULL,
     [Telefone1] varchar(255) NULL,
-    [DDD2] varchar(3) NULL,
+    [DDD2] varchar(4) NULL,
     [Telefone2] varchar(255) NULL,
-    [DDDFax] varchar(3) NULL,
+    [DDDFax] varchar(4) NULL,
     [Fax] varchar(255) NULL,
     [CorreioEletronico] varchar(255) NULL,
     [SituacaoEspecial] varchar(255) NULL,

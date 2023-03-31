@@ -2,7 +2,7 @@ namespace migradata.Helpers;
 
 public static class SqlCommands
 {
-    public static readonly string DataBaseName = $"MigraData-RFB";
+    public static readonly string DataBaseName = @"MigraData_RFB";
     
     public static readonly string ConnectionString_SqlServer
         = Environment.GetEnvironmentVariable("connectionstring_migradata_sqlserver")!;
