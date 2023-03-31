@@ -151,6 +151,7 @@ public static class MgSocios
         QualificacaoRepresentanteLegal = fields[9].ToString().Replace("\"", "").Trim(),
         FaixaEtaria = fields[10].ToString().Replace("\"", "").Trim()
     };
+    
     private static async Task DoList(string sqlcommand, Generic data, Socio model, int cont)
     {
         data.ClearParameters();

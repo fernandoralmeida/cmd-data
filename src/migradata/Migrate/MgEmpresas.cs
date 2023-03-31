@@ -151,6 +151,7 @@ public static class MgEmpresas
         PorteEmpresa = fields[5].ToString().Replace("\"", ""),
         EnteFederativoResponsavel = fields[6].ToString().Replace("\"", "")
     };
+    
     private static async Task DoList(string sqlcommand, Generic data, Empresa emp, int cont)
     {
         data.ClearParameters();

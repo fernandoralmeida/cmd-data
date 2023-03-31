@@ -167,6 +167,7 @@ public static class MgEstabelecimentos
         CorreioEletronico = fields[28].ToString().Replace("\"", "").Trim(),
         DataSitucaoEspecial = fields[29].ToString().Replace("\"", "").Trim()
     };
+    
     private static async Task DoList(string sqlcommand, Generic data, Estabelecimento est, int cont)
     {
         data.ClearParameters();

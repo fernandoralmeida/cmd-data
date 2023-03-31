@@ -147,6 +147,7 @@ public static class MgSimples
         DataOpcaoMEI = fields[5].ToString().Replace("\"", "").Trim(),
         DataExclusaoMEI = fields[6].ToString().Replace("\"", "").Trim()
     };
+    
     private static async Task DoList(string sqlcommand, Generic data, Simples model, int cont)
     {
         data.ClearParameters();
