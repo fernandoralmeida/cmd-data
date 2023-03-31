@@ -1,8 +1,8 @@
 ﻿namespace migradata.Models;
 
-public class QualificacaoSocio
+public class MNaturezaJuridica
 {
-    public QualificacaoSocio() {}
+    public MNaturezaJuridica() {}
     public string? Codigo { get; set; }
     public string? Descricao { get; set; }
 }

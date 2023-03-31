@@ -1,8 +1,8 @@
 ﻿namespace migradata.Models;
 
-public class Simples
+public class MSimples
 {
-    public Simples() {}
+    public MSimples() {}
     public string? CNPJBase { get; set; }
     public string? OpcaoSimples { get; set; }
     public string? DataOpcaoSimples { get; set; }

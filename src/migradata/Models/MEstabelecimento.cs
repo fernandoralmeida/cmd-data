@@ -1,9 +1,9 @@
 ﻿namespace migradata.Models;
 
-public class Estabelecimento
+public class MEstabelecimento
 {
 
-    public Estabelecimento() { }
+    public MEstabelecimento() { }
     public string? CNPJBase { get; set; }
     public string? CNPJOrdem { get; set; }
     public string? CNPJDV { get; set; }

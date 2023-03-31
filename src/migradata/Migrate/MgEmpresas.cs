@@ -2,7 +2,7 @@ using System.Diagnostics;
 using System.Text;
 using migradata.Helpers;
 using migradata.Models;
-using migradata.Repositories;
+using migradata.SqlServer;
 
 namespace migradata.Migrate;
 
@@ -32,10 +32,10 @@ public static class MgEmpresas
         try
         {
 
-            foreach (var file in await new ListFiles().DoListAync(@"C:\data", ".EMPRECSV"))
+            foreach (var file in await new NormalizeFiles().DoListAync(@"C:\data", ".EMPRECSV"))
             {
 
-                var _list = new List<Empresa>();
+                var _list = new List<MEmpresa>();
                 Console.WriteLine($"Migration File {Path.GetFileName(file)}");
                 using (var reader = new StreamReader(file, Encoding.GetEncoding("ISO-8859-1")))
                 {
@@ -64,7 +64,7 @@ public static class MgEmpresas
 
                 var T1 = Task.Run(async () =>
                 {
-                    var _db = new Generic();
+                    var _db = new Data();
                     foreach (var item in _list1)
                         await DoList(_insert, _db, item, c1++);
 
@@ -72,49 +72,49 @@ public static class MgEmpresas
 
                 var T2 = Task.Run(async () =>
                 {
-                    var _db = new Generic();
+                    var _db = new Data();
                     foreach (var item in _list2)
                         await DoList(_insert, _db, item, c2++);
                 });
 
                 var T3 = Task.Run(async () =>
                 {
-                    var _db = new Generic();
+                    var _db = new Data();
                     foreach (var item in _list3)
                         await DoList(_insert, _db, item, c3++);
                 });
 
                 var T4 = Task.Run(async () =>
                 {
-                    var _db = new Generic();
+                    var _db = new Data();
                     foreach (var item in _list4)
                         await DoList(_insert, _db, item, c4++);
                 });
 
                 var T5 = Task.Run(async () =>
                 {
-                    var _db = new Generic();
+                    var _db = new Data();
                     foreach (var item in _list5)
                         await DoList(_insert, _db, item, c5++);
                 });
 
                 var T6 = Task.Run(async () =>
                 {
-                    var _db = new Generic();
+                    var _db = new Data();
                     foreach (var item in _list6)
                         await DoList(_insert, _db, item, c6++);
                 });
 
                 var T7 = Task.Run(async () =>
                 {
-                    var _db = new Generic();
+                    var _db = new Data();
                     foreach (var item in _list7)
                         await DoList(_insert, _db, item, c7++);
                 });
 
                 var T8 = Task.Run(async () =>
                 {
-                    var _db = new Generic();
+                    var _db = new Data();
                     foreach (var item in _list8)
                         await DoList(_insert, _db, item, c8++);
                 });
@@ -125,7 +125,7 @@ public static class MgEmpresas
 
             Console.WriteLine("Analyzing data!");
             
-            var db = new Generic();
+            var db = new Data();
             await db.WriteAsync(SqlCommands.DeleteNotExist("Empresas", "Estabelecimentos"));
             await db.ReadAsync(SqlCommands.SelectCommand("Empresas"));
             f = db.CNPJBase!.Count();
@@ -140,8 +140,8 @@ public static class MgEmpresas
         }
     });
 
-    private static Empresa DoFields(string[] fields)
-    => new Empresa()
+    private static MEmpresa DoFields(string[] fields)
+    => new MEmpresa()
     {
         CNPJBase = fields[0].ToString().Replace("\"", ""),
         RazaoSocial = fields[1].ToString().Replace("\"", ""),
@@ -152,7 +152,7 @@ public static class MgEmpresas
         EnteFederativoResponsavel = fields[6].ToString().Replace("\"", "")
     };
     
-    private static async Task DoList(string sqlcommand, Generic data, Empresa emp, int cont)
+    private static async Task DoList(string sqlcommand, Data data, MEmpresa emp, int cont)
     {
         data.ClearParameters();
         data.AddParameters("@CNPJBase", emp.CNPJBase!);

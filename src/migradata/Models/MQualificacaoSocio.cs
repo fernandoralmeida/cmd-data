@@ -1,8 +1,8 @@
 ﻿namespace migradata.Models;
 
-public class Pais
+public class MQualificacaoSocio
 {
-    public Pais() {}
+    public MQualificacaoSocio() {}
     public string? Codigo { get; set; }
     public string? Descricao { get; set; }
 }

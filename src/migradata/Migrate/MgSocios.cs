@@ -2,7 +2,7 @@ using System.Diagnostics;
 using System.Text;
 using migradata.Helpers;
 using migradata.Models;
-using migradata.Repositories;
+using migradata.SqlServer;
 
 namespace migradata.Migrate;
 
@@ -32,10 +32,10 @@ public static class MgSocios
         try
         {
 
-            foreach (var file in await new ListFiles().DoListAync(@"C:\data", ".SOCIOCSV"))
+            foreach (var file in await new NormalizeFiles().DoListAync(@"C:\data", ".SOCIOCSV"))
             {
 
-                var _list = new List<Socio>();
+                var _list = new List<MSocio>();
                 Console.WriteLine($"Migration File {Path.GetFileName(file)}");
                 using (var reader = new StreamReader(file, Encoding.GetEncoding("ISO-8859-1")))
                 {
@@ -64,56 +64,56 @@ public static class MgSocios
 
                 var T1 = Task.Run(async () =>
                 {
-                    var _db = new Generic();
+                    var _db = new Data();
                     foreach (var item in _list1)
                         await DoList(_insert, _db, item, c1++);
                 });
 
                 var T2 = Task.Run(async () =>
                 {
-                    var _db = new Generic();
+                    var _db = new Data();
                     foreach (var item in _list2)
                         await DoList(_insert, _db, item, c2++);
                 });
 
                 var T3 = Task.Run(async () =>
                 {
-                    var _db = new Generic();
+                    var _db = new Data();
                     foreach (var item in _list3)
                         await DoList(_insert, _db, item, c3++);
                 });
 
                 var T4 = Task.Run(async () =>
                 {
-                    var _db = new Generic();
+                    var _db = new Data();
                     foreach (var item in _list4)
                         await DoList(_insert, _db, item, c4++);
                 });
 
                 var T5 = Task.Run(async () =>
                 {
-                    var _db = new Generic();
+                    var _db = new Data();
                     foreach (var item in _list5)
                         await DoList(_insert, _db, item, c5++);
                 });
 
                 var T6 = Task.Run(async () =>
                 {
-                    var _db = new Generic();
+                    var _db = new Data();
                     foreach (var item in _list6)
                         await DoList(_insert, _db, item, c6++);
                 });
 
                 var T7 = Task.Run(async () =>
                 {
-                    var _db = new Generic();
+                    var _db = new Data();
                     foreach (var item in _list7)
                         await DoList(_insert, _db, item, c7++);
                 });
 
                 var T8 = Task.Run(async () =>
                 {
-                    var _db = new Generic();
+                    var _db = new Data();
                     foreach (var item in _list8)
                         await DoList(_insert, _db, item, c8++);
                 });
@@ -122,7 +122,7 @@ public static class MgSocios
                 Console.WriteLine($"Read: {i}, migrated: {c1 + c2 + c3 + c4 + c5 + c6 + c7 + c8}, {_timer.Elapsed.TotalMinutes} minutes");
             }
             Console.WriteLine("Analyzing data!");
-            var db = new Generic();
+            var db = new Data();
             await db.WriteAsync(SqlCommands.DeleteNotExist("Socios", "Empresas"));
             await db.ReadAsync(SqlCommands.SelectCommand("Socios"));
             f = db.CNPJBase!.Count();
@@ -136,8 +136,8 @@ public static class MgSocios
         }
     });
 
-    private static Socio DoFields(string[] fields)
-    => new Socio()
+    private static MSocio DoFields(string[] fields)
+    => new MSocio()
     {
         CNPJBase = fields[0].ToString().Replace("\"", "").Trim(),
         IdentificadorSocio = fields[1].ToString().Replace("\"", "").Trim(),
@@ -152,7 +152,7 @@ public static class MgSocios
         FaixaEtaria = fields[10].ToString().Replace("\"", "").Trim()
     };
     
-    private static async Task DoList(string sqlcommand, Generic data, Socio model, int cont)
+    private static async Task DoList(string sqlcommand, Data data, MSocio model, int cont)
     {
         data.ClearParameters();
         data.AddParameters("@CNPJBase", model.CNPJBase!);

@@ -1,4 +1,4 @@
-using migradata.Repositories;
+using migradata.SqlServer;
 using migradata.Helpers;
 
 namespace migradata.Migrate;
@@ -7,7 +7,7 @@ public static class MgNormalize
 {
     public static async Task StartAsync()
     {
-        var data = new Generic();
+        var data = new Data();
         Console.WriteLine("Checking Connections...");
         Thread.Sleep(3000);
         data.CheckDB();

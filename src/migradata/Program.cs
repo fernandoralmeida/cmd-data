@@ -23,7 +23,7 @@ class Program
             {
                 case 1:
                     Console.WriteLine("Normalize Files");
-                    await new ListFiles().NormalizeFile(@"C:\data");
+                    await new NormalizeFiles().Start(@"C:\data");
                     await Migrate.MgNormalize.StartAsync();
                     Console.WriteLine("Start migration...");
                    

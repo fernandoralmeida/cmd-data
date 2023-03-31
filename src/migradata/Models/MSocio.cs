@@ -1,8 +1,8 @@
 ﻿namespace migradata.Models;
 
-public class Socio
+public class MSocio
 {
-    public Socio() {}
+    public MSocio() {}
     public string? CNPJBase { get; set; }
     public string? IdentificadorSocio { get; set; }
     public string? NomeRazaoSocio { get; set; }

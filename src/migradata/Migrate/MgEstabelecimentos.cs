@@ -1,7 +1,7 @@
 using System.Diagnostics;
 using System.Text;
 using migradata.Helpers;
-using migradata.Repositories;
+using migradata.SqlServer;
 using migradata.Models;
 
 namespace migradata.Migrate;
@@ -30,10 +30,10 @@ public static class MgEstabelecimentos
         _timer.Start();
         try
         {
-            foreach (var file in await new ListFiles().DoListAync(@"C:\data", ".ESTABELE"))
+            foreach (var file in await new NormalizeFiles().DoListAync(@"C:\data", ".ESTABELE"))
             {
-                var _data = new Generic();
-                var _list = new List<Estabelecimento>();
+                var _data = new Data();
+                var _list = new List<MEstabelecimento>();
                 Console.WriteLine($"Migration File {Path.GetFileName(file)}");
                 using (var reader = new StreamReader(file, Encoding.GetEncoding("ISO-8859-1")))
                 {
@@ -42,7 +42,7 @@ public static class MgEstabelecimentos
                         var line = reader.ReadLine();
                         var fields = line!.Split(';');
 
-                        foreach (var item in Conditional.MicroRegionJau()
+                        foreach (var item in MMunicipio.MicroRegionJau()
                                                         .Where(s => s == fields[20]
                                                         .ToString()
                                                         .Replace("\"", "")))
@@ -68,7 +68,7 @@ public static class MgEstabelecimentos
 
                 var T1 = Task.Run(async () =>
                 {
-                    var _db = new Generic();
+                    var _db = new Data();
                     foreach (var item in _list1)
                         await DoList(_insert, _db, item, c1++);
 
@@ -76,49 +76,49 @@ public static class MgEstabelecimentos
 
                 var T2 = Task.Run(async () =>
                 {
-                    var _db = new Generic();
+                    var _db = new Data();
                     foreach (var item in _list2)
                         await DoList(_insert, _db, item, c2++);
                 });
 
                 var T3 = Task.Run(async () =>
                 {
-                    var _db = new Generic();
+                    var _db = new Data();
                     foreach (var item in _list3)
                         await DoList(_insert, _db, item, c3++);
                 });
 
                 var T4 = Task.Run(async () =>
                 {
-                    var _db = new Generic();
+                    var _db = new Data();
                     foreach (var item in _list4)
                         await DoList(_insert, _db, item, c4++);
                 });
 
                 var T5 = Task.Run(async () =>
                 {
-                    var _db = new Generic();
+                    var _db = new Data();
                     foreach (var item in _list5)
                         await DoList(_insert, _db, item, c5++);
                 });
 
                 var T6 = Task.Run(async () =>
                 {
-                    var _db = new Generic();
+                    var _db = new Data();
                     foreach (var item in _list6)
                         await DoList(_insert, _db, item, c6++);
                 });
 
                 var T7 = Task.Run(async () =>
                 {
-                    var _db = new Generic();
+                    var _db = new Data();
                     foreach (var item in _list7)
                         await DoList(_insert, _db, item, c7++);
                 });
 
                 var T8 = Task.Run(async () =>
                 {
-                    var _db = new Generic();
+                    var _db = new Data();
                     foreach (var item in _list8)
                         await DoList(_insert, _db, item, c8++);
                 });
@@ -127,7 +127,7 @@ public static class MgEstabelecimentos
                 Console.WriteLine($"Read: {i}, migrated: {c1 + c2 + c3 + c4 + c5 + c6 + c7 + c8}, {_timer.Elapsed.TotalMinutes} minutes");
             }
             _timer.Stop();
-            var db = new Generic();
+            var db = new Data();
             await db.ReadAsync(SqlCommands.SelectCommand("Estabelecimentos"));
             f = db.CNPJBase!.Count();
             Console.WriteLine($"Read: {i}, migrated: {f}, {_timer.Elapsed.TotalMinutes} minutes");
@@ -138,8 +138,8 @@ public static class MgEstabelecimentos
         }
     });
     
-    private static Estabelecimento DoFields(string[] fields)
-    => new Estabelecimento()
+    private static MEstabelecimento DoFields(string[] fields)
+    => new MEstabelecimento()
     {
         CNPJBase = fields[0].ToString().Replace("\"", "").Trim(),
         CNPJOrdem = fields[1].ToString().Replace("\"", "").Trim(),
@@ -173,7 +173,7 @@ public static class MgEstabelecimentos
         DataSitucaoEspecial = fields[29].ToString().Replace("\"", "").Trim()
     };
     
-    private static async Task DoList(string sqlcommand, Generic data, Estabelecimento est, int cont)
+    private static async Task DoList(string sqlcommand, Data data, MEstabelecimento est, int cont)
     {
         data.ClearParameters();
         data.AddParameters("@CNPJBase", est.CNPJBase!);

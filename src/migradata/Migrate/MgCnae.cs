@@ -1,7 +1,7 @@
 using System.Diagnostics;
 using System.Text;
 using migradata.Helpers;
-using migradata.Repositories;
+using migradata.SqlServer;
 
 namespace migradata.Migrate;
 
@@ -16,12 +16,12 @@ public static class MgCnaes
             var _timer = new Stopwatch();
             _timer.Start();
 
-            foreach (var file in await new ListFiles().DoListAync(@"C:\data", ".CNAECSV"))
+            foreach (var file in await new NormalizeFiles().DoListAync(@"C:\data", ".CNAECSV"))
                 try
                 {
                     Console.WriteLine($"Migration File {Path.GetFileName(file)}");
 
-                    var _data = new Generic();
+                    var _data = new Data();
 
                     using (var reader = new StreamReader(file, Encoding.GetEncoding("ISO-8859-1")))
                         while (!reader.EndOfStream)

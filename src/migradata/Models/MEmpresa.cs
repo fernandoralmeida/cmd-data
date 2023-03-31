@@ -1,8 +1,8 @@
 ﻿namespace migradata.Models;
 
-public class Empresa
+public class MEmpresa
 {
-    public Empresa()
+    public MEmpresa()
     {    }
     public string? CNPJBase { get; set; }
     public string? RazaoSocial { get; set; }

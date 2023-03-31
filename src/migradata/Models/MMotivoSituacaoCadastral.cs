@@ -1,8 +1,8 @@
 ﻿namespace migradata.Models;
 
-public class MotivoSituacaoCadastral
+public class MMotivoSituacaoCadastral
 {
-    public MotivoSituacaoCadastral() {}
+    public MMotivoSituacaoCadastral() {}
     public string? Codigo
     {
         get; set;

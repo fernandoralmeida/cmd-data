@@ -1,21 +1,24 @@
-﻿IF OBJECT_ID(N'[__EFMigrationsHistory]') IS NULL
-BEGIN
-    CREATE TABLE [__EFMigrationsHistory] (
-        [MigrationId] nvarchar(150) NOT NULL,
-        [ProductVersion] nvarchar(32) NOT NULL,
-        CONSTRAINT [PK___EFMigrationsHistory] PRIMARY KEY ([MigrationId])
-    );
-END;
-GO
+namespace migradata.Helpers;
 
-BEGIN TRANSACTION;
-GO
+public static class CreateTables
+{    
+    public static async Task StartAsync(TServer server)
+        => await Task.Run(async () =>
+        {
+            if (server == TServer.SqlServer)
+                await new SqlServer.Data().WriteAsync(ScritpDB());
 
+            if (server == TServer.MySql)
+                await MySql.Data.WriteAsync(ScritpDB());
+        });
+
+
+    private static string ScritpDB()
+    => @"
 CREATE TABLE [Cnaes] (
-    [Codigo] varchar(10) NULL,
-    [Descricao] varchar(max) NULL
+[Codigo] varchar(10) NULL,
+[Descricao] varchar(max) NULL
 );
-GO
 
 CREATE TABLE [Empresas] (
     [CNPJBase] varchar(10) NULL,
@@ -26,7 +29,6 @@ CREATE TABLE [Empresas] (
     [PorteEmpresa] varchar(5) NULL,
     [EnteFederativoResponsavel] varchar(255) NULL
 );
-GO
 
 CREATE TABLE [Estabelecimentos] (
     [CNPJBase] varchar(8) NULL,
@@ -60,37 +62,31 @@ CREATE TABLE [Estabelecimentos] (
     [SituacaoEspecial] varchar(255) NULL,
     [DataSitucaoEspecial] varchar(10) NULL
 );
-GO
 
 CREATE TABLE [MotivoSituacaoCadastral] (
     [Codigo] varchar(10) NULL,
     [Descricao] varchar(max) NULL
 );
-GO
 
 CREATE TABLE [Municipios] (
     [Codigo] varchar(10) NULL,
     [Descricao] varchar(max) NULL
 );
-GO
 
 CREATE TABLE [NaturezaJuridica] (
     [Codigo] varchar(10) NULL,
     [Descricao] varchar(max) NULL
 );
-GO
 
 CREATE TABLE [Paises] (
     [Codigo] varchar(10) NULL,
     [Descricao] varchar(max) NULL
 );
-GO
 
 CREATE TABLE [QualificacaoSocios] (
     [Codigo] varchar(10) NULL,
     [Descricao] varchar(max) NULL
 );
-GO
 
 CREATE TABLE [Simples] (
     [CNPJBase] varchar(10) NULL,
@@ -101,7 +97,6 @@ CREATE TABLE [Simples] (
     [DataOpcaoMEI] varchar(10) NULL,
     [DataExclusaoMEI] varchar(10) NULL
 );
-GO
 
 CREATE TABLE [Socios] (
     [CNPJBase] varchar(10) NULL,
@@ -115,13 +110,6 @@ CREATE TABLE [Socios] (
     [NomeRepresentante] varchar(255) NULL,
     [QualificacaoRepresentanteLegal] varchar(4) NULL,
     [FaixaEtaria] varchar(2) NULL
-);
-GO
+);";
 
-INSERT INTO [__EFMigrationsHistory] ([MigrationId], [ProductVersion])
-VALUES (N'20230319192857_M_Initial', N'7.0.4');
-GO
-
-COMMIT;
-GO
-
+}

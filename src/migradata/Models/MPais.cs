@@ -1,8 +1,8 @@
 ﻿namespace migradata.Models;
 
-public class NaturezaJuridica
+public class MPais
 {
-    public NaturezaJuridica() {}
+    public MPais() {}
     public string? Codigo { get; set; }
     public string? Descricao { get; set; }
 }

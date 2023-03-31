@@ -1,12 +1,31 @@
 ﻿namespace migradata.Models;
 
-public class Municipio
+public class MMunicipio
 {
-    public Municipio() {}
+    public MMunicipio() {}
     public string? Codigo { get; set; }
     public string? Descricao { get; set; }
 
-    public bool MicroRegiaoJahu(Municipio obj)
+    public static List<string> MicroRegionJau()
+    {
+        return new string[]{
+            "6203",
+            "6205",
+            "6219",
+            "6235",
+            "6245",
+            "6259",
+            "6383",
+            "6501",
+            "6541",
+            "6559",
+            "6607",
+            "6697",
+            "6835",
+            "7195"
+        }.ToList();
+    }
+    public bool MicroRegiaoJahu(MMunicipio obj)
     {
         /*             
         est.[Coluna 20] = '6607' OR *Jahu*

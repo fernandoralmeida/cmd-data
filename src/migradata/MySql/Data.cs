@@ -1,48 +1,47 @@
 using System.Data;
-using System.Data.SqlClient;
+using migradata.Helpers;
+using MySql.Data.MySqlClient;
 
-namespace migradata.Repositories;
+namespace migradata.MySql;
 
-//Classe generica para acesso simplicado via Sql Native Client
-public class Generic
+public static class Data
 {
+    private static readonly string _connectionString = SqlCommands.ConnectionString_MySql;
 
-    private readonly string _connectionString = Environment.GetEnvironmentVariable("connection_string_migradata")!;
+    private static MySqlParameterCollection ParameterCollection = new MySqlCommand().Parameters;
 
-    private SqlParameterCollection ParameterCollection = new SqlCommand().Parameters;
-
-    public void ClearParameters()
+    public static void ClearParameters()
     {
         ParameterCollection.Clear();
     }
 
-    public void AddParameters(string parameterName, object parameterValue)
+    public static void AddParameters(string parameterName, object parameterValue)
     {
-        ParameterCollection.Add(new SqlParameter(parameterName, parameterValue));
+        ParameterCollection.Add(new MySqlParameter(parameterName, parameterValue));
     }
 
-    public IEnumerable<string>? CNPJBase {get; set;}
+    public static IEnumerable<string>? CNPJBase { get; set; }
 
-    public async Task ReadAsync(string querySelect)
+    public static async Task ReadAsync(string querySelect)
      => await Task.Run(() =>
         {
-            using (SqlConnection connection = new SqlConnection(_connectionString))
+            using (MySqlConnection connection = new MySqlConnection(_connectionString))
             {
                 try
                 {
-                    connection.Open();                    
+                    connection.Open();
 
-                    SqlCommand _command = connection.CreateCommand();
+                    MySqlCommand _command = connection.CreateCommand();
                     _command.CommandType = CommandType.Text;
                     _command.CommandText = querySelect;
                     _command.CommandTimeout = 0;
 
-                    foreach (SqlParameter p in ParameterCollection)
+                    foreach (MySqlParameter p in ParameterCollection)
                     {
-                        _command.Parameters.Add(new SqlParameter(p.ParameterName, p.Value));
+                        _command.Parameters.Add(new MySqlParameter(p.ParameterName, p.Value));
                     }
 
-                    SqlDataReader reader = _command.ExecuteReader();
+                    MySqlDataReader reader = _command.ExecuteReader();
 
                     var _list = new List<string>();
                     while (reader.Read())
@@ -59,22 +58,22 @@ public class Generic
             }
         });
 
-    public async Task WriteAsync(string queryWrite)
+    public static async Task WriteAsync(string queryWrite)
         => await Task.Run(() =>
             {
-                using (SqlConnection connection = new SqlConnection(_connectionString))
+                using (MySqlConnection connection = new MySqlConnection(_connectionString))
                 {
                     try
                     {
                         connection.Open();
-                        SqlCommand _command = connection.CreateCommand();
+                        MySqlCommand _command = connection.CreateCommand();
                         _command.CommandType = CommandType.Text;
                         _command.CommandText = queryWrite;
                         _command.CommandTimeout = 0;
 
-                        foreach (SqlParameter p in ParameterCollection)
+                        foreach (MySqlParameter p in ParameterCollection)
                         {
-                            _command.Parameters.Add(new SqlParameter(p.ParameterName, p.Value));
+                            _command.Parameters.Add(new MySqlParameter(p.ParameterName, p.Value));
                         }
 
                         var r = _command.ExecuteNonQuery();
@@ -86,9 +85,9 @@ public class Generic
                 }
             });
 
-    public void CheckDB()
+    public static void CheckDB()
     {
-        using (SqlConnection connection = new SqlConnection(_connectionString))
+        using (MySqlConnection connection = new MySqlConnection(_connectionString))
         {
             try
             {

@@ -2,6 +2,13 @@ namespace migradata.Helpers;
 
 public static class SqlCommands
 {
+    public static readonly string DataBaseName = $"MigraData-RFB";
+    
+    public static readonly string ConnectionString_SqlServer
+        = Environment.GetEnvironmentVariable("connectionstring_migradata_sqlserver")!;
+
+    public static string ConnectionString_MySql
+        = Environment.GetEnvironmentVariable("connectionstring_migradata_mysql")!;
 
     public static readonly string Fields_Estabelecimentos = @"(CNPJBase,
                                         CNPJOrdem,

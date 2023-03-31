@@ -3,9 +3,9 @@ using System.IO;
 
 namespace migradata.Helpers;
 
-public class ListFiles
+public class NormalizeFiles
 {
-    public async Task NormalizeFile(string path)
+    public async Task Start(string path)
     {
         await DeleteNotZip(path);
 

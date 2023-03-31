@@ -2,7 +2,7 @@ using System.Diagnostics;
 using System.Text;
 using migradata.Helpers;
 using migradata.Models;
-using migradata.Repositories;
+using migradata.SqlServer;
 
 namespace migradata.Migrate;
 
@@ -32,10 +32,10 @@ public static class MgSimples
         try
         {
 
-            foreach (var file in await new ListFiles().DoListAync(@"C:\data", ".D30311"))
+            foreach (var file in await new NormalizeFiles().DoListAync(@"C:\data", ".D30311"))
             {
 
-                var _list = new List<Simples>();
+                var _list = new List<MSimples>();
                 Console.WriteLine($"Migration File {Path.GetFileName(file)}");
                 using (var reader = new StreamReader(file, Encoding.GetEncoding("ISO-8859-1")))
                 {
@@ -64,56 +64,56 @@ public static class MgSimples
 
                 var T1 = Task.Run(async () =>
                 {
-                    var _db = new Generic();
+                    var _db = new Data();
                     foreach (var item in _list1)
                         await DoList(_insert, _db, item, c1++);
                 });
 
                 var T2 = Task.Run(async () =>
                 {
-                    var _db = new Generic();
+                    var _db = new Data();
                     foreach (var item in _list2)
                         await DoList(_insert, _db, item, c2++);
                 });
 
                 var T3 = Task.Run(async () =>
                 {
-                    var _db = new Generic();
+                    var _db = new Data();
                     foreach (var item in _list3)
                         await DoList(_insert, _db, item, c3++);
                 });
 
                 var T4 = Task.Run(async () =>
                 {
-                    var _db = new Generic();
+                    var _db = new Data();
                     foreach (var item in _list4)
                         await DoList(_insert, _db, item, c4++);
                 });
 
                 var T5 = Task.Run(async () =>
                 {
-                    var _db = new Generic();
+                    var _db = new Data();
                     foreach (var item in _list5)
                         await DoList(_insert, _db, item, c5++);
                 });
 
                 var T6 = Task.Run(async () =>
                 {
-                    var _db = new Generic();
+                    var _db = new Data();
                     foreach (var item in _list6)
                         await DoList(_insert, _db, item, c6++);
                 });
 
                 var T7 = Task.Run(async () =>
                 {
-                    var _db = new Generic();
+                    var _db = new Data();
                     foreach (var item in _list7)
                         await DoList(_insert, _db, item, c7++);
                 });
 
                 var T8 = Task.Run(async () =>
                 {
-                    var _db = new Generic();
+                    var _db = new Data();
                     foreach (var item in _list8)
                         await DoList(_insert, _db, item, c8++);
                 });
@@ -122,7 +122,7 @@ public static class MgSimples
                 Console.WriteLine($"Read: {i}, migrated: {c1 + c2 + c3 + c4 + c5 + c6 + c7 + c8}, {_timer.Elapsed.TotalMinutes} minutes");
             }
             Console.WriteLine("Analyzing data!");
-            var db = new Generic();
+            var db = new Data();
             await db.WriteAsync(SqlCommands.DeleteNotExist("Simples", "Empresas"));
             await db.ReadAsync(SqlCommands.SelectCommand("Simples"));
             f = db.CNPJBase!.Count();
@@ -136,8 +136,8 @@ public static class MgSimples
         }
     });
 
-    private static Simples DoFields(string[] fields)
-    => new Simples()
+    private static MSimples DoFields(string[] fields)
+    => new MSimples()
     {
         CNPJBase = fields[0].ToString().Replace("\"", "").Trim(),
         OpcaoSimples = fields[1].ToString().Replace("\"", "").Trim(),
@@ -148,7 +148,7 @@ public static class MgSimples
         DataExclusaoMEI = fields[6].ToString().Replace("\"", "").Trim()
     };
     
-    private static async Task DoList(string sqlcommand, Generic data, Simples model, int cont)
+    private static async Task DoList(string sqlcommand, Data data, MSimples model, int cont)
     {
         data.ClearParameters();
         data.AddParameters("@CNPJBase", model.CNPJBase!);

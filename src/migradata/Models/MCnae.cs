@@ -1,7 +1,7 @@
 ﻿namespace migradata.Models;
-public class Cnae
+public class MCnae
 {
-    public Cnae()
+    public MCnae()
     {    }
     public string? Codigo { get; set; }
     public string? Descricao { get; set; }
