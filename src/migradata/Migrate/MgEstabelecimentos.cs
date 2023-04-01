@@ -38,7 +38,7 @@ public static class MgEstabelecimentos
                         var line = reader.ReadLine();
                         var fields = line!.Split(';');
 
-                        foreach (var item in MMunicipio.OnlyJau()
+                        foreach (var item in MMunicipio.MicroRegionJau()
                                                         .Where(s => s == fields[20]
                                                         .ToString()
                                                         .Replace("\"", "")))
@@ -65,9 +65,9 @@ public static class MgEstabelecimentos
                         var i = 0;
                         var _db = Factory.Data(server);
                         foreach (var row in rows)
-                        {   
+                        {
                             i++;
-                            await DoInsert(_insert, _db, row);                            
+                            await DoInsert(_insert, _db, row);
                         }
                         c2 += i;
                     }));
