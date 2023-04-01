@@ -1,96 +1,96 @@
-CREATE TABLE [Cnaes] (
-    [Codigo] varchar(10) NULL,
-    [Descricao] varchar(max) NULL
+CREATE TABLE Cnaes (
+    Codigo VARCHAR(10) NULL,
+    Descricao VARCHAR(8000) NULL
 );
 
-CREATE TABLE [Empresas] (
-    [CNPJBase] varchar(10) NULL,
-    [RazaoSocial] varchar(255) NULL,
-    [NaturezaJuridica] varchar(10) NULL,
-    [QualificacaoResponsavel] varchar(5) NULL,
-    [CapitalSocial] varchar(255) NULL,
-    [PorteEmpresa] varchar(5) NULL,
-    [EnteFederativoResponsavel] varchar(255) NULL
+CREATE TABLE Empresas (
+    CNPJBase VARCHAR(10) NULL,
+    RazaoSocial VARCHAR(255) NULL,
+    NaturezaJuridica VARCHAR(10) NULL,
+    QualificacaoResponsavel VARCHAR(5) NULL,
+    CapitalSocial VARCHAR(255) NULL,
+    PorteEmpresa VARCHAR(5) NULL,
+    EnteFederativoResponsavel VARCHAR(255) NULL
 );
 
-CREATE TABLE [Estabelecimentos] (
-    [CNPJBase] varchar(8) NULL,
-    [CNPJOrdem] varchar(4) NULL,
-    [CNPJDV] varchar(2) NULL,
-    [IdentificadorMatrizFilial] varchar(2) NULL,
-    [NomeFantasia] varchar(255) NULL,
-    [SituacaoCadastral] varchar(2) NULL,
-    [DataSituacaoCadastral] varchar(10) NULL,
-    [MotivoSituacaoCadastral] varchar(2) NULL,
-    [NomeCidadeExterior] varchar(255) NULL,
-    [Pais] varchar(5) NULL,
-    [DataInicioAtividade] varchar(10) NULL,
-    [CnaeFiscalPrincipal] varchar(255) NULL,
-    [CnaeFiscalSecundaria] varchar(max) NULL,
-    [TipoLogradouro] varchar(255) NULL,
-    [Logradouro] varchar(255) NULL,
-    [Numero] varchar(255) NULL,
-    [Complemento] varchar(255) NULL,
-    [Bairro] varchar(255) NULL,
-    [CEP] varchar(10) NULL,
-    [UF] varchar(2) NULL,
-    [Municipio] varchar(10) NULL,
-    [DDD1] varchar(4) NULL,
-    [Telefone1] varchar(255) NULL,
-    [DDD2] varchar(4) NULL,
-    [Telefone2] varchar(255) NULL,
-    [DDDFax] varchar(4) NULL,
-    [Fax] varchar(255) NULL,
-    [CorreioEletronico] varchar(255) NULL,
-    [SituacaoEspecial] varchar(255) NULL,
-    [DataSitucaoEspecial] varchar(10) NULL
+CREATE TABLE Estabelecimentos (
+    CNPJBase VARCHAR(8) NULL,
+    CNPJOrdem VARCHAR(4) NULL,
+    CNPJDV VARCHAR(2) NULL,
+    IdentificadorMatrizFilial VARCHAR(2) NULL,
+    NomeFantasia VARCHAR(255) NULL,
+    SituacaoCadastral VARCHAR(2) NULL,
+    DataSituacaoCadastral VARCHAR(10) NULL,
+    MotivoSituacaoCadastral VARCHAR(2) NULL,
+    NomeCidadeExterior VARCHAR(255) NULL,
+    Pais VARCHAR(5) NULL,
+    DataInicioAtividade VARCHAR(10) NULL,
+    CnaeFiscalPrincipal VARCHAR(255) NULL,
+    CnaeFiscalSecundaria VARCHAR(8000) NULL,
+    TipoLogradouro VARCHAR(255) NULL,
+    Logradouro VARCHAR(255) NULL,
+    Numero VARCHAR(255) NULL,
+    Complemento VARCHAR(255) NULL,
+    Bairro VARCHAR(255) NULL,
+    CEP VARCHAR(10) NULL,
+    UF VARCHAR(2) NULL,
+    Municipio VARCHAR(10) NULL,
+    DDD1 VARCHAR(4) NULL,
+    Telefone1 VARCHAR(255) NULL,
+    DDD2 VARCHAR(4) NULL,
+    Telefone2 VARCHAR(255) NULL,
+    DDDFax VARCHAR(4) NULL,
+    Fax VARCHAR(255) NULL,
+    CorreioEletronico VARCHAR(255) NULL,
+    SituacaoEspecial VARCHAR(255) NULL,
+    DataSitucaoEspecial VARCHAR(10) NULL
 );
 
-CREATE TABLE [MotivoSituacaoCadastral] (
-    [Codigo] varchar(10) NULL,
-    [Descricao] varchar(max) NULL
+CREATE TABLE MotivoSituacaoCadastral (
+    Codigo VARCHAR(10) NULL,
+    Descricao VARCHAR(8000) NULL
 );
 
-CREATE TABLE [Municipios] (
-    [Codigo] varchar(10) NULL,
-    [Descricao] varchar(max) NULL
+CREATE TABLE Municipios (
+    Codigo VARCHAR(10) NULL,
+    Descricao VARCHAR(8000) NULL
 );
 
-CREATE TABLE [NaturezaJuridica] (
-    [Codigo] varchar(10) NULL,
-    [Descricao] varchar(max) NULL
+CREATE TABLE NaturezaJuridica (
+    Codigo VARCHAR(10) NULL,
+    Descricao VARCHAR(8000) NULL
 );
 
-CREATE TABLE [Paises] (
-    [Codigo] varchar(10) NULL,
-    [Descricao] varchar(max) NULL
+CREATE TABLE Paises (
+    Codigo VARCHAR(10) NULL,
+    Descricao VARCHAR(8000) NULL
 );
 
-CREATE TABLE [QualificacaoSocios] (
-    [Codigo] varchar(10) NULL,
-    [Descricao] varchar(max) NULL
+CREATE TABLE QualificacaoSocios (
+    Codigo VARCHAR(10) NULL,
+    Descricao VARCHAR(8000) NULL
 );
 
-CREATE TABLE [Simples] (
-    [CNPJBase] varchar(10) NULL,
-    [OpcaoSimples] varchar(2) NULL,
-    [DataOpcaoSimples] varchar(10) NULL,
-    [DataExclusaoSimples] varchar(10) NULL,
-    [OpcaoMEI] varchar(2) NULL,
-    [DataOpcaoMEI] varchar(10) NULL,
-    [DataExclusaoMEI] varchar(10) NULL
+CREATE TABLE Simples (
+    CNPJBase VARCHAR(10) NULL,
+    OpcaoSimples VARCHAR(2) NULL,
+    DataOpcaoSimples VARCHAR(10) NULL,
+    DataExclusaoSimples VARCHAR(10) NULL,
+    OpcaoMEI VARCHAR(2) NULL,
+    DataOpcaoMEI VARCHAR(10) NULL,
+    DataExclusaoMEI VARCHAR(10) NULL
 );
 
-CREATE TABLE [Socios] (
-    [CNPJBase] varchar(10) NULL,
-    [IdentificadorSocio] varchar(2) NULL,
-    [NomeRazaoSocio] varchar(255) NULL,
-    [CnpjCpfSocio] varchar(50) NULL,
-    [QualificacaoSocio] varchar(4) NULL,
-    [DataEntradaSociedade] varchar(10) NULL,
-    [Pais] nvarchar(max) NULL,
-    [RepresentanteLegal] varchar(50) NULL,
-    [NomeRepresentante] varchar(255) NULL,
-    [QualificacaoRepresentanteLegal] varchar(4) NULL,
-    [FaixaEtaria] varchar(2) NULL
+CREATE TABLE Socios (
+    CNPJBase VARCHAR(10) NULL,
+    IdentificadorSocio VARCHAR(2) NULL,
+    NomeRazaoSocio VARCHAR(255) NULL,
+    CnpjCpfSocio VARCHAR(50) NULL,
+    QualificacaoSocio VARCHAR(4) NULL,
+    DataEntradaSociedade VARCHAR(10) NULL,
+    Pais VARCHAR(8000) NULL,
+    RepresentanteLegal VARCHAR(50) NULL,
+    NomeRepresentante VARCHAR(255) NULL,
+    QualificacaoRepresentanteLegal VARCHAR(4) NULL,
+    FaixaEtaria VARCHAR(2) NULL
 );
