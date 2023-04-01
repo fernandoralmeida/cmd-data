@@ -33,6 +33,8 @@ public static class MgEstabelecimentos
         {
             foreach (var file in await new NormalizeFiles().DoListAync(@"C:\data", ".ESTABELE"))
             {
+                var _timerI = new Stopwatch();
+                _timerI.Start();
                 var _data = IoC.Data(server);
                 var _list = new List<MEstabelecimento>();
                 Console.WriteLine($"Migration File {Path.GetFileName(file)}");
@@ -125,10 +127,11 @@ public static class MgEstabelecimentos
                 });
 
                 await Task.WhenAll(T1, T2, T3, T4, T5, T6, T7, T8);
-                Console.WriteLine($"Read: {i}, migrated: {c1 + c2 + c3 + c4 + c5 + c6 + c7 + c8}, {_timer.Elapsed.TotalMinutes} minutes");
+                _timerI.Stop();
+                Console.WriteLine($"Read: {i}, migrated: {c1 + c2 + c3 + c4 + c5 + c6 + c7 + c8}, {_timerI.Elapsed.TotalMinutes} minutes");
             }
             _timer.Stop();
-            var db = new Data();
+            var db = IoC.Data(server);
             await db.ReadAsync(SqlCommands.SelectCommand("Estabelecimentos"));
             f = db.CNPJBase!.Count();
             Console.WriteLine($"Read: {i}, migrated: {f}, {_timer.Elapsed.TotalMinutes} minutes");

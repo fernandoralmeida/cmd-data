@@ -1,7 +1,7 @@
 namespace migradata.Helpers;
 
 public static class CreateTables
-{    
+{
     public static async Task StartAsync(TServer server)
         => await Task.Run(async () =>
         {
@@ -23,9 +23,9 @@ CREATE TABLE Cnaes (
 CREATE TABLE Empresas (
     CNPJBase VARCHAR(10) NULL,
     RazaoSocial VARCHAR(255) NULL,
-    NaturezaJuridica VARCHAR(10) NULL,
+    NaturezaJuridica VARCHAR(5) NULL,
     QualificacaoResponsavel VARCHAR(5) NULL,
-    CapitalSocial VARCHAR(255) NULL,
+    CapitalSocial VARCHAR(20) NULL,
     PorteEmpresa VARCHAR(5) NULL,
     EnteFederativoResponsavel VARCHAR(255) NULL
 );
@@ -59,7 +59,7 @@ CREATE TABLE Estabelecimentos (
     DDDFax VARCHAR(4) NULL,
     Fax VARCHAR(255) NULL,
     CorreioEletronico VARCHAR(255) NULL,
-    SituacaoEspecial VARCHAR(255) NULL,
+    SituacaoEspecial VARCHAR(10) NULL,
     DataSitucaoEspecial VARCHAR(10) NULL
 );
 
@@ -105,7 +105,7 @@ CREATE TABLE Socios (
     CnpjCpfSocio VARCHAR(50) NULL,
     QualificacaoSocio VARCHAR(4) NULL,
     DataEntradaSociedade VARCHAR(10) NULL,
-    Pais VARCHAR(8000) NULL,
+    Pais VARCHAR(5) NULL,
     RepresentanteLegal VARCHAR(50) NULL,
     NomeRepresentante VARCHAR(255) NULL,
     QualificacaoRepresentanteLegal VARCHAR(4) NULL,

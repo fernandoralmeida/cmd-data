@@ -35,7 +35,8 @@ public static class MgEmpresas
 
             foreach (var file in await new NormalizeFiles().DoListAync(@"C:\data", ".EMPRECSV"))
             {
-
+                var _timerI = new Stopwatch();    
+                _timerI.Start();
                 var _list = new List<MEmpresa>();
                 Console.WriteLine($"Migration File {Path.GetFileName(file)}");
                 using (var reader = new StreamReader(file, Encoding.GetEncoding("ISO-8859-1")))
@@ -121,7 +122,8 @@ public static class MgEmpresas
                 });
 
                 await Task.WhenAll(T1, T2, T3, T4, T5, T6, T7, T8);
-                Console.WriteLine($"Read: {i}, migrated: {c1 + c2 + c3 + c4 + c5 + c6 + c7 + c8}, {_timer.Elapsed.TotalMinutes} minutes");
+                _timerI.Stop();
+                Console.WriteLine($"Read: {i}, migrated: {c1 + c2 + c3 + c4 + c5 + c6 + c7 + c8}, {_timerI.Elapsed.TotalMinutes} minutes");
             }
 
             Console.WriteLine("Analyzing data!");
@@ -158,10 +160,10 @@ public static class MgEmpresas
         data.ClearParameters();
         data.AddParameters("@CNPJBase", emp.CNPJBase!);
         data.AddParameters("@RazaoSocial", emp.RazaoSocial!);
-        data.AddParameters("@NaturezaJuridica", emp.NaturezaJuridica!);
-        data.AddParameters("@QualificacaoResponsavel", emp.QualificacaoResponsavel!);
+        data.AddParameters("@NaturezaJuridica", emp.NaturezaJuridica!.Length <= 4 ? emp.NaturezaJuridica! : "0000");
+        data.AddParameters("@QualificacaoResponsavel", emp.QualificacaoResponsavel!.Length <= 2 ? emp.QualificacaoResponsavel! : "00");
         data.AddParameters("@CapitalSocial", emp.CapitalSocial!);
-        data.AddParameters("@PorteEmpresa", emp.PorteEmpresa!);
+        data.AddParameters("@PorteEmpresa", emp.PorteEmpresa!.Length <= 2 ? emp.PorteEmpresa! : "00");
         data.AddParameters("@EnteFederativoResponsavel", emp.EnteFederativoResponsavel!);
         await data.WriteAsync(sqlcommand);
     }

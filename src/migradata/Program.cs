@@ -25,7 +25,7 @@ class Program
             {
                 case 1:
                     Console.WriteLine("Normalize Files");
-                    await new NormalizeFiles().Start(@"C:\data");
+                    //await new NormalizeFiles().Start(@"C:\data");
                     await Migrate.MgNormalize.StartAsync(TServer.SqlServer);
                     Console.WriteLine("Start migration...");
                    
@@ -44,7 +44,7 @@ class Program
                     break;
                 case 2:
                     Console.WriteLine("Normalize Files");
-                    await new NormalizeFiles().Start(@"C:\data");
+                    //await new NormalizeFiles().Start(@"C:\data");
                     await Migrate.MgNormalize.StartAsync(TServer.MySql);
                     Console.WriteLine("Start migration...");
 

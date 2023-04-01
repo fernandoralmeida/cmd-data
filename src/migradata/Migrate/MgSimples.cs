@@ -35,7 +35,8 @@ public static class MgSimples
 
             foreach (var file in await new NormalizeFiles().DoListAync(@"C:\data", ".D30311"))
             {
-
+                var _timerI = new Stopwatch();
+                _timerI.Start();
                 var _list = new List<MSimples>();
                 Console.WriteLine($"Migration File {Path.GetFileName(file)}");
                 using (var reader = new StreamReader(file, Encoding.GetEncoding("ISO-8859-1")))
@@ -120,7 +121,8 @@ public static class MgSimples
                 });
 
                 await Task.WhenAll(T1, T2, T3, T4, T5, T6, T7, T8);
-                Console.WriteLine($"Read: {i}, migrated: {c1 + c2 + c3 + c4 + c5 + c6 + c7 + c8}, {_timer.Elapsed.TotalMinutes} minutes");
+                _timerI.Stop();
+                Console.WriteLine($"Read: {i}, migrated: {c1 + c2 + c3 + c4 + c5 + c6 + c7 + c8}, {_timerI.Elapsed.TotalMinutes} minutes");
             }
             Console.WriteLine("Analyzing data!");
             var db = IoC.Data(server);
