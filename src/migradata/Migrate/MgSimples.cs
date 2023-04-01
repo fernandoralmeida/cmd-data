@@ -31,7 +31,7 @@ public static class MgSimples
                 var _innertimer = new Stopwatch();
                 _innertimer.Start();
                 var _list = new List<MSimples>();
-                await new Log().Write($"Reading File {Path.GetFileName(file)}");
+                Log.Storage($"Reading File {Path.GetFileName(file)}");
                 using (var reader = new StreamReader(file, Encoding.GetEncoding("ISO-8859-1")))
                 {
                     while (!reader.EndOfStream)
@@ -46,13 +46,13 @@ public static class MgSimples
                 var _tasks = new List<Task>();
                 var _lists = new List<IEnumerable<MSimples>>();
 
-                int parts = 10;
+                int parts = 8;
                 int size = (_list.Count() / parts) + 1;
 
                 for (int p = 0; p < parts; p++)
                     _lists.Add(_list.Skip(p * size).Take(size));
 
-                await new Log().Write($"Migrating: {_list.Count()} -> {parts} : {size}");
+                Log.Storage($"Migrating: {_list.Count()} -> {parts} : {size}");
 
                 foreach (var rows in _lists)
                     _tasks.Add(Task.Run(async () =>
@@ -70,10 +70,10 @@ public static class MgSimples
                 await Task.WhenAll(_tasks);
 
                 _innertimer.Stop();
-                await new Log().Write($"Read: {c1} | Migrated: {c2} | Time: {_innertimer.Elapsed.ToString("hh\\:mm\\:ss")}");
+                Log.Storage($"Read: {c1} | Migrated: {c2} | Time: {_innertimer.Elapsed.ToString("hh\\:mm\\:ss")}");
             }
            
-            await new Log().Write("Analyzing data!");
+            Log.Storage("Analyzing data!");
             
             var db = Factory.Data(server);
             await db.WriteAsync(SqlCommands.DeleteNotExist("Simples", "Empresas"));
@@ -81,11 +81,11 @@ public static class MgSimples
             c3 = db.CNPJBase!.Count();
             
             _timer.Stop();
-            await new Log().Write($"Read: {c1} | Migrated: {c3} | Time: {_timer.Elapsed.ToString("hh\\:mm\\:ss")}");
+            Log.Storage($"Read: {c1} | Migrated: {c3} | Time: {_timer.Elapsed.ToString("hh\\:mm\\:ss")}");
         }
         catch (Exception ex)
         {
-            await new Log().Write($"Error: {ex.Message}");
+            Log.Storage($"Error: {ex.Message}");
         }
     });
 

@@ -20,7 +20,7 @@ public static class MgPaises
             foreach (var file in await new NormalizeFiles().DoListAync(@"C:\data", ".PAISCSV"))
                 try
                 {
-                    await new Log().Write($"Migrating File {Path.GetFileName(file)}");
+                    Log.Storage($"Migrating File {Path.GetFileName(file)}");
 
                     var _data = Factory.Data(server);
 
@@ -37,11 +37,11 @@ public static class MgPaises
                         }
 
                     _timer.Stop();
-                    await new Log().Write($"{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")} | Read: {i} | Migrated: {i} | Time: {_timer.Elapsed.ToString("hh\\:mm\\:ss")}");
+                    Log.Storage($"Read: {i} | Migrated: {i} | Time: {_timer.Elapsed.ToString("hh\\:mm\\:ss")}");
                 }
                 catch (Exception ex)
                 {
-                    await new Log().Write("Error: " + ex.Message);
+                    Log.Storage("Error: " + ex.Message);
                 }
         });
 }

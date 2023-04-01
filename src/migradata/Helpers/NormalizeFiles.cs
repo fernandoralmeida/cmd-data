@@ -10,10 +10,27 @@ public class NormalizeFiles
         await DeleteNotZip(path);
 
         var _tasks = new List<Task>();
+        var _listfiles = new List<string>();
+        var _lists = new List<IEnumerable<string>>();
 
         foreach (string file in Directory.GetFiles(path))
             if (file.Contains(".zip") == true)
-                _tasks.Add(Unzip(file, path));
+                _listfiles.Add(file);
+
+
+        int parts = 8;
+        int size = (_listfiles.Count / parts) + 1;
+
+        for (int i = 0; i < parts; i++)
+            _lists.Add(_listfiles.Skip(i * size).Take(size));
+
+
+        foreach (var rows in _lists)
+            _tasks.Add(Task.Run(async () =>
+            {
+                foreach (var row in rows)
+                    await Unzip(row, path);
+            }));
 
         await Task.WhenAll(_tasks);
     }
@@ -31,7 +48,7 @@ public class NormalizeFiles
 
 
     private async Task Unzip(string sourceFilePath, string destinationFolderPath)
-        => await Task.Run(async () =>
+        => await Task.Run(() =>
         {
             string filename = Path.GetFileNameWithoutExtension(sourceFilePath);
             string fileextension = Path.GetExtension(sourceFilePath);
@@ -40,12 +57,12 @@ public class NormalizeFiles
             {
                 foreach (ZipArchiveEntry entry in archive.Entries)
                 {
-                    await new Log().Write($"Unzip File:{filename}{fileextension}");
+                    Log.Storage($"Unzip File:{filename}{fileextension}");
                     string filePath = Path.Combine(destinationFolderPath, entry.FullName);
                     entry.ExtractToFile(filePath, true);
 
                     File.Move(filePath, Path.Combine(Path.GetDirectoryName(filePath)!, $"{filename}{Path.GetExtension(filePath)}"));
-                    await new Log().Write($"File:{filename}{Path.GetExtension(filePath)} OK");
+                    Log.Storage($"File:{filename}{Path.GetExtension(filePath)} OK");
                 }
             }
         });

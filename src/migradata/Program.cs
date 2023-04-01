@@ -5,7 +5,7 @@ class Program
 {
     static async Task Main(string[] args)
     {
-        await new Log().Write("Starting System");
+        Log.Storage("Starting System");
         while (true)
         {
             Thread.Sleep(3000);
@@ -24,10 +24,10 @@ class Program
             switch (choice)
             {
                 case 1:
-                    await new Log().Write("Normalize Files");
+                    Log.Storage("Normalize Files");
                     await new NormalizeFiles().Start(@"C:\data");
                     await Migrate.MgNormalize.StartAsync(TServer.SqlServer);
-                    await new Log().Write("Start migration...");
+                    Log.Storage("Start migration...");
                    
                     await Task.WhenAll(
                         Migrate.MgCnaes.StartAsync(TServer.SqlServer),
@@ -41,12 +41,14 @@ class Program
                     await Migrate.MgEmpresas.StartAsync(TServer.SqlServer);
                     await Migrate.MgSocios.StartAsync(TServer.SqlServer);
                     await Migrate.MgSimples.StartAsync(TServer.SqlServer);
+                    
+                    await Log.Write(Log.StorageLog!);
                     break;
                 case 2:
-                    await new Log().Write("Normalize Files");
+                    Log.Storage("Normalize Files");
                     await new NormalizeFiles().Start(@"C:\data");
                     await Migrate.MgNormalize.StartAsync(TServer.MySql);
-                    await new Log().Write("Start migration...");
+                    Log.Storage("Start migration...");
 
                     await Task.WhenAll(
                         Migrate.MgCnaes.StartAsync(TServer.MySql),
@@ -60,20 +62,27 @@ class Program
                     await Migrate.MgEmpresas.StartAsync(TServer.MySql);
                     await Migrate.MgSocios.StartAsync(TServer.MySql);
                     await Migrate.MgSimples.StartAsync(TServer.MySql);
+                    
+                    await Log.Write(Log.StorageLog!);
                     break;
                 case 3:
                     Helpers.DataBase.CreateInSqlServer();
                     await Helpers.CreateTables.StartAsync(TServer.SqlServer);
+                    
+                    await Log.Write(Log.StorageLog!);
                     break;
                 case 4:
                     Helpers.DataBase.CreateInMySql();
                     await Helpers.CreateTables.StartAsync(TServer.MySql);
+                    
+                    await Log.Write(Log.StorageLog!);
                     break;
                 case 5:
-                    await new Log().Write("Closing App...");
+                    Log.Storage("Closing App...");
                     return;
                 default:
-                    await new Log().Write("Invalid option. Try again!");
+                    Log.Storage("Invalid option. Try again!");
+                    await Log.Write(Log.StorageLog!);
                     break;
             }
         }

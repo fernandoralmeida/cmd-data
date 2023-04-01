@@ -8,11 +8,11 @@ public static class MgNormalize
     public static async Task StartAsync(TServer server)
     {
         var data = Factory.Data(server);
-        await new Log().Write("Checking Connections...");
+        Log.Storage("Checking Connections...");
         Thread.Sleep(3000);
         data.CheckDB();
         Thread.Sleep(3000);
-        await new Log().Write("Normalizing Database...");
+        Log.Storage("Normalizing Database...");
         await data.WriteAsync(SqlCommands.DeletCommand("Cnaes"));
         await data.WriteAsync(SqlCommands.DeletCommand("MotivoSituacaoCadastral"));
         await data.WriteAsync(SqlCommands.DeletCommand("Municipios"));
@@ -23,7 +23,7 @@ public static class MgNormalize
         await data.WriteAsync(SqlCommands.DeletCommand("Empresas"));
         await data.WriteAsync(SqlCommands.DeletCommand("Socios"));
         await data.WriteAsync(SqlCommands.DeletCommand("Simples"));
-        await new Log().Write("Normalized Database!");
+        Log.Storage("Normalized Database!");
         Thread.Sleep(3000);
     }
 }

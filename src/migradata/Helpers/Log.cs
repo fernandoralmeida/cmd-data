@@ -1,18 +1,44 @@
 namespace migradata.Helpers;
 
-public class Log
+public static class Log
 {
-    public async Task Write(string message)
+    private static List<string> _storagelog = new();
+    public static List<string>? StorageLog
+    {
+        get { return _storagelog; }
+        set { _storagelog = value!; }
+    }
+
+    public static void Storage(string message)
+    {
+        StorageLog!.Add($"{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")} | {message}");
+        Console.WriteLine($"{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")} | {message}");
+    }
+
+    public async static Task Write(IEnumerable<string> messages)
         => await Task.Run(() =>
         {
-            Console.WriteLine($"{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")} | {message}");
-            string _file = "log.txt";
-            if (File.Exists(_file) == true)
-                using (StreamWriter sw = File.AppendText(_file))
-                    sw.WriteLine($"{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")} | {message}");
-            else
-                using (StreamWriter writer = File.CreateText(_file))
-                    writer.WriteLine($"{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")} | {message}");
+            try
+            {
+                foreach (var message in messages)
+                {
+                    string _file = "log.txt";
+                    if (File.Exists(_file) == true)
+                        using (StreamWriter sw = File.AppendText(_file))
+                            sw.WriteLine(message);
+                    else
+                        using (StreamWriter writer = File.CreateText(_file))
+                            writer.WriteLine(message);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")} | Error | {ex.Message}");
+            }
+            finally
+            {
+                StorageLog!.Clear();
+            }
 
         });
 }

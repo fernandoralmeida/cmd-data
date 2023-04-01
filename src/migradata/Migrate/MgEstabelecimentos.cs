@@ -30,7 +30,7 @@ public static class MgEstabelecimentos
                 _innertimer.Start();
                 var _data = Factory.Data(server);
                 var _list = new List<MEstabelecimento>();
-                await new Log().Write($"Reading File {Path.GetFileName(file)}");
+                Log.Storage($"Reading File {Path.GetFileName(file)}");
                 using (var reader = new StreamReader(file, Encoding.GetEncoding("ISO-8859-1")))
                 {
                     while (!reader.EndOfStream)
@@ -51,13 +51,13 @@ public static class MgEstabelecimentos
                 var _tasks = new List<Task>();
                 var _lists = new List<IEnumerable<MEstabelecimento>>();
 
-                int parts = 10;
+                int parts = 8;
                 int size = (_list.Count() / parts) + 1;
 
                 for (int p = 0; p < parts; p++)
                     _lists.Add(_list.Skip(p * size).Take(size));
 
-                await new Log().Write($"Migrating: {_list.Count()} -> {parts} : {size}");
+                Log.Storage($"Migrating: {_list.Count()} -> {parts} : {size}");
 
                 foreach (var rows in _lists)
                     _tasks.Add(Task.Run(async () =>
@@ -76,17 +76,17 @@ public static class MgEstabelecimentos
 
                 _innertimer.Stop();
 
-                await new Log().Write($"Read: {c1} | Migrated: {c2} | Time: {_innertimer.Elapsed.ToString("hh\\:mm\\:ss")}");
+                Log.Storage($"Read: {c1} | Migrated: {c2} | Time: {_innertimer.Elapsed.ToString("hh\\:mm\\:ss")}");
             }
             _timer.Stop();
             var db = Factory.Data(server);
             await db.ReadAsync(SqlCommands.SelectCommand("Estabelecimentos"));
             c3 = db.CNPJBase!.Count();
-            await new Log().Write($"Read: {c1} | Migrated: {c3} | Time: {_timer.Elapsed.ToString("hh\\:mm\\:ss")}");
+            Log.Storage($"Read: {c1} | Migrated: {c3} | Time: {_timer.Elapsed.ToString("hh\\:mm\\:ss")}");
         }
         catch (Exception ex)
         {
-            await new Log().Write($"Erro: {ex.Message}");
+            Log.Storage($"Erro: {ex.Message}");
         }
     });
 
