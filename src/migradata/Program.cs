@@ -5,9 +5,9 @@ class Program
 {
     static async Task Main(string[] args)
     {
+        await new Log().Write("Starting System");
         while (true)
         {
-            Console.WriteLine("Start System!");
             Thread.Sleep(3000);
             Console.WriteLine("MigraData V1.0");
             Console.WriteLine("Choose Options!");
@@ -24,10 +24,10 @@ class Program
             switch (choice)
             {
                 case 1:
-                    Console.WriteLine("Normalize Files");
-                    //await new NormalizeFiles().Start(@"C:\data");
+                    await new Log().Write("Normalize Files");
+                    await new NormalizeFiles().Start(@"C:\data");
                     await Migrate.MgNormalize.StartAsync(TServer.SqlServer);
-                    Console.WriteLine("Start migration...");
+                    await new Log().Write("Start migration...");
                    
                     await Task.WhenAll(
                         Migrate.MgCnaes.StartAsync(TServer.SqlServer),
@@ -43,10 +43,10 @@ class Program
                     await Migrate.MgSimples.StartAsync(TServer.SqlServer);
                     break;
                 case 2:
-                    Console.WriteLine("Normalize Files");
-                    //await new NormalizeFiles().Start(@"C:\data");
+                    await new Log().Write("Normalize Files");
+                    await new NormalizeFiles().Start(@"C:\data");
                     await Migrate.MgNormalize.StartAsync(TServer.MySql);
-                    Console.WriteLine("Start migration...");
+                    await new Log().Write("Start migration...");
 
                     await Task.WhenAll(
                         Migrate.MgCnaes.StartAsync(TServer.MySql),
@@ -70,14 +70,12 @@ class Program
                     await Helpers.CreateTables.StartAsync(TServer.MySql);
                     break;
                 case 5:
-                    Console.WriteLine("Closing App...");
+                    await new Log().Write("Closing App...");
                     return;
                 default:
-                    Console.WriteLine("Invalid option. Try again!");
+                    await new Log().Write("Invalid option. Try again!");
                     break;
             }
-
-            Console.WriteLine();
         }
     }
 }

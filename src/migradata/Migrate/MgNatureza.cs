@@ -18,9 +18,9 @@ public static class MgNatureza
             foreach (var file in await new NormalizeFiles().DoListAync(@"C:\data", ".NATJUCSV"))
                 try
                 {
-                    Console.WriteLine($"Migration File {Path.GetFileName(file)}");
+                    await new Log().Write($"Migrating File {Path.GetFileName(file)}");
 
-                    var _data = IoC.Data(server);
+                    var _data = Factory.Data(server);
 
                     using (var reader = new StreamReader(file, Encoding.GetEncoding("ISO-8859-1")))
                         while (!reader.EndOfStream)
@@ -35,11 +35,11 @@ public static class MgNatureza
                         }
 
                     _timer.Stop();
-                    Console.WriteLine($"Read: {i}, migrated: {i}, {_timer.Elapsed.TotalMinutes} minutes");
+                    await new Log().Write($"Read: {i} | Migrated: {i} | Time: {_timer.Elapsed.ToString("hh\\:mm\\:ss")}");
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine("Erro ao conectar: " + ex.Message);
+                    await new Log().Write("Error: " + ex.Message);
                 }
         });
 }

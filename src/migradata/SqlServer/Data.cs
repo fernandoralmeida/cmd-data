@@ -55,7 +55,7 @@ public class Data : IData
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine("Error: " + ex.Message);
+                    new Log().Write("Error: " + ex.Message).Wait();
                 }
             }
         });
@@ -82,7 +82,7 @@ public class Data : IData
                     }
                     catch (Exception ex)
                     {
-                        Console.WriteLine("Error: " + ex.Message);
+                        new Log().Write("Error: " + ex.Message).Wait();
                     }
                 }
             });
@@ -94,11 +94,11 @@ public class Data : IData
             try
             {
                 connection.Open();
-                Console.WriteLine("Successful Connection!");
+                new Log().Write("Successful Connection!").Wait();
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Error: " + ex.Message);
+                new Log().Write("Error: " + ex.Message).Wait();
             }
         }
     }

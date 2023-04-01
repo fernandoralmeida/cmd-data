@@ -9,9 +9,13 @@ public class NormalizeFiles
     {
         await DeleteNotZip(path);
 
+        var _tasks = new List<Task>();
+
         foreach (string file in Directory.GetFiles(path))
             if (file.Contains(".zip") == true)
-                await Unzip(file, path);
+                _tasks.Add(Unzip(file, path));
+
+        await Task.WhenAll(_tasks);
     }
 
     public async Task<string[]> DoListAync(string path, string extension)
@@ -27,7 +31,7 @@ public class NormalizeFiles
 
 
     private async Task Unzip(string sourceFilePath, string destinationFolderPath)
-        => await Task.Run(() =>
+        => await Task.Run(async () =>
         {
             string filename = Path.GetFileNameWithoutExtension(sourceFilePath);
             string fileextension = Path.GetExtension(sourceFilePath);
@@ -36,12 +40,12 @@ public class NormalizeFiles
             {
                 foreach (ZipArchiveEntry entry in archive.Entries)
                 {
-                    Console.WriteLine($"Unzip File:{filename}{fileextension}");
+                    await new Log().Write($"Unzip File:{filename}{fileextension}");
                     string filePath = Path.Combine(destinationFolderPath, entry.FullName);
                     entry.ExtractToFile(filePath, true);
 
                     File.Move(filePath, Path.Combine(Path.GetDirectoryName(filePath)!, $"{filename}{Path.GetExtension(filePath)}"));
-                    Console.WriteLine($"File:{filename}{Path.GetExtension(filePath)} OK");
+                    await new Log().Write($"File:{filename}{Path.GetExtension(filePath)} OK");
                 }
             }
         });

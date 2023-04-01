@@ -20,9 +20,9 @@ public static class MgQualifica
             foreach (var file in await new NormalizeFiles().DoListAync(@"C:\data", ".QUALSCSV"))
                 try
                 {
-                    Console.WriteLine($"Migration File {Path.GetFileName(file)}");
+                    await new Log().Write($"Migrating File {Path.GetFileName(file)}");
 
-                    var _data = IoC.Data(server);
+                    var _data = Factory.Data(server);
 
                     using (var reader = new StreamReader(file, Encoding.GetEncoding("ISO-8859-1")))
                         while (!reader.EndOfStream)
@@ -37,11 +37,11 @@ public static class MgQualifica
                         }
 
                     _timer.Stop();
-                    Console.WriteLine($"Read: {i}, migrated: {i}, {_timer.Elapsed.TotalMinutes} minutes");
+                    await new Log().Write($"{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")} | Read: {i} | Migrated: {i} | Time: {_timer.Elapsed.ToString("hh\\:mm\\:ss")}");
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine("Erro ao conectar: " + ex.Message);
+                    await new Log().Write("Erro ao conectar: " + ex.Message);
                 }
         });
 }

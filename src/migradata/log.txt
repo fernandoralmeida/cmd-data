@@ -1,0 +1,24 @@
+2023-04-01 15:45:31 | Starting System
+2023-04-01 15:45:37 | Normalize Files
+2023-04-01 15:45:37 | Unzip File:Empresas3.zip
+2023-04-01 15:45:37 | Unzip File:Estabelecimentos3.zip
+2023-04-01 15:45:38 | File:Empresas3.EMPRECSV OK
+2023-04-01 15:45:42 | File:Estabelecimentos3.ESTABELE OK
+2023-04-01 15:45:42 | Checking Connections...
+2023-04-01 15:45:47 | Successful Connection!
+2023-04-01 15:45:50 | Normalizing Database...
+2023-04-01 15:45:52 | Normalized Database!
+2023-04-01 15:45:55 | Start migration...
+2023-04-01 15:45:55 | Reading File Estabelecimentos3.ESTABELE
+2023-04-01 15:46:03 | Migrating: 4007 -> 10 : 401
+2023-04-01 15:46:03 | Read: 4753435 | Migrated: 4007 | Time: 00:00:07
+2023-04-01 15:46:03 | Read: 4753435 | Migrated: 0 | Time: 00:00:07
+2023-04-01 15:46:03 | Reading File Empresas3.EMPRECSV
+2023-04-01 15:46:14 | Migrating: 4494860 -> 10 : 449487
+2023-04-01 15:46:16 | Read: 4494860 | Migrated: 4494860 | Time: 00:00:13
+2023-04-01 15:46:16 | Analyzing data!
+2023-04-01 15:46:17 | Read: 4494860 | Migrated: 0 | Time: 00:00:13
+2023-04-01 15:46:17 | Analyzing data!
+2023-04-01 15:46:17 | Read: 0 | Migrated: 0 | Time: 00:00:00
+2023-04-01 15:46:17 | Analyzing data!
+2023-04-01 15:46:17 | Read: 0 | Migrated: 0 | Time: 00:00:00

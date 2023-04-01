@@ -6,6 +6,9 @@ public class MMunicipio
     public string? Codigo { get; set; }
     public string? Descricao { get; set; }
 
+    public static List<string> OnlyJau()
+        => new string[] {"6607"}.ToList();
+
     public static List<string> MicroRegionJau()
     {
         return new string[]{

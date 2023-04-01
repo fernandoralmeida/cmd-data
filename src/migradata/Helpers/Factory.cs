@@ -2,7 +2,7 @@ using migradata.Interfaces;
 
 namespace migradata.Helpers;
 
-public static class IoC
+public static class Factory
 {
     public static IData Data(TServer server)
     {
