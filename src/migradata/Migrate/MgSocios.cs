@@ -46,7 +46,7 @@ public static class MgSocios
                 var _tasks = new List<Task>();
                 var _lists = new List<IEnumerable<MSocio>>();
 
-                int parts = 8;
+                int parts = Cpu.Count;
                 int size = (_list.Count() / parts) + 1;
 
                 for (int p = 0; p < parts; p++)

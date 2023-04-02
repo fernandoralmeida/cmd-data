@@ -18,7 +18,7 @@ public class NormalizeFiles
                 _listfiles.Add(file);
 
 
-        int parts = 8;
+        int parts = Cpu.Count;
         int size = (_listfiles.Count / parts) + 1;
 
         for (int i = 0; i < parts; i++)
