@@ -1,6 +1,6 @@
 CREATE TABLE Cnaes (
     Codigo VARCHAR(10) NULL,
-    Descricao VARCHAR(8000) NULL
+    Descricao TEXT NULL
 );
 
 CREATE TABLE Empresas (
@@ -25,8 +25,8 @@ CREATE TABLE Estabelecimentos (
     NomeCidadeExterior VARCHAR(255) NULL,
     Pais VARCHAR(5) NULL,
     DataInicioAtividade VARCHAR(10) NULL,
-    CnaeFiscalPrincipal VARCHAR(255) NULL,
-    CnaeFiscalSecundaria VARCHAR(8000) NULL,
+    CnaeFiscalPrincipal VARCHAR(10) NULL,
+    CnaeFiscalSecundaria TEXT NULL,
     TipoLogradouro VARCHAR(255) NULL,
     Logradouro VARCHAR(255) NULL,
     Numero VARCHAR(255) NULL,
@@ -48,27 +48,27 @@ CREATE TABLE Estabelecimentos (
 
 CREATE TABLE MotivoSituacaoCadastral (
     Codigo VARCHAR(10) NULL,
-    Descricao VARCHAR(8000) NULL
+    Descricao TEXT NULL
 );
 
 CREATE TABLE Municipios (
     Codigo VARCHAR(10) NULL,
-    Descricao VARCHAR(8000) NULL
+    Descricao TEXT NULL
 );
 
 CREATE TABLE NaturezaJuridica (
     Codigo VARCHAR(10) NULL,
-    Descricao VARCHAR(8000) NULL
+    Descricao TEXT NULL
 );
 
 CREATE TABLE Paises (
     Codigo VARCHAR(10) NULL,
-    Descricao VARCHAR(8000) NULL
+    Descricao TEXT NULL
 );
 
 CREATE TABLE QualificacaoSocios (
     Codigo VARCHAR(10) NULL,
-    Descricao VARCHAR(8000) NULL
+    Descricao TEXT NULL
 );
 
 CREATE TABLE Simples (
@@ -85,7 +85,7 @@ CREATE TABLE Socios (
     CNPJBase VARCHAR(10) NULL,
     IdentificadorSocio VARCHAR(2) NULL,
     NomeRazaoSocio VARCHAR(255) NULL,
-    CnpjCpfSocio VARCHAR(50) NULL,
+    CnpjCpfSocio VARCHAR(15) NULL,
     QualificacaoSocio VARCHAR(4) NULL,
     DataEntradaSociedade VARCHAR(10) NULL,
     Pais VARCHAR(5) NULL,
