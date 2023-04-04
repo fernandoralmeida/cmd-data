@@ -10,6 +10,9 @@ public static class CreateTables
 
             if (server == TServer.MySql)
                 await new MySql.Data().WriteAsync(ScritpDB());
+
+            if (server == TServer.PostgreSql)
+                await  new Postgres.Data().WriteAsync(ScritpDB());
         });
 
 

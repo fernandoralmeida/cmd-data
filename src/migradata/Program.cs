@@ -8,7 +8,7 @@ class Program
         Log.Storage("Starting System");
         while (true)
         {
-            Thread.Sleep(3000);
+            Thread.Sleep(1000);
             Console.WriteLine("MigraData V1.0");
             Console.WriteLine("Choose Options!");
             Console.WriteLine("----------");
@@ -16,8 +16,9 @@ class Program
             Console.WriteLine("2. Migrate To MySql");
             Console.WriteLine("3. Create In SqlServer");
             Console.WriteLine("4. Create In MySql");
+            Console.WriteLine("5. Create In PostgreSQL");
             Console.WriteLine("----------");
-            Console.WriteLine("5. Close");
+            Console.WriteLine("6. Close");
 
             string input = Console.ReadLine()!;
             int choice = int.Parse(input);
@@ -78,6 +79,10 @@ class Program
                     await Log.Write(Log.StorageLog!);
                     break;
                 case 5:
+                    Helpers.DataBase.CreateInPostgreSql();
+                    await Helpers.CreateTables.StartAsync(TServer.PostgreSql);
+                    break;
+                case 6:
                     Log.Storage("Closing App...");
                     return;
                 default:

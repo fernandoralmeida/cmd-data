@@ -1,5 +1,6 @@
 using System.Data.SqlClient;
 using MySql.Data.MySqlClient;
+using Npgsql;
 
 namespace migradata.Helpers;
 
@@ -23,11 +24,11 @@ public static class DataBase
             {
                 cmd = new SqlCommand($"CREATE DATABASE {SqlCommands.DataBaseName}", connection);
                 if (cmd.ExecuteNonQuery() < 1)
-                    Console.WriteLine($"{SqlCommands.DataBaseName} successfully created!");
-            }            
+                    Log.Storage($"{SqlCommands.DataBaseName} successfully created!");
+            }
 
             connection.Close();
-        }        
+        }
     }
 
     public static void CreateInMySql()
@@ -38,9 +39,43 @@ public static class DataBase
 
         MySqlCommand command = new MySqlCommand($"CREATE DATABASE IF NOT EXISTS {SqlCommands.DataBaseName};", connection);
         if (command.ExecuteNonQuery() == 1)
-            Console.WriteLine($"{SqlCommands.DataBaseName} successfully created!");
+            Log.Storage($"{SqlCommands.DataBaseName} successfully created!");
 
         connection.Close();
+    }
+
+    public static void CreateInPostgreSql()
+    {
+        try
+        {
+            using (var conn = new NpgsqlConnection(SqlCommands.ConnectionString_PostgreSql))
+            {
+                conn.Open();
+                Log.Storage($"{SqlCommands.DataBaseName} OK!");
+            }
+        }
+        catch
+        {
+            try
+            {
+                using (var conn = new NpgsqlConnection(Environment.GetEnvironmentVariable("postgresql_default")))
+                {
+                    conn.Open();
+                    using (var cmd = new NpgsqlCommand($"CREATE DATABASE {SqlCommands.DataBaseName}", conn))
+                    {
+                        cmd.ExecuteScalar();
+                        Log.Storage($"{SqlCommands.DataBaseName} successfully created!");
+                    }
+
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Storage($"{ex.Message}: Database OK!");
+            }
+
+        }
+
     }
 
 }
