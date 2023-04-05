@@ -8,6 +8,10 @@ public static class Factory
     {
         if (server == TServer.SqlServer)
             return new SqlServer.Data();
+
+        else if (server == TServer.PostgreSql)
+            return new Postgres.Data();    
+            
         else
             return new MySql.Data();
     }
