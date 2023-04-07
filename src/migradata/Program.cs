@@ -21,7 +21,10 @@ class Program
             Console.WriteLine("5 Create In PostgreSQL");
             Console.WriteLine("6 Migrate To PostgreSQL");
             Console.WriteLine("------------------------");
-            Console.WriteLine("7 Close");
+            Console.WriteLine("7 Using MongoDB");
+            Console.WriteLine("8 Migrate To MongoDB");
+            Console.WriteLine("------------------------");
+            Console.WriteLine("9 Close");
 
             string input = Console.ReadLine()!;
             int choice = int.Parse(input);
@@ -47,8 +50,15 @@ class Program
                     break;
                 case 6:
                     await Container.Execute(TServer.PostgreSql);
-                    return;
+                    break;
                 case 7:
+                    await new MongoDB.Create().DatabaseIfNotExists(SqlCommands.DataBaseName, "estabelecimentos");
+                    break;
+                case 8:
+                    await MongoDB.Collections.Estabelecimentos(MongoDB.TCollection.Estabelecimentos);
+                    await MongoDB.Collections.Empresas(MongoDB.TCollection.Empresas);
+                    break;
+                case 9:
                     Log.Storage("Closing App...");
                     return;
                 default:
