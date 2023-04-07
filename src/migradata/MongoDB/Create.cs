@@ -11,7 +11,7 @@ public class Create
     => await Task.Run(() =>
     {
 
-        var client = new MongoClient("mongodb://192.168.0.60:27017");
+        var client = new MongoClient("mongodb://127.0.0.1:27017");
         var dbList = client.ListDatabases().ToList();
 
         bool databaseExists = dbList.Any(db => db.Contains(databaseName.ToLower()));

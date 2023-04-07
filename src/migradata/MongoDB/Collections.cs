@@ -58,7 +58,7 @@ public static class Collections
                     _tasks.Add(Task.Run(async () =>
                     {
                         var i = 0;
-                        var client = new MongoClient("mongodb://192.168.0.60:27017");
+                        var client = new MongoClient("mongodb://127.0.0.1:27017");
                         var _data = client.GetDatabase(SqlCommands.DataBaseName.ToLower());
                         var _estabelecimento = _data.GetCollection<MEstabelecimento>(collection.ToString().ToLower());
                         await _estabelecimento.InsertManyAsync(rows);
@@ -73,7 +73,7 @@ public static class Collections
                 Log.Storage($"Read: {c1} | Migrated: {c2} | Time: {_innertimer.Elapsed.ToString("hh\\:mm\\:ss")}");
             }
             _timer.Stop();
-            var client = new MongoClient("mongodb://192.168.0.60:27017");
+            var client = new MongoClient("mongodb://127.0.0.1:27017");
             var _data = client.GetDatabase(SqlCommands.DataBaseName.ToLower());
             var _collection = _data.GetCollection<BsonDocument>(collection.ToString().ToLower());
             c3 = _collection.CountDocuments(FilterDefinition<BsonDocument>.Empty);
@@ -93,7 +93,7 @@ public static class Collections
         int c2 = 0;
         long c3 = 0;
 
-        var _timer = new Stopwatch();   
+        var _timer = new Stopwatch();
         _timer.Start();
 
         try
@@ -116,7 +116,7 @@ public static class Collections
                     }
                 }
 
-                var _mongo = new MongoClient("mongodb://192.168.0.60:27017");
+                var _mongo = new MongoClient("mongodb://127.0.0.1:27017");
                 var _db = _mongo.GetDatabase(SqlCommands.DataBaseName.ToLower());
                 var _estabele = _db.GetCollection<MEstabelecimento>(TCollection.Estabelecimentos.ToString().ToLower());
                 var projection = Builders<MEstabelecimento>.Projection.Include("CNPJBase").Exclude("_id");
@@ -133,21 +133,26 @@ public static class Collections
 
                 Log.Storage($"Migrating: {_list.Count()} -> {parts} : {size}");
 
+                var _thread = 0;
+
                 foreach (var rows in _lists)
                     _tasks.Add(Task.Run(async () =>
                     {
+                        var _core = _thread++;
                         var i = 0;
-                        var client = new MongoClient("mongodb://192.168.0.60:27017");
+                        var client = new MongoClient("mongodb://127.0.0.1:27017");
                         var _data = client.GetDatabase(SqlCommands.DataBaseName.ToLower());
                         var _emp = _data.GetCollection<MEmpresa>(collection.ToString().ToLower());
                         var _emps = new List<MEmpresa>();
-                        foreach (var item in rows)
-                            foreach(var r in _cnpjs.Where(s => s == item.CNPJBase))
+
+                        foreach (var row in rows)
+                            foreach(var field in _cnpjs.Where(s => s["CNPJBase"] == row.CNPJBase))
                             {
-                                _emps.Add(item);
-                                i = rows.Count();
+                                _emps.Add(row);
+                                i++;
                                 c2 += i;
-                            };
+                                Console.WriteLine($"T:{_core} -> R:{i}");
+                            }                        
 
                         await _emp.InsertManyAsync(_emps);
                     }));
@@ -161,7 +166,7 @@ public static class Collections
 
             Log.Storage("Analyzing data!");
 
-            var client = new MongoClient("mongodb://192.168.0.60:27017");
+            var client = new MongoClient("mongodb://127.0.0.1:27017");
             var _data = client.GetDatabase(SqlCommands.DataBaseName.ToLower());
             var _collection = _data.GetCollection<BsonDocument>(collection.ToString().ToLower());
             c3 = _collection.CountDocuments(FilterDefinition<BsonDocument>.Empty);

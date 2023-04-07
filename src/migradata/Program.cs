@@ -55,7 +55,7 @@ class Program
                     await new MongoDB.Create().DatabaseIfNotExists(SqlCommands.DataBaseName, "estabelecimentos");
                     break;
                 case 8:
-                    await MongoDB.Collections.Estabelecimentos(MongoDB.TCollection.Estabelecimentos);
+                    //await MongoDB.Collections.Estabelecimentos(MongoDB.TCollection.Estabelecimentos);
                     await MongoDB.Collections.Empresas(MongoDB.TCollection.Empresas);
                     break;
                 case 9:
