@@ -133,28 +133,14 @@ public static class Collections
 
                 Log.Storage($"Migrating: {_list.Count()} -> {parts} : {size}");
 
-                var _thread = 0;
-
                 foreach (var rows in _lists)
                     _tasks.Add(Task.Run(async () =>
                     {
-                        var _core = _thread++;
-                        var i = 0;
                         var client = new MongoClient("mongodb://127.0.0.1:27017");
                         var _data = client.GetDatabase(SqlCommands.DataBaseName.ToLower());
                         var _emp = _data.GetCollection<MEmpresa>(collection.ToString().ToLower());
-                        var _emps = new List<MEmpresa>();
-
-                        foreach (var row in rows)
-                            foreach(var field in _cnpjs.Where(s => s["CNPJBase"] == row.CNPJBase))
-                            {
-                                _emps.Add(row);
-                                i++;
-                                c2 += i;
-                                Console.WriteLine($"T:{_core} -> R:{i}");
-                            }                        
-
-                        await _emp.InsertManyAsync(_emps);
+                        c2 += rows.Count();
+                        await _emp.InsertManyAsync(rows);
                     }));
 
                 await Task.WhenAll(_tasks);
