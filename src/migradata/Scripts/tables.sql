@@ -4,7 +4,7 @@ CREATE TABLE Cnaes (
 );
 
 CREATE TABLE Empresas (
-    CNPJBase VARCHAR(10) NULL,
+    CNPJBase VARCHAR(8) NULL,
     RazaoSocial VARCHAR(255) NULL,
     NaturezaJuridica VARCHAR(5) NULL,
     QualificacaoResponsavel VARCHAR(5) NULL,
@@ -42,7 +42,7 @@ CREATE TABLE Estabelecimentos (
     DDDFax VARCHAR(4) NULL,
     Fax VARCHAR(255) NULL,
     CorreioEletronico VARCHAR(255) NULL,
-    SituacaoEspecial VARCHAR(10) NULL,
+    SituacaoEspecial VARCHAR(50) NULL,
     DataSitucaoEspecial VARCHAR(10) NULL
 );
 
@@ -72,7 +72,7 @@ CREATE TABLE QualificacaoSocios (
 );
 
 CREATE TABLE Simples (
-    CNPJBase VARCHAR(10) NULL,
+    CNPJBase VARCHAR(8) NULL,
     OpcaoSimples VARCHAR(2) NULL,
     DataOpcaoSimples VARCHAR(10) NULL,
     DataExclusaoSimples VARCHAR(10) NULL,
@@ -82,7 +82,7 @@ CREATE TABLE Simples (
 );
 
 CREATE TABLE Socios (
-    CNPJBase VARCHAR(10) NULL,
+    CNPJBase VARCHAR(8) NULL,
     IdentificadorSocio VARCHAR(2) NULL,
     NomeRazaoSocio VARCHAR(255) NULL,
     CnpjCpfSocio VARCHAR(15) NULL,
