@@ -42,7 +42,7 @@ CREATE TABLE Estabelecimentos (
     DDDFax VARCHAR(4) NULL,
     Fax VARCHAR(255) NULL,
     CorreioEletronico VARCHAR(255) NULL,
-    SituacaoEspecial VARCHAR(10) NULL,
+    SituacaoEspecial VARCHAR(50) NULL,
     DataSitucaoEspecial VARCHAR(10) NULL
 );
 
