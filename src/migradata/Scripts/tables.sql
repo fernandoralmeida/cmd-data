@@ -1,6 +1,6 @@
 CREATE TABLE Cnaes (
     Codigo VARCHAR(10) NULL,
-    Descricao TEXT NULL
+    Descricao varchar(MAX) NULL
 );
 
 CREATE TABLE Empresas (
@@ -26,7 +26,7 @@ CREATE TABLE Estabelecimentos (
     Pais VARCHAR(5) NULL,
     DataInicioAtividade VARCHAR(10) NULL,
     CnaeFiscalPrincipal VARCHAR(10) NULL,
-    CnaeFiscalSecundaria TEXT NULL,
+    CnaeFiscalSecundaria varchar(MAX) NULL,
     TipoLogradouro VARCHAR(255) NULL,
     Logradouro VARCHAR(255) NULL,
     Numero VARCHAR(255) NULL,
@@ -48,27 +48,27 @@ CREATE TABLE Estabelecimentos (
 
 CREATE TABLE MotivoSituacaoCadastral (
     Codigo VARCHAR(2) NULL,
-    Descricao TEXT NULL
+    Descricao varchar(MAX) NULL
 );
 
 CREATE TABLE Municipios (
     Codigo VARCHAR(10) NULL,
-    Descricao TEXT NULL
+    Descricao varchar(MAX) NULL
 );
 
 CREATE TABLE NaturezaJuridica (
     Codigo VARCHAR(5) NULL,
-    Descricao TEXT NULL
+    Descricao varchar(MAX) NULL
 );
 
 CREATE TABLE Paises (
     Codigo VARCHAR(5) NULL,
-    Descricao TEXT NULL
+    Descricao varchar(MAX) NULL
 );
 
 CREATE TABLE QualificacaoSocios (
     Codigo VARCHAR(4) NULL,
-    Descricao TEXT NULL
+    Descricao varchar(MAX) NULL
 );
 
 CREATE TABLE Simples (
