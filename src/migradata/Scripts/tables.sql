@@ -42,12 +42,12 @@ CREATE TABLE Estabelecimentos (
     DDDFax VARCHAR(4) NULL,
     Fax VARCHAR(255) NULL,
     CorreioEletronico VARCHAR(255) NULL,
-    SituacaoEspecial VARCHAR(50) NULL,
+    SituacaoEspecial VARCHAR(10) NULL,
     DataSitucaoEspecial VARCHAR(10) NULL
 );
 
 CREATE TABLE MotivoSituacaoCadastral (
-    Codigo VARCHAR(10) NULL,
+    Codigo VARCHAR(2) NULL,
     Descricao TEXT NULL
 );
 
@@ -57,17 +57,17 @@ CREATE TABLE Municipios (
 );
 
 CREATE TABLE NaturezaJuridica (
-    Codigo VARCHAR(10) NULL,
+    Codigo VARCHAR(5) NULL,
     Descricao TEXT NULL
 );
 
 CREATE TABLE Paises (
-    Codigo VARCHAR(10) NULL,
+    Codigo VARCHAR(5) NULL,
     Descricao TEXT NULL
 );
 
 CREATE TABLE QualificacaoSocios (
-    Codigo VARCHAR(10) NULL,
+    Codigo VARCHAR(4) NULL,
     Descricao TEXT NULL
 );
 

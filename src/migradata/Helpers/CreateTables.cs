@@ -67,7 +67,7 @@ CREATE TABLE Estabelecimentos (
 );
 
 CREATE TABLE MotivoSituacaoCadastral (
-    Codigo VARCHAR(10) NULL,
+    Codigo VARCHAR(2) NULL,
     Descricao TEXT NULL
 );
 
@@ -77,17 +77,17 @@ CREATE TABLE Municipios (
 );
 
 CREATE TABLE NaturezaJuridica (
-    Codigo VARCHAR(10) NULL,
+    Codigo VARCHAR(5) NULL,
     Descricao TEXT NULL
 );
 
 CREATE TABLE Paises (
-    Codigo VARCHAR(10) NULL,
+    Codigo VARCHAR(5) NULL,
     Descricao TEXT NULL
 );
 
 CREATE TABLE QualificacaoSocios (
-    Codigo VARCHAR(10) NULL,
+    Codigo VARCHAR(4) NULL,
     Descricao TEXT NULL
 );
 
