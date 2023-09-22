@@ -59,7 +59,7 @@ public static class Collections
                     {
                         var i = 0;
                         var client = new MongoClient("mongodb://127.0.0.1:27017");
-                        var _data = client.GetDatabase(SqlCommands.DataBaseName.ToLower());
+                        var _data = client.GetDatabase(DataBase.MigraData_RFB.ToLower());
                         var _estabelecimento = _data.GetCollection<MEstabelecimento>(collection.ToString().ToLower());
                         await _estabelecimento.InsertManyAsync(rows);
                         i = rows.Count();
@@ -74,7 +74,7 @@ public static class Collections
             }
             _timer.Stop();
             var client = new MongoClient("mongodb://127.0.0.1:27017");
-            var _data = client.GetDatabase(SqlCommands.DataBaseName.ToLower());
+            var _data = client.GetDatabase(DataBase.MigraData_RFB.ToLower());
             var _collection = _data.GetCollection<BsonDocument>(collection.ToString().ToLower());
             c3 = _collection.CountDocuments(FilterDefinition<BsonDocument>.Empty);
             Log.Storage($"Read: {c1} | Migrated: {c3} | Time: {_timer.Elapsed.ToString("hh\\:mm\\:ss")}");
@@ -117,7 +117,7 @@ public static class Collections
                 }
 
                 var _mongo = new MongoClient("mongodb://127.0.0.1:27017");
-                var _db = _mongo.GetDatabase(SqlCommands.DataBaseName.ToLower());
+                var _db = _mongo.GetDatabase(DataBase.MigraData_RFB.ToLower());
                 var _estabele = _db.GetCollection<MEstabelecimento>(TCollection.Estabelecimentos.ToString().ToLower());
                 var projection = Builders<MEstabelecimento>.Projection.Include("CNPJBase").Exclude("_id");
                 var _cnpjs = await _estabele.Find(new BsonDocument()).Project(projection).ToListAsync();
@@ -137,7 +137,7 @@ public static class Collections
                     _tasks.Add(Task.Run(async () =>
                     {
                         var client = new MongoClient("mongodb://127.0.0.1:27017");
-                        var _data = client.GetDatabase(SqlCommands.DataBaseName.ToLower());
+                        var _data = client.GetDatabase(DataBase.MigraData_RFB.ToLower());
                         var _emp = _data.GetCollection<MEmpresa>(collection.ToString().ToLower());
                         c2 += rows.Count();
                         await _emp.InsertManyAsync(rows);
@@ -153,7 +153,7 @@ public static class Collections
             Log.Storage("Analyzing data!");
 
             var client = new MongoClient("mongodb://127.0.0.1:27017");
-            var _data = client.GetDatabase(SqlCommands.DataBaseName.ToLower());
+            var _data = client.GetDatabase(DataBase.MigraData_RFB.ToLower());
             var _collection = _data.GetCollection<BsonDocument>(collection.ToString().ToLower());
             c3 = _collection.CountDocuments(FilterDefinition<BsonDocument>.Empty);
 

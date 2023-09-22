@@ -1,3 +1,4 @@
+using System.Data;
 using System.Diagnostics;
 using System.Text;
 using migradata.Helpers;
@@ -70,14 +71,14 @@ public static class MgSocios
                 await Task.WhenAll(_tasks);
 
                 _innertimer.Stop();
-                
+
                 Log.Storage($"Read: {c1} | Migrated: {c2} | Time: {_innertimer.Elapsed.ToString("hh\\:mm\\:ss")}");
             }
             Log.Storage("Analyzing data!");
 
             var db = Factory.Data(server);
-            await db.WriteAsync(SqlCommands.DeleteNotExist("Socios", "Empresas"));
-            await db.ReadAsync(SqlCommands.SelectCommand("Socios"));
+            await db.WriteAsync(SqlCommands.DeleteNotExist("Socios", "Empresas"), DataBase.MigraData_RFB);
+            await db.ReadAsync(SqlCommands.SelectCommand("Socios"), DataBase.MigraData_RFB);
             c3 = db.CNPJBase!.Count();
 
             _timer.Stop();
@@ -88,6 +89,47 @@ public static class MgSocios
             Log.Storage($"Error: {ex.Message}");
         }
     });
+
+    public static async Task ToVpsAsync(TServer server)
+        => await Task.Run(async () =>
+        {
+            var _timer = new Stopwatch();
+            _timer.Start();
+
+            int i = 0;
+            var _select = SqlCommands.SelectCommand("Socios");
+            var _insert = SqlCommands.InsertCommand("Socios", SqlCommands.Fields_Socios, SqlCommands.Values_Socios);
+
+            var _sqlserver = Factory.Data(TServer.SqlServer);
+
+            var _dataVPS = Factory.Data(server);
+
+            foreach (DataRow row in _sqlserver.ReadAsync(_select, DataBase.Sim_RFB_db20210001).Result.Rows)
+                try
+                {
+                    _dataVPS.ClearParameters();
+                    _dataVPS.AddParameters("@CNPJBase", row[0]);
+                    _dataVPS.AddParameters("@IdentificadorSocio", row[1]);
+                    _dataVPS.AddParameters("@NomeRazaoSocio", row[2]);
+                    _dataVPS.AddParameters("@CnpjCpfSocio", row[3]);
+                    _dataVPS.AddParameters("@QualificacaoSocio", row[4]);
+                    _dataVPS.AddParameters("@DataEntradaSociedade", row[5]);
+                    _dataVPS.AddParameters("@Pais", row[6]);
+                    _dataVPS.AddParameters("@RepresentanteLegal", row[7]);
+                    _dataVPS.AddParameters("@NomeRepresentante", row[8]);
+                    _dataVPS.AddParameters("@QualificacaoRepresentanteLegal", row[9]);
+                    _dataVPS.AddParameters("@FaixaEtaria", row[10]);
+                    await _dataVPS.WriteAsync(_insert, DataBase.IndicadoresNET);
+                    i++;
+                }
+                catch (Exception ex)
+                {
+                    Log.Storage("Error: " + ex.Message);
+                }
+
+            _timer.Stop();
+            Log.Storage($"Read: {i} | Migrated: {i} | Time: {_timer.Elapsed.ToString("hh\\:mm\\:ss")}");
+        });
 
     private static MSocio DoFields(string[] fields)
     => new MSocio()
@@ -104,7 +146,7 @@ public static class MgSocios
         QualificacaoRepresentanteLegal = fields[9].ToString().Replace("\"", "").Trim(),
         FaixaEtaria = fields[10].ToString().Replace("\"", "").Trim()
     };
-    
+
     private static async Task DoInsert(string sqlcommand, IData data, MSocio model)
     {
         data.ClearParameters();
@@ -119,7 +161,7 @@ public static class MgSocios
         data.AddParameters("@NomeRepresentante", model.NomeRepresentante!);
         data.AddParameters("@QualificacaoRepresentanteLegal", model.QualificacaoRepresentanteLegal!);
         data.AddParameters("@FaixaEtaria", model.FaixaEtaria!);
-        await data.WriteAsync(sqlcommand);        
+        await data.WriteAsync(sqlcommand, DataBase.MigraData_RFB);
     }
 
 }

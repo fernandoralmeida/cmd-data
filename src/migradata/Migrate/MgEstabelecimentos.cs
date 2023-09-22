@@ -4,6 +4,7 @@ using migradata.Helpers;
 using migradata.SqlServer;
 using migradata.Models;
 using migradata.Interfaces;
+using System.Data;
 
 namespace migradata.Migrate;
 
@@ -80,7 +81,7 @@ public static class MgEstabelecimentos
             }
             _timer.Stop();
             var db = Factory.Data(server);
-            await db.ReadAsync(SqlCommands.SelectCommand("Estabelecimentos"));
+            await db.ReadAsync(SqlCommands.SelectCommand("Estabelecimentos"), DataBase.MigraData_RFB);
             c3 = db.CNPJBase!.Count();
             Log.Storage($"Read: {c1} | Migrated: {c3} | Time: {_timer.Elapsed.ToString("hh\\:mm\\:ss")}");
         }
@@ -88,6 +89,67 @@ public static class MgEstabelecimentos
         {
             Log.Storage($"Erro: {ex.Message}");
         }
+    });
+
+    public static async Task ToVpsAsync(TServer server)
+    => await Task.Run(async () =>
+    {
+
+        var _timer = new Stopwatch();
+        _timer.Start();
+
+        int i = 0;
+        var _select = SqlCommands.SelectCommand("Estabelecimentos");
+        var _insert = SqlCommands.InsertCommand("Estabelecimentos", SqlCommands.Fields_Estabelecimentos, SqlCommands.Values_Estabelecumentos);
+
+        var _sqlserver = Factory.Data(TServer.SqlServer);
+
+        var _dataVPS = Factory.Data(server);
+
+        foreach (DataRow row in _sqlserver.ReadAsync(_select, DataBase.Sim_RFB_db20210001).Result.Rows)
+            try
+            {
+                _dataVPS.ClearParameters();
+                _dataVPS.AddParameters("@CNPJBase", row[0]);
+                _dataVPS.AddParameters("@CNPJOrdem", row[1]);
+                _dataVPS.AddParameters("@CNPJDV", row[2]);
+                _dataVPS.AddParameters("@IdentificadorMatrizFilial", row[3]);
+                _dataVPS.AddParameters("@NomeFantasia", row[4]);
+                _dataVPS.AddParameters("@SituacaoCadastral", row[5]);
+                _dataVPS.AddParameters("@DataSituacaoCadastral", row[6]);
+                _dataVPS.AddParameters("@MotivoSituacaoCadastral", row[7]);
+                _dataVPS.AddParameters("@NomeCidadeExterior", row[8]);
+                _dataVPS.AddParameters("@Pais", row[9]);
+                _dataVPS.AddParameters("@DataInicioAtividade", row[10]);
+                _dataVPS.AddParameters("@CnaeFiscalPrincipal", row[11]);
+                _dataVPS.AddParameters("@CnaeFiscalSecundaria", row[12]);
+                _dataVPS.AddParameters("@TipoLogradouro", row[13]);
+                _dataVPS.AddParameters("@Logradouro", row[14]);
+                _dataVPS.AddParameters("@Numero", row[15]);
+                _dataVPS.AddParameters("@Complemento", row[16]);
+                _dataVPS.AddParameters("@Bairro", row[17]);
+                _dataVPS.AddParameters("@CEP", row[18]);
+                _dataVPS.AddParameters("@UF", row[19]);
+                _dataVPS.AddParameters("@Municipio", row[20]);
+                _dataVPS.AddParameters("@DDD1", row[21]);
+                _dataVPS.AddParameters("@Telefone1", row[22]);
+                _dataVPS.AddParameters("@DDD2", row[23]);
+                _dataVPS.AddParameters("@Telefone2", row[24]);
+                _dataVPS.AddParameters("@DDDFax", row[25]);
+                _dataVPS.AddParameters("@Fax", row[26]);
+                _dataVPS.AddParameters("@CorreioEletronico", row[27]);
+                _dataVPS.AddParameters("@SituacaoEspecial", row[28]);
+                _dataVPS.AddParameters("@DataSitucaoEspecial", row[29]);
+                await _dataVPS.WriteAsync(_insert, DataBase.IndicadoresNET);
+                i++;
+            }
+            catch (Exception ex)
+            {
+                Log.Storage("Error: " + ex.Message);
+            }
+
+        _timer.Stop();
+        Log.Storage($"Read: {i} | Migrated: {i} | Time: {_timer.Elapsed.ToString("hh\\:mm\\:ss")}");
     });
 
     private static MEstabelecimento DoFields(string[] fields)
@@ -159,7 +221,7 @@ public static class MgEstabelecimentos
         data.AddParameters("@SituacaoEspecial", est.SituacaoEspecial!);
         data.AddParameters("@DataSitucaoEspecial", est.DataSitucaoEspecial!);
         //await Task.Run(() => { });
-        await data.WriteAsync(sqlcommand);
+        await data.WriteAsync(sqlcommand, DataBase.MigraData_RFB);
     }
 
 }

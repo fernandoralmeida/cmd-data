@@ -1,4 +1,6 @@
 ﻿using migradata.Helpers;
+using migradata.MySql;
+using MongoDB.Driver.Core.Operations;
 
 namespace migradata;
 class Program
@@ -24,41 +26,48 @@ class Program
             Console.WriteLine("7 Using MongoDB");
             Console.WriteLine("8 Migrate To MongoDB");
             Console.WriteLine("------------------------");
-            Console.WriteLine("9 Close");
+            Console.WriteLine("9 Export do VPS MariaDB");
+            Console.WriteLine("------------------------");
+            Console.WriteLine("10 Close");
 
             string input = Console.ReadLine()!;
             int choice = int.Parse(input);
             switch (choice)
             {
                 case 1:
-                    Helpers.DataBase.CreateInSqlServer();
+                    Helpers.DataBase.CreateInSqlServer(DataBase.MigraData_RFB);
                     await Helpers.CreateTables.StartAsync(TServer.SqlServer);
                     break;
                 case 2:
                     await Container.Execute(TServer.SqlServer);
                     break;
                 case 3:
-                    Helpers.DataBase.CreateInMySql();
+                    Helpers.DataBase.CreateInMySql(DataBase.MigraData_RFB);
                     await Helpers.CreateTables.StartAsync(TServer.MySql);
                     break;
                 case 4:
                     await Container.Execute(TServer.MySql);
                     break;
                 case 5:
-                    Helpers.DataBase.CreateInPostgreSql();
+                    Helpers.DataBase.CreateInPostgreSql(DataBase.MigraData_RFB);
                     await Helpers.CreateTables.StartAsync(TServer.PostgreSql);
                     break;
                 case 6:
                     await Container.Execute(TServer.PostgreSql);
                     break;
                 case 7:
-                    await new MongoDB.Create().DatabaseIfNotExists(SqlCommands.DataBaseName, "estabelecimentos");
+                    await new MongoDB.Create().DatabaseIfNotExists(DataBase.MigraData_RFB, "estabelecimentos");
                     break;
                 case 8:
                     //await MongoDB.Collections.Estabelecimentos(MongoDB.TCollection.Estabelecimentos);
                     await MongoDB.Collections.Empresas(MongoDB.TCollection.Empresas);
                     break;
                 case 9:
+                    DataBase.CreateInMySql(DataBase.IndicadoresNET);
+                    await CreateTables.ToVPS(DataBase.IndicadoresNET);
+                    await Container.ExecuteToVPS(TServer.MySql);
+                    return;
+                case 10:
                     Log.Storage("Closing App...");
                     return;
                 default:

@@ -1,3 +1,4 @@
+using System.Data;
 using System.Diagnostics;
 using System.Text;
 using migradata.Helpers;
@@ -72,14 +73,14 @@ public static class MgSimples
                 _innertimer.Stop();
                 Log.Storage($"Read: {c1} | Migrated: {c2} | Time: {_innertimer.Elapsed.ToString("hh\\:mm\\:ss")}");
             }
-           
+
             Log.Storage("Analyzing data!");
-            
+
             var db = Factory.Data(server);
-            await db.WriteAsync(SqlCommands.DeleteNotExist("Simples", "Empresas"));
-            await db.ReadAsync(SqlCommands.SelectCommand("Simples"));
+            await db.WriteAsync(SqlCommands.DeleteNotExist("Simples", "Empresas"), DataBase.MigraData_RFB);
+            await db.ReadAsync(SqlCommands.SelectCommand("Simples"), DataBase.MigraData_RFB);
             c3 = db.CNPJBase!.Count();
-            
+
             _timer.Stop();
             Log.Storage($"Read: {c1} | Migrated: {c3} | Time: {_timer.Elapsed.ToString("hh\\:mm\\:ss")}");
         }
@@ -88,6 +89,43 @@ public static class MgSimples
             Log.Storage($"Error: {ex.Message}");
         }
     });
+
+    public static async Task ToVpsAsync(TServer server)
+        => await Task.Run(async () =>
+        {
+            var _timer = new Stopwatch();
+            _timer.Start();
+
+            int i = 0;
+            var _select = SqlCommands.SelectCommand("Simples");
+            var _insert = SqlCommands.InsertCommand("Simples", SqlCommands.Fields_Simples, SqlCommands.Values_Simples);
+
+            var _sqlserver = Factory.Data(TServer.SqlServer);
+
+            var _dataVPS = Factory.Data(server);
+
+            foreach (DataRow row in _sqlserver.ReadAsync(_select, DataBase.Sim_RFB_db20210001).Result.Rows)
+                try
+                {
+                    _dataVPS.ClearParameters();
+                    _dataVPS.AddParameters("@CNPJBase", row[0]);
+                    _dataVPS.AddParameters("@OpcaoSimples", row[1]);
+                    _dataVPS.AddParameters("@DataOpcaoSimples", row[2]);
+                    _dataVPS.AddParameters("@DataExclusaoSimples", row[3]);
+                    _dataVPS.AddParameters("@OpcaoMEI", row[4]);
+                    _dataVPS.AddParameters("@DataOpcaoMEI", row[5]);
+                    _dataVPS.AddParameters("@DataExclusaoMEI", row[6]);
+                    await _dataVPS.WriteAsync(_insert, DataBase.IndicadoresNET);
+                    i++;
+                }
+                catch (Exception ex)
+                {
+                    Log.Storage("Error: " + ex.Message);
+                }
+
+            _timer.Stop();
+            Log.Storage($"Read: {i} | Migrated: {i} | Time: {_timer.Elapsed.ToString("hh\\:mm\\:ss")}");
+        });
 
     private static MSimples DoFields(string[] fields)
     => new MSimples()
@@ -100,7 +138,7 @@ public static class MgSimples
         DataOpcaoMEI = fields[5].ToString().Replace("\"", "").Trim(),
         DataExclusaoMEI = fields[6].ToString().Replace("\"", "").Trim()
     };
-    
+
     private static async Task DoInsert(string sqlcommand, IData data, MSimples model)
     {
         data.ClearParameters();
@@ -111,7 +149,7 @@ public static class MgSimples
         data.AddParameters("@OpcaoMEI", model.OpcaoMEI!);
         data.AddParameters("@DataOpcaoMEI", model.DataOpcaoMEI!);
         data.AddParameters("@DataExclusaoMEI", model.DataExclusaoMEI!);
-        await data.WriteAsync(sqlcommand);        
+        await data.WriteAsync(sqlcommand, DataBase.MigraData_RFB);
     }
 
 }

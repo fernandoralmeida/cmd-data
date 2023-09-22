@@ -8,8 +8,6 @@ namespace migradata.SqlServer;
 public class Data : IData
 {
 
-    private readonly string _connectionString = SqlCommands.ConnectionString_SqlServer;
-
     private SqlParameterCollection ParameterCollection = new SqlCommand().Parameters;
 
     public void ClearParameters()
@@ -24,10 +22,10 @@ public class Data : IData
 
     public IEnumerable<string>? CNPJBase { get; set; }
 
-    public async Task ReadAsync(string querySelect)
+    public async Task<DataTable> ReadAsync(string querySelect, string dbname)
      => await Task.Run(() =>
         {
-            using (SqlConnection connection = new SqlConnection(_connectionString))
+            using (SqlConnection connection = new ($"{DataBase.DataSource_SqlServer}Database={dbname};"))
             {
                 try
                 {
@@ -43,27 +41,24 @@ public class Data : IData
                         _command.Parameters.Add(new SqlParameter(p.ParameterName, p.Value));
                     }
 
-                    SqlDataReader reader = _command.ExecuteReader();
+                    DataTable _table = new();
 
-                    var _list = new List<string>();
-                    while (reader.Read())
-                    {
-                        _list.Add(reader[0].ToString()!);
-                    }
-                    CNPJBase = _list;
-                    reader.Close();
+                    new SqlDataAdapter(_command).Fill(_table);
+
+                    return _table;
                 }
                 catch (Exception ex)
                 {
                     Log.Storage("Error: " + ex.Message);
+                    return new DataTable();
                 }
             }
         });
 
-    public async Task WriteAsync(string queryWrite)
+    public async Task WriteAsync(string queryWrite, string dbname)
         => await Task.Run(() =>
             {
-                using (SqlConnection connection = new SqlConnection(_connectionString))
+                using (SqlConnection connection = new ($"{DataBase.DataSource_SqlServer}Database={dbname};"))
                 {
                     try
                     {
@@ -87,9 +82,9 @@ public class Data : IData
                 }
             });
 
-    public void CheckDB()
+    public void CheckDB(string dbname)
     {
-        using (SqlConnection connection = new SqlConnection(_connectionString))
+        using (SqlConnection connection = new ($"{DataBase.DataSource_SqlServer}Database={dbname};"))
         {
             try
             {

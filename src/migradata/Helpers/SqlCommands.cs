@@ -2,17 +2,6 @@ namespace migradata.Helpers;
 
 public static class SqlCommands
 {
-    public static readonly string DataBaseName = @"MigraData_RFB";
-
-    public static readonly string ConnectionString_SqlServer
-        = Environment.GetEnvironmentVariable("connectionstring_migradata_sqlserver")!;
-
-    public static string ConnectionString_MySql
-        = Environment.GetEnvironmentVariable("connectionstring_migradata_mysql")!;
-
-    public static string ConnectionString_PostgreSql
-        = Environment.GetEnvironmentVariable("connectionstring_migradata_postgresql")!;
-
     public static readonly string Fields_Estabelecimentos = @"(CNPJBase,
                                         CNPJOrdem,
                                         CNPJDV,
@@ -94,6 +83,6 @@ public static class SqlCommands
         => $"DELETE FROM {tablename}";
 
     public static string SelectCommand(string tablename)
-        => $"SELECT CNPJBase FROM {tablename}";
+        => $"SELECT * FROM {tablename}";
 
 }

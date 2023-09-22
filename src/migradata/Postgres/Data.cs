@@ -7,8 +7,6 @@ namespace migradata.Postgres;
 
 public class Data : IData
 {
-    private readonly string _connectionString = SqlCommands.ConnectionString_PostgreSql;
-
     private NpgsqlParameterCollection ParameterCollection = new NpgsqlCommand().Parameters;
 
     public void ClearParameters()
@@ -23,10 +21,10 @@ public class Data : IData
 
     public IEnumerable<string>? CNPJBase { get; set; }
 
-    public async Task ReadAsync(string query)
+    public async Task<DataTable> ReadAsync(string query, string dbname)
      => await Task.Run(() =>
         {
-            using (NpgsqlConnection connection = new NpgsqlConnection(_connectionString))
+            using (NpgsqlConnection connection = new ($"{DataBase.DataSource_MySQL}Database={dbname};"))
             {
                 try
                 {
@@ -42,27 +40,24 @@ public class Data : IData
                         _command.Parameters.Add(new NpgsqlParameter(p.ParameterName, p.Value));
                     }
 
-                    NpgsqlDataReader reader = _command.ExecuteReader();
+                    DataTable _table = new();
 
-                    var _list = new List<string>();
-                    while (reader.Read())
-                    {
-                        _list.Add(reader[0].ToString()!);
-                    }
-                    CNPJBase = _list;
-                    reader.Close();
+                    new NpgsqlDataAdapter(_command).Fill(_table);
+
+                    return _table;
                 }
                 catch (Exception ex)
                 {
                     Log.Storage("Error: " + ex.Message);
+                    return new DataTable();
                 }
             }
         });
 
-    public async Task WriteAsync(string query)
+    public async Task WriteAsync(string query, string dbname)
         => await Task.Run(() =>
             {
-                using (NpgsqlConnection connection = new NpgsqlConnection(_connectionString))
+                using (NpgsqlConnection connection = new ($"{DataBase.DataSource_MySQL}Database={dbname};"))
                 {
                     try
                     {
@@ -86,9 +81,9 @@ public class Data : IData
                 }
             });
 
-    public void CheckDB()
+    public void CheckDB(string dbname)
     {
-        using (NpgsqlConnection connection = new NpgsqlConnection(_connectionString))
+        using (NpgsqlConnection connection = new ($"{DataBase.DataSource_MySQL}Database={dbname};"))
         {
             try
             {

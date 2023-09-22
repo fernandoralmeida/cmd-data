@@ -18,8 +18,8 @@ public class Create
 
         if (!databaseExists)
         {
-            var database = client.GetDatabase(SqlCommands.DataBaseName.ToLower());
-            Log.Storage($"{SqlCommands.DataBaseName} successfully created!");
+            var database = client.GetDatabase(DataBase.MigraData_RFB.ToLower());
+            Log.Storage($"{DataBase.MigraData_RFB} successfully created!");
             var collectionExists = database
                 .ListCollections(
                 new ListCollectionsOptions

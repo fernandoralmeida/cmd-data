@@ -1,3 +1,5 @@
+using System.Data;
+
 namespace migradata.Interfaces;
 
 public interface IData
@@ -5,7 +7,7 @@ public interface IData
     IEnumerable<string>? CNPJBase { get; set; }
     void ClearParameters();
     void AddParameters(string parameterName, object parameterValue);
-    Task ReadAsync(string query);
-    Task WriteAsync(string query);
-    void CheckDB();
+    Task<DataTable> ReadAsync(string query, string dbname);
+    Task WriteAsync(string query, string dbname);
+    void CheckDB(string dbname);
 }

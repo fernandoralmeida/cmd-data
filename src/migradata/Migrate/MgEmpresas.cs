@@ -1,3 +1,4 @@
+using System.Data;
 using System.Diagnostics;
 using System.Text;
 using migradata.Helpers;
@@ -15,7 +16,6 @@ public static class MgEmpresas
 
         int c1 = 0;
         int c2 = 0;
-        int c3 = 0;
 
         var _insert = SqlCommands.InsertCommand("Empresas",
                         SqlCommands.Fields_Empresas,
@@ -29,7 +29,7 @@ public static class MgEmpresas
 
             foreach (var file in await new NormalizeFiles().DoListAync(@"C:\data", ".EMPRECSV"))
             {
-                var _innertimer = new Stopwatch();    
+                var _innertimer = new Stopwatch();
                 _innertimer.Start();
                 var _list = new List<MEmpresa>();
                 Log.Storage($"Reading File {Path.GetFileName(file)}");
@@ -69,26 +69,64 @@ public static class MgEmpresas
                     }));
 
                 await Task.WhenAll(_tasks);
-                
+
                 _innertimer.Stop();
 
                 Log.Storage($"Read: {c1} | Migrated: {c2} | Time: {_innertimer.Elapsed.ToString("hh\\:mm\\:ss")}");
             }
 
             Log.Storage("Analyzing data!");
-            
+
             var db = Factory.Data(server);
-            await db.WriteAsync(SqlCommands.DeleteNotExist("Empresas", "Estabelecimentos"));
-            await db.ReadAsync(SqlCommands.SelectCommand("Empresas"));
-            c3 = db.CNPJBase!.Count();
-            
+            await db.WriteAsync(SqlCommands.DeleteNotExist("Empresas", "Estabelecimentos"), DataBase.MigraData_RFB);
+            var _cont = await db.ReadAsync(SqlCommands.SelectCommand("Empresas"), DataBase.MigraData_RFB);
+
             _timer.Stop();
-            Log.Storage($"Read: {c1} | Migrated: {c3} | Time: {_timer.Elapsed.ToString("hh\\:mm\\:ss")}");
+            Log.Storage($"Read: {c1} | Migrated: {_cont.Rows.Count} | Time: {_timer.Elapsed.ToString("hh\\:mm\\:ss")}");
         }
         catch (Exception ex)
         {
             Log.Storage($"Error: {ex.Message}");
         }
+    });
+
+
+    public static async Task ToVpsAsync(TServer server)
+    => await Task.Run(async () =>
+    {
+
+        var _timer = new Stopwatch();
+        _timer.Start();
+
+        int i = 0;
+        var _select = SqlCommands.SelectCommand("Empresas");
+        var _insert = SqlCommands.InsertCommand("Empresas", SqlCommands.Fields_Empresas, SqlCommands.Values_Empresas);
+
+        var _sqlserver = Factory.Data(TServer.SqlServer);
+
+        var _dataVPS = Factory.Data(server);
+
+        foreach (DataRow row in _sqlserver.ReadAsync(_select, DataBase.Sim_RFB_db20210001).Result.Rows)
+            try
+            {
+                _dataVPS.ClearParameters();
+                _dataVPS.AddParameters("@CNPJBase", row[0]);
+                _dataVPS.AddParameters("@RazaoSocial", row[1]);
+                _dataVPS.AddParameters("@NaturezaJuridica", row[2]);
+                _dataVPS.AddParameters("@QualificacaoResponsavel", row[3]);
+                _dataVPS.AddParameters("@CapitalSocial", row[4]);
+                _dataVPS.AddParameters("@PorteEmpresa", row[5]);
+                _dataVPS.AddParameters("@EnteFederativoResponsavel", row[6]);
+                await _dataVPS.WriteAsync(_insert, DataBase.IndicadoresNET);
+                i++;
+            }
+            catch (Exception ex)
+            {
+                Log.Storage("Error: " + ex.Message);
+            }
+
+        _timer.Stop();
+        Log.Storage($"Read: {i} | Migrated: {i} | Time: {_timer.Elapsed.ToString("hh\\:mm\\:ss")}");
     });
 
     private static MEmpresa DoFields(string[] fields)
@@ -102,7 +140,7 @@ public static class MgEmpresas
         PorteEmpresa = fields[5].ToString().Replace("\"", ""),
         EnteFederativoResponsavel = fields[6].ToString().Replace("\"", "")
     };
-    
+
     private static async Task DoInsert(string sqlcommand, IData data, MEmpresa emp)
     {
         data.ClearParameters();
@@ -114,7 +152,7 @@ public static class MgEmpresas
         data.AddParameters("@PorteEmpresa", emp.PorteEmpresa!.Length <= 2 ? emp.PorteEmpresa! : "00");
         data.AddParameters("@EnteFederativoResponsavel", emp.EnteFederativoResponsavel!);
         //await Task.Run(()=>{});
-        await data.WriteAsync(sqlcommand);
+        await data.WriteAsync(sqlcommand, DataBase.MigraData_RFB);
     }
 
 }
