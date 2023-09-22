@@ -7,7 +7,7 @@ public static class Container
     public static async Task Execute(TServer server)
     {
         Log.Storage("Normalize Files");
-        //await new NormalizeFiles().Start(@"C:\data");
+        await new NormalizeFiles().Start(@"C:\data");
         await Migrate.MgNormalize.StartAsync(server);
         Log.Storage("Start migration...");
 

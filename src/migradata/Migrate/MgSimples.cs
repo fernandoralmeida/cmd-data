@@ -27,7 +27,7 @@ public static class MgSimples
         try
         {
 
-            foreach (var file in await new NormalizeFiles().DoListAync(@"C:\data", ".D30311"))
+            foreach (var file in await new NormalizeFiles().DoListAync(@"C:\data", ".D30"))
             {
                 var _innertimer = new Stopwatch();
                 _innertimer.Start();
