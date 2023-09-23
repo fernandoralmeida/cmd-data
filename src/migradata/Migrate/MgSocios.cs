@@ -56,7 +56,7 @@ public static class MgSocios
                 Log.Storage($"Migrating: {_list.Count()} -> {parts} : {size}");
 
                 foreach (var rows in _lists)
-                    _tasks.Add(Task.Run(async () =>
+                    _tasks.Add(new Task(async () =>
                     {
                         var i = 0;
                         var _db = Factory.Data(server);
@@ -64,12 +64,10 @@ public static class MgSocios
                         {
                             i++;
                             await DoInsert(_insert, _db, row);
-                            Console.Write($"{(i * 100) / _list.Count()}%");
                         }
                         c2 += i;
                     }));
 
-                //await Task.WhenAll(_tasks);
                 Parallel.ForEach(_tasks, t => t.Start());
 
                 _innertimer.Stop();

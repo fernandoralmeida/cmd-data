@@ -7,17 +7,18 @@ public static class Container
     public static async Task Execute(TServer server)
     {
         Log.Storage("Normalize Files");
-        await new NormalizeFiles().Start(@"C:\data");
-        await Migrate.MgNormalize.StartAsync(server);
+        //await new NormalizeFiles().Start(@"C:\data");
+        await Migrate.MgNormalize.StartAsync(server, DataBase.MigraData_RFB);
         Log.Storage("Start migration...");
 
-        await Task.WhenAll(
+        Parallel.ForEach(new List<Task>(){
             Migrate.MgCnaes.StartAsync(server),
             Migrate.MgMotivos.StartAsync(server),
             Migrate.MgMunicipios.StartAsync(server),
             Migrate.MgNatureza.StartAsync(server),
             Migrate.MgPaises.StartAsync(server),
-            Migrate.MgQualifica.StartAsync(server));
+            Migrate.MgQualifica.StartAsync(server)
+        }, t => t.Wait());
 
         await Migrate.MgEstabelecimentos.StartAsync(server);
         await Migrate.MgEmpresas.StartAsync(server);
@@ -29,7 +30,7 @@ public static class Container
 
     public static async Task ExecuteToVPS(TServer server)
     {
-        await Migrate.MgNormalize.StartAsync(server);
+        await Migrate.MgNormalize.StartAsync(server, DataBase.IndicadoresNET);
         Log.Storage("Start migration To VPS...");
 
         await Migrate.MgCnaes.ToVpsAsync(server);

@@ -5,6 +5,7 @@ using migradata.Helpers;
 using migradata.Interfaces;
 using migradata.Models;
 using migradata.SqlServer;
+using MongoDB.Driver.Core.Bindings;
 
 namespace migradata.Migrate;
 
@@ -56,7 +57,7 @@ public static class MgEmpresas
                 Log.Storage($"Migrating: {_list.Count()} -> {parts} : {size}");
 
                 foreach (var rows in _lists)
-                    _tasks.Add(Task.Run(async () =>
+                    _tasks.Add(new Task(async () =>
                     {
                         var i = 0;
                         var _db = Factory.Data(server);
@@ -64,18 +65,15 @@ public static class MgEmpresas
                         {
                             i++;
                             await DoInsert(_insert, _db, row);
-                            Console.Write($"{(i * 100) / _list.Count()}%");
                         }
                         c2 += i;
                     }));
-
-                //await Task.WhenAll(_tasks);
 
                 Parallel.ForEach(_tasks, t => t.Start());
 
                 _innertimer.Stop();
 
-                Log.Storage($"Read: {c1} | Migrated: {c2} | Time: {_innertimer.Elapsed.ToString("hh\\:mm\\:ss")}");
+                Log.Storage($"Read: {c1} | Migrated: {c2} | Time: {_innertimer.Elapsed:hh\\:mm\\:ss}");
             }
 
             Log.Storage("Analyzing data!");
@@ -85,7 +83,7 @@ public static class MgEmpresas
             var _cont = await db.ReadAsync(SqlCommands.SelectCommand("Empresas"), DataBase.MigraData_RFB);
 
             _timer.Stop();
-            Log.Storage($"Read: {c1} | Migrated: {_cont.Rows.Count} | Time: {_timer.Elapsed.ToString("hh\\:mm\\:ss")}");
+            Log.Storage($"Read: {c1} | Migrated: {_cont.Rows.Count} | Time: {_timer.Elapsed:hh\\:mm\\:ss}");
         }
         catch (Exception ex)
         {
@@ -122,6 +120,7 @@ public static class MgEmpresas
                 _dataVPS.AddParameters("@EnteFederativoResponsavel", row[6]);
                 await _dataVPS.WriteAsync(_insert, DataBase.IndicadoresNET);
                 i++;
+                Console.Write(i);
             }
             catch (Exception ex)
             {
@@ -129,11 +128,11 @@ public static class MgEmpresas
             }
 
         _timer.Stop();
-        Log.Storage($"Read: {i} | Migrated: {i} | Time: {_timer.Elapsed.ToString("hh\\:mm\\:ss")}");
+        Log.Storage($"Read: {i} | Migrated: {i} | Time: {_timer.Elapsed:hh\\:mm\\:ss}");
     });
 
     private static MEmpresa DoFields(string[] fields)
-    => new MEmpresa()
+    => new()
     {
         CNPJBase = fields[0].ToString().Replace("\"", ""),
         RazaoSocial = fields[1].ToString().Replace("\"", ""),
