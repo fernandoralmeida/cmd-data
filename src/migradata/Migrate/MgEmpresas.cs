@@ -64,11 +64,14 @@ public static class MgEmpresas
                         {
                             i++;
                             await DoInsert(_insert, _db, row);
+                            Console.Write($"{(i * 100) / _list.Count()}%");
                         }
                         c2 += i;
                     }));
 
-                await Task.WhenAll(_tasks);
+                //await Task.WhenAll(_tasks);
+
+                Parallel.ForEach(_tasks, t => t.Start());
 
                 _innertimer.Stop();
 

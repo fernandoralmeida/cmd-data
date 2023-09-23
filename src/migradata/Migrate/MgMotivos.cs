@@ -34,6 +34,7 @@ public static class MgMotivos
                             _data.AddParameters("@Descricao", fields[1].ToString().Replace("\"", "").Trim());
                             await _data.WriteAsync(_insert, DataBase.MigraData_RFB);
                             i++;
+                            Console.Write(i);
                         }
 
                     _timer.Stop();
@@ -68,6 +69,7 @@ public static class MgMotivos
                 _dataVPS.AddParameters("@Descricao", row[1]);
                 await _dataVPS.WriteAsync(_insert, DataBase.IndicadoresNET);
                 i++;
+                Console.Write(i);
             }
             catch (Exception ex)
             {

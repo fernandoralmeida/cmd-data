@@ -64,11 +64,13 @@ public static class MgSimples
                         {
                             i++;
                             await DoInsert(_insert, _db, row);
+                            Console.Write($"{(i * 100) / _list.Count()}%");
                         }
                         c2 += i;
                     }));
 
-                await Task.WhenAll(_tasks);
+                //await Task.WhenAll(_tasks);
+                Parallel.ForEach(_tasks, t => t.Start());
 
                 _innertimer.Stop();
                 Log.Storage($"Read: {c1} | Migrated: {c2} | Time: {_innertimer.Elapsed.ToString("hh\\:mm\\:ss")}");
@@ -117,6 +119,7 @@ public static class MgSimples
                     _dataVPS.AddParameters("@DataExclusaoMEI", row[6]);
                     await _dataVPS.WriteAsync(_insert, DataBase.IndicadoresNET);
                     i++;
+                    Console.Write(i);
                 }
                 catch (Exception ex)
                 {
