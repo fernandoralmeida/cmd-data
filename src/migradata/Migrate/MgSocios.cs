@@ -56,7 +56,7 @@ public static class MgSocios
                 Log.Storage($"Migrating: {_list.Count()} -> {parts} : {size}");
 
                 foreach (var rows in _lists)
-                    _tasks.Add(new Task(async () =>
+                    _tasks.Add(Task.Run(async () =>
                     {
                         var i = 0;
                         var _db = Factory.Data(server);
@@ -68,6 +68,7 @@ public static class MgSocios
                         c2 += i;
                     }));
 
+                //await Task.WhenAll(_tasks);
                 Parallel.ForEach(_tasks, t => t.Start());
 
                 _innertimer.Stop();
@@ -82,7 +83,7 @@ public static class MgSocios
             c3 = db.CNPJBase!.Count();
 
             _timer.Stop();
-            Log.Storage($"Read: {c1} | Migrated: {c3} | Time: {_timer.Elapsed.ToString("hh\\:mm\\:ss")}");
+            Log.Storage($"Read: {c1} | Migrated: {c3} | Time: {_timer.Elapsed:hh\\:mm\\:ss}");
         }
         catch (Exception ex)
         {
@@ -128,7 +129,7 @@ public static class MgSocios
                 }
 
             _timer.Stop();
-            Log.Storage($"Read: {i} | Migrated: {i} | Time: {_timer.Elapsed.ToString("hh\\:mm\\:ss")}");
+            Log.Storage($"Read: {i} | Migrated: {i} | Time: {_timer.Elapsed:hh\\:mm\\:ss}");
         });
 
     private static MSocio DoFields(string[] fields)

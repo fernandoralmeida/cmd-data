@@ -4,7 +4,6 @@ using System.Text;
 using migradata.Helpers;
 using migradata.Interfaces;
 using migradata.Models;
-using migradata.SqlServer;
 
 namespace migradata.Migrate;
 
@@ -119,6 +118,7 @@ public static class MgEmpresas
                 _dataVPS.AddParameters("@EnteFederativoResponsavel", row[6]);
                 await _dataVPS.WriteAsync(_insert, databaseWrite, datasourceWrite);
                 i++;
+                Console.Write(i);
             }
             catch (Exception ex)
             {
@@ -130,7 +130,7 @@ public static class MgEmpresas
     });
 
     private static MEmpresa DoFields(string[] fields)
-    => new MEmpresa()
+    => new()
     {
         CNPJBase = fields[0].ToString().Replace("\"", ""),
         RazaoSocial = fields[1].ToString().Replace("\"", ""),

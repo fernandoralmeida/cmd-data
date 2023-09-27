@@ -15,7 +15,6 @@ public static class MgEstabelecimentos
     {
         int c1 = 0;
         int c2 = 0;
-        int c3 = 0;
 
         var _insert = SqlCommands.InsertCommand("Estabelecimentos",
                         SqlCommands.Fields_Estabelecimentos,
@@ -73,7 +72,6 @@ public static class MgEstabelecimentos
                         c2 += i;
                     }));
 
-                //await Task.WhenAll(_tasks);
                 Parallel.ForEach(_tasks, t => t.Start());
 
                 _innertimer.Stop();
@@ -83,7 +81,7 @@ public static class MgEstabelecimentos
             _timer.Stop();
             var db = Factory.Data(server);
             await db.ReadAsync(SqlCommands.SelectCommand("Estabelecimentos"), database, datasource);
-            c3 = db.CNPJBase!.Count();
+            var c3 = db.CNPJBase!.Count();
             Log.Storage($"Read: {c1} | Migrated: {c3} | Time: {_timer.Elapsed:hh\\:mm\\:ss}");
         }
         catch (Exception ex)
@@ -143,6 +141,7 @@ public static class MgEstabelecimentos
                 _dataVPS.AddParameters("@DataSitucaoEspecial", row[29]);
                 await _dataVPS.WriteAsync(_insert, databaseWrite, datasourceWrite);
                 i++;
+                Console.Write(i);
             }
             catch (Exception ex)
             {
@@ -150,7 +149,7 @@ public static class MgEstabelecimentos
             }
 
         _timer.Stop();
-        Log.Storage($"Read: {i} | Migrated: {i} | Time: {_timer.Elapsed.ToString("hh\\:mm\\:ss")}");
+        Log.Storage($"Read: {i} | Migrated: {i} | Time: {_timer.Elapsed:hh\\:mm\\:ss}");
     });
 
     private static MEstabelecimento DoFields(string[] fields)
