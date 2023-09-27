@@ -80,9 +80,8 @@ public static class MgEstabelecimentos
             }
             _timer.Stop();
             var db = Factory.Data(server);
-            await db.ReadAsync(SqlCommands.SelectCommand("Estabelecimentos"), database, datasource);
-            var c3 = db.CNPJBase!.Count();
-            Log.Storage($"Read: {c1} | Migrated: {c3} | Time: {_timer.Elapsed:hh\\:mm\\:ss}");
+            var c3 = await db.ReadAsync(SqlCommands.SelectCommand("Estabelecimentos"), database, datasource);
+            Log.Storage($"Read: {c1} | Migrated: {c3.Rows.Count} | Time: {_timer.Elapsed:hh\\:mm\\:ss}");
         }
         catch (Exception ex)
         {
