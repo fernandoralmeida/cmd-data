@@ -1,25 +1,9 @@
 namespace migradata.Helpers;
 
-public static class CreateTables
+public static class SqlScript
 {
-    public static async Task StartAsync(TServer server)
-        => await Task.Run(async () =>
-        {
-            if (server == TServer.SqlServer)
-                await new SqlServer.Data().WriteAsync(ScritpDB(), DataBase.MigraData_RFB);
 
-            if (server == TServer.MySql)
-                await new MySql.Data().WriteAsync(ScritpMariaDB(), DataBase.MigraData_RFB);
-
-            if (server == TServer.PostgreSql)
-                await new Postgres.Data().WriteAsync(ScritpDB(), DataBase.MigraData_RFB);
-        });
-
-    public static async Task ToVPS(string dbname)
-        => await new MySql.Data().WriteAsync(ScritpMariaDB(), dbname);
-
-
-    private static string ScritpDB()
+    public static string Default
     => @"
 CREATE TABLE Cnaes (
     Codigo VARCHAR(10) NULL,
@@ -118,7 +102,7 @@ CREATE TABLE Socios (
     FaixaEtaria VARCHAR(2) NULL
 );";
 
-    private static string ScritpMariaDB()
+    public static string MariaDB
     => @"
 CREATE TABLE Cnaes (
     Codigo VARCHAR(10) NULL,

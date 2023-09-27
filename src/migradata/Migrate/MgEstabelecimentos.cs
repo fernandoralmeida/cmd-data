@@ -10,7 +10,7 @@ namespace migradata.Migrate;
 
 public static class MgEstabelecimentos
 {
-    public static async Task StartAsync(TServer server)
+    public static async Task FileToDataBase(TServer server, string database, string datasource)
     => await Task.Run(async () =>
     {
         int c1 = 0;
@@ -61,15 +61,14 @@ public static class MgEstabelecimentos
                 Log.Storage($"Migrating: {_list.Count()} -> {parts} : {size}");
 
                 foreach (var rows in _lists)
-                    _tasks.Add(Task.Run(async () =>
+                    _tasks.Add(new Task(async () =>
                     {
                         var i = 0;
                         var _db = Factory.Data(server);
                         foreach (var row in rows)
                         {
                             i++;
-                            await DoInsert(_insert, _db, row);
-                            Console.Write($"{(i * 100) / _list.Count()}%");
+                            await DoInsert(_insert, _db, row, database, datasource);
                         }
                         c2 += i;
                     }));
@@ -79,13 +78,13 @@ public static class MgEstabelecimentos
 
                 _innertimer.Stop();
 
-                Log.Storage($"Read: {c1} | Migrated: {c2} | Time: {_innertimer.Elapsed.ToString("hh\\:mm\\:ss")}");
+                Log.Storage($"Read: {c1} | Migrated: {c2} | Time: {_innertimer.Elapsed:hh\\:mm\\:ss}");
             }
             _timer.Stop();
             var db = Factory.Data(server);
-            await db.ReadAsync(SqlCommands.SelectCommand("Estabelecimentos"), DataBase.MigraData_RFB);
+            await db.ReadAsync(SqlCommands.SelectCommand("Estabelecimentos"), database, datasource);
             c3 = db.CNPJBase!.Count();
-            Log.Storage($"Read: {c1} | Migrated: {c3} | Time: {_timer.Elapsed.ToString("hh\\:mm\\:ss")}");
+            Log.Storage($"Read: {c1} | Migrated: {c3} | Time: {_timer.Elapsed:hh\\:mm\\:ss}");
         }
         catch (Exception ex)
         {
@@ -93,7 +92,7 @@ public static class MgEstabelecimentos
         }
     });
 
-    public static async Task ToVpsAsync(TServer server)
+    public static async Task DatabaseToDataBaseAsync(TServer server, string databaseRead, string datasourceRead, string databaseWrite, string datasourceWrite)
     => await Task.Run(async () =>
     {
 
@@ -108,7 +107,7 @@ public static class MgEstabelecimentos
 
         var _dataVPS = Factory.Data(server);
 
-        foreach (DataRow row in _sqlserver.ReadAsync(_select, DataBase.Sim_RFB_db20210001).Result.Rows)
+        foreach (DataRow row in _sqlserver.ReadAsync(_select, databaseRead, datasourceRead).Result.Rows)
             try
             {
                 _dataVPS.ClearParameters();
@@ -142,7 +141,7 @@ public static class MgEstabelecimentos
                 _dataVPS.AddParameters("@CorreioEletronico", row[27]);
                 _dataVPS.AddParameters("@SituacaoEspecial", row[28]);
                 _dataVPS.AddParameters("@DataSitucaoEspecial", row[29]);
-                await _dataVPS.WriteAsync(_insert, DataBase.IndicadoresNET);
+                await _dataVPS.WriteAsync(_insert, databaseWrite, datasourceWrite);
                 i++;
             }
             catch (Exception ex)
@@ -189,7 +188,7 @@ public static class MgEstabelecimentos
         DataSitucaoEspecial = fields[29].ToString().Replace("\"", "").Trim()
     };
 
-    private static async Task DoInsert(string sqlcommand, IData data, MEstabelecimento est)
+    private static async Task DoInsert(string sqlcommand, IData data, MEstabelecimento est, string database, string datasource)
     {
         data.ClearParameters();
         data.AddParameters("@CNPJBase", est.CNPJBase!);
@@ -222,8 +221,7 @@ public static class MgEstabelecimentos
         data.AddParameters("@CorreioEletronico", est.CorreioEletronico!.ToLower());
         data.AddParameters("@SituacaoEspecial", est.SituacaoEspecial!);
         data.AddParameters("@DataSitucaoEspecial", est.DataSitucaoEspecial!);
-        //await Task.Run(() => { });
-        await data.WriteAsync(sqlcommand, DataBase.MigraData_RFB);
+        await data.WriteAsync(sqlcommand, database, datasource);
     }
 
 }

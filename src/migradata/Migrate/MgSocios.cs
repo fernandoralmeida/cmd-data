@@ -10,7 +10,7 @@ namespace migradata.Migrate;
 
 public static class MgSocios
 {
-    public static async Task StartAsync(TServer server)
+    public static async Task FileToDataBase(TServer server, string database, string datasource)
     => await Task.Run(async () =>
     {
         int c1 = 0;
@@ -56,31 +56,29 @@ public static class MgSocios
                 Log.Storage($"Migrating: {_list.Count()} -> {parts} : {size}");
 
                 foreach (var rows in _lists)
-                    _tasks.Add(Task.Run(async () =>
+                    _tasks.Add(new Task(async () =>
                     {
                         var i = 0;
                         var _db = Factory.Data(server);
                         foreach (var row in rows)
                         {
                             i++;
-                            await DoInsert(_insert, _db, row);
-                            Console.Write($"{(i * 100) / _list.Count()}%");
+                            await DoInsert(_insert, _db, row, database, datasource);
                         }
                         c2 += i;
                     }));
 
-                //await Task.WhenAll(_tasks);
                 Parallel.ForEach(_tasks, t => t.Start());
 
                 _innertimer.Stop();
 
-                Log.Storage($"Read: {c1} | Migrated: {c2} | Time: {_innertimer.Elapsed.ToString("hh\\:mm\\:ss")}");
+                Log.Storage($"Read: {c1} | Migrated: {c2} | Time: {_innertimer.Elapsed:hh\\:mm\\:ss}");
             }
             Log.Storage("Analyzing data!");
 
             var db = Factory.Data(server);
-            await db.WriteAsync(SqlCommands.DeleteNotExist("Socios", "Empresas"), DataBase.MigraData_RFB);
-            await db.ReadAsync(SqlCommands.SelectCommand("Socios"), DataBase.MigraData_RFB);
+            await db.WriteAsync(SqlCommands.DeleteNotExist("Socios", "Empresas"), database, datasource);
+            await db.ReadAsync(SqlCommands.SelectCommand("Socios"), database, datasource);
             c3 = db.CNPJBase!.Count();
 
             _timer.Stop();
@@ -92,7 +90,7 @@ public static class MgSocios
         }
     });
 
-    public static async Task ToVpsAsync(TServer server)
+    public static async Task DatabaseToDataBaseAsync(TServer server, string databaseRead, string datasourceRead, string databaseWrite, string datasourceWrite)
         => await Task.Run(async () =>
         {
             var _timer = new Stopwatch();
@@ -106,7 +104,7 @@ public static class MgSocios
 
             var _dataVPS = Factory.Data(server);
 
-            foreach (DataRow row in _sqlserver.ReadAsync(_select, DataBase.Sim_RFB_db20210001).Result.Rows)
+            foreach (DataRow row in _sqlserver.ReadAsync(_select, databaseRead, datasourceRead).Result.Rows)
                 try
                 {
                     _dataVPS.ClearParameters();
@@ -121,9 +119,8 @@ public static class MgSocios
                     _dataVPS.AddParameters("@NomeRepresentante", row[8]);
                     _dataVPS.AddParameters("@QualificacaoRepresentanteLegal", row[9]);
                     _dataVPS.AddParameters("@FaixaEtaria", row[10]);
-                    await _dataVPS.WriteAsync(_insert, DataBase.IndicadoresNET);
+                    await _dataVPS.WriteAsync(_insert, databaseWrite, datasourceWrite);
                     i++;
-                    Console.Write(i);
                 }
                 catch (Exception ex)
                 {
@@ -150,7 +147,7 @@ public static class MgSocios
         FaixaEtaria = fields[10].ToString().Replace("\"", "").Trim()
     };
 
-    private static async Task DoInsert(string sqlcommand, IData data, MSocio model)
+    private static async Task DoInsert(string sqlcommand, IData data, MSocio model, string database, string datasource)
     {
         data.ClearParameters();
         data.AddParameters("@CNPJBase", model.CNPJBase!);
@@ -164,7 +161,7 @@ public static class MgSocios
         data.AddParameters("@NomeRepresentante", model.NomeRepresentante!);
         data.AddParameters("@QualificacaoRepresentanteLegal", model.QualificacaoRepresentanteLegal!);
         data.AddParameters("@FaixaEtaria", model.FaixaEtaria!);
-        await data.WriteAsync(sqlcommand, DataBase.MigraData_RFB);
+        await data.WriteAsync(sqlcommand, database, datasource);
     }
 
 }

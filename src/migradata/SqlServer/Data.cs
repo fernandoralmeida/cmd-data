@@ -22,10 +22,10 @@ public class Data : IData
 
     public IEnumerable<string>? CNPJBase { get; set; }
 
-    public async Task<DataTable> ReadAsync(string querySelect, string dbname)
+    public async Task<DataTable> ReadAsync(string querySelect, string database, string datasource)
      => await Task.Run(() =>
         {
-            using (SqlConnection connection = new ($"{DataBase.DataSource_SqlServer}Database={dbname};"))
+            using (SqlConnection connection = new ($"{datasource}Database={database};"))
             {
                 try
                 {
@@ -55,10 +55,10 @@ public class Data : IData
             }
         });
 
-    public async Task WriteAsync(string queryWrite, string dbname)
+    public async Task WriteAsync(string queryWrite, string database, string datasource)
         => await Task.Run(() =>
             {
-                using (SqlConnection connection = new ($"{DataBase.DataSource_SqlServer}Database={dbname};"))
+                using (SqlConnection connection = new ($"{datasource}Database={database};"))
                 {
                     try
                     {
@@ -82,9 +82,9 @@ public class Data : IData
                 }
             });
 
-    public void CheckDB(string dbname)
+    public void CheckDB(string database, string datasource)
     {
-        using (SqlConnection connection = new ($"{DataBase.DataSource_SqlServer}Database={dbname};"))
+        using (SqlConnection connection = new ($"{datasource}Database={database};"))
         {
             try
             {

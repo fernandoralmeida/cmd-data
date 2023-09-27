@@ -1,5 +1,4 @@
 using System.Data.SqlClient;
-using MongoDB.Driver;
 using MySql.Data.MySqlClient;
 using Npgsql;
 
@@ -13,57 +12,48 @@ public static class DataBase
 
     public static readonly string IndicadoresNET = @"www_indicadores";
 
-    public static readonly string DataSource_SqlServer
-        = Environment.GetEnvironmentVariable("datasource_sqlserver")!;
-
-    public static readonly string DataSource_Docker_SqlServer
-        = Environment.GetEnvironmentVariable("datasource_sqlserver")!;
-
-    public static string DataSource_MySQL
-        = Environment.GetEnvironmentVariable("datasource_mysql")!;
-
-    public static string DataSource_PostgreSql
-        = Environment.GetEnvironmentVariable("datasource_postgresql")!;
-
-    public static void CreateInSqlServer(string dbname)
+    public static async void CreateInSqlServer(string database, string datasource)
     {
-        using SqlConnection connection = new ($"{DataSource_Docker_SqlServer}Database={dbname};");
+        using SqlConnection connection = new ($"{datasource}");
         connection.Open();
 
-        var cmd = new SqlCommand($"SELECT database_id FROM sys.databases WHERE Name = '{dbname}'", connection);
+        var cmd = new SqlCommand($"SELECT database_id FROM sys.databases WHERE Name = '{database}'", connection);
 
         var databaseId = cmd.ExecuteScalar();
 
         if (databaseId == null)
         {
-            cmd = new SqlCommand($"CREATE DATABASE {dbname}", connection);
+            cmd = new SqlCommand($"CREATE DATABASE {database}", connection);
             if (cmd.ExecuteNonQuery() < 1)
-                Log.Storage($"{dbname} successfully created!");
+                Log.Storage($"{database} successfully created!");
         }
-
         connection.Close();
+
+        await CreateTablesAsync(TServer.SqlServer, database, datasource);
     }
 
-    public static void CreateInMySql(string dbname)
+    public static async void CreateInMySql(string database, string datasource)
     {
-        MySqlConnection connection = new MySqlConnection($"{DataSource_MySQL}Database={dbname};");
+        MySqlConnection connection = new($"{datasource}");
         connection.Open();
 
-        MySqlCommand command = new MySqlCommand($"CREATE DATABASE IF NOT EXISTS {dbname};", connection);
+        MySqlCommand command = new MySqlCommand($"CREATE DATABASE IF NOT EXISTS {database};", connection);
         if (command.ExecuteNonQuery() == 1)
-            Log.Storage($"{dbname} successfully created!");
+            Log.Storage($"{database} successfully created!");
 
         connection.Close();
+
+        await CreateTablesAsync(TServer.MySql, database, datasource);
     }
 
-    public static void CreateInPostgreSql(string dbname)
+    public static async void CreateInPostgreSql(string database, string datasource)
     {
-        string connectionString = $"{DataSource_PostgreSql}Database={dbname};";
+        string connectionString = $"{datasource}Database={database};";
         try
         {
             using var conn = new NpgsqlConnection(connectionString);
             conn.Open();
-            Log.Storage($"{dbname} OK!");
+            Log.Storage($"{database} OK!");
         }
         catch
         {
@@ -72,21 +62,32 @@ public static class DataBase
                 using (var conn = new NpgsqlConnection(connectionString))
                 {
                     conn.Open();
-                    using (var cmd = new NpgsqlCommand($"CREATE DATABASE {dbname}", conn))
+                    using (var cmd = new NpgsqlCommand($"CREATE DATABASE {database}", conn))
                     {
                         cmd.ExecuteScalar();
-                        Log.Storage($"{dbname} successfully created!");
+                        Log.Storage($"{database} successfully created!");
                     }
-
                 }
+                
+                await CreateTablesAsync(TServer.PostgreSql, database, datasource);
             }
             catch (Exception ex)
             {
                 Log.Storage($"{ex.Message}: Database OK!");
             }
-
         }
-
     }
 
+    private static async Task CreateTablesAsync(TServer server, string database, string datasource)
+    => await Task.Run(async () =>
+    {
+        if (server == TServer.SqlServer)
+            await new SqlServer.Data().WriteAsync(SqlScript.Default, database, datasource);
+
+        if (server == TServer.MySql)
+            await new MySql.Data().WriteAsync(SqlScript.MariaDB, database, datasource);
+
+        if (server == TServer.PostgreSql)
+            await new Postgres.Data().WriteAsync(SqlScript.Default, database, datasource);
+    });
 }

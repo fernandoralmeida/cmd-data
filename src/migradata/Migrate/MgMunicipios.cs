@@ -8,7 +8,7 @@ namespace migradata.Migrate;
 
 public static class MgMunicipios
 {
-    public static async Task StartAsync(TServer server)
+    public static async Task FileToDataBase(TServer server, string database, string datasource)
         => await Task.Run(async () =>
         {
             int i = 0;
@@ -33,13 +33,12 @@ public static class MgMunicipios
                             _data.ClearParameters();
                             _data.AddParameters("@Codigo", fields[0].ToString().Replace("\"", "").Trim());
                             _data.AddParameters("@Descricao", fields[1].ToString().Replace("\"", "").Trim());
-                            await _data.WriteAsync(_insert, DataBase.MigraData_RFB);
+                            await _data.WriteAsync(_insert, database, datasource);
                             i++;
-                            Console.Write(i);
                         }
 
                     _timer.Stop();
-                    Log.Storage($"Read: {i} | Migrated: {i} | Time: {_timer.Elapsed.ToString("hh\\:mm\\:ss")}");
+                    Log.Storage($"Read: {i} | Migrated: {i} | Time: {_timer.Elapsed:hh\\:mm\\:ss}");
                 }
                 catch (Exception ex)
                 {
@@ -47,7 +46,7 @@ public static class MgMunicipios
                 }
         });
 
-    public static async Task ToVpsAsync(TServer server)
+    public static async Task DatabaseToDataBaseAsync(TServer server, string databaseRead, string datasoruceRead, string databaseWrite, string datasourceWrite)
         => await Task.Run(async () =>
         {
             var _timer = new Stopwatch();
@@ -61,15 +60,14 @@ public static class MgMunicipios
 
             var _dataVPS = Factory.Data(server);
 
-            foreach (DataRow row in _sqlserver.ReadAsync(_select, DataBase.Sim_RFB_db20210001).Result.Rows)
+            foreach (DataRow row in _sqlserver.ReadAsync(_select, databaseRead, datasoruceRead).Result.Rows)
                 try
                 {
                     _dataVPS.ClearParameters();
                     _dataVPS.AddParameters("@Codigo", row[0]);
                     _dataVPS.AddParameters("@Descricao", row[1]);
-                    await _dataVPS.WriteAsync(_insert, DataBase.IndicadoresNET);
+                    await _dataVPS.WriteAsync(_insert, databaseWrite, datasourceWrite);
                     i++;
-                    Console.Write(i);
                 }
                 catch (Exception ex)
                 {
@@ -77,6 +75,6 @@ public static class MgMunicipios
                 }
 
             _timer.Stop();
-            Log.Storage($"Read: {i} | Migrated: {i} | Time: {_timer.Elapsed.ToString("hh\\:mm\\:ss")}");
+            Log.Storage($"Read: {i} | Migrated: {i} | Time: {_timer.Elapsed:hh\\:mm\\:ss}");
         });
 }

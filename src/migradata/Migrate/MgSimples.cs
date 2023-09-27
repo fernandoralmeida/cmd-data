@@ -10,7 +10,7 @@ namespace migradata.Migrate;
 
 public static class MgSimples
 {
-    public static async Task StartAsync(TServer server)
+    public static async Task FileToDataBase(TServer server, string database, string datasource)
     => await Task.Run(async () =>
     {
         int c1 = 0;
@@ -56,20 +56,18 @@ public static class MgSimples
                 Log.Storage($"Migrating: {_list.Count()} -> {parts} : {size}");
 
                 foreach (var rows in _lists)
-                    _tasks.Add(Task.Run(async () =>
+                    _tasks.Add(new Task(async () =>
                     {
                         var i = 0;
                         var _db = Factory.Data(server);
                         foreach (var row in rows)
                         {
                             i++;
-                            await DoInsert(_insert, _db, row);
-                            Console.Write($"{(i * 100) / _list.Count()}%");
+                            await DoInsert(_insert, _db, row, database, datasource);
                         }
                         c2 += i;
                     }));
 
-                //await Task.WhenAll(_tasks);
                 Parallel.ForEach(_tasks, t => t.Start());
 
                 _innertimer.Stop();
@@ -79,12 +77,12 @@ public static class MgSimples
             Log.Storage("Analyzing data!");
 
             var db = Factory.Data(server);
-            await db.WriteAsync(SqlCommands.DeleteNotExist("Simples", "Empresas"), DataBase.MigraData_RFB);
-            await db.ReadAsync(SqlCommands.SelectCommand("Simples"), DataBase.MigraData_RFB);
+            await db.WriteAsync(SqlCommands.DeleteNotExist("Simples", "Empresas"), database, datasource);
+            await db.ReadAsync(SqlCommands.SelectCommand("Simples"), database, datasource);
             c3 = db.CNPJBase!.Count();
 
             _timer.Stop();
-            Log.Storage($"Read: {c1} | Migrated: {c3} | Time: {_timer.Elapsed.ToString("hh\\:mm\\:ss")}");
+            Log.Storage($"Read: {c1} | Migrated: {c3} | Time: {_timer.Elapsed:hh\\:mm\\:ss}");
         }
         catch (Exception ex)
         {
@@ -92,7 +90,7 @@ public static class MgSimples
         }
     });
 
-    public static async Task ToVpsAsync(TServer server)
+    public static async Task DatabaseToDataBaseAsync(TServer server, string databaseRead, string datasourceRead, string databaseWrite, string datasourceWrite)
         => await Task.Run(async () =>
         {
             var _timer = new Stopwatch();
@@ -106,7 +104,7 @@ public static class MgSimples
 
             var _dataVPS = Factory.Data(server);
 
-            foreach (DataRow row in _sqlserver.ReadAsync(_select, DataBase.Sim_RFB_db20210001).Result.Rows)
+            foreach (DataRow row in _sqlserver.ReadAsync(_select, databaseRead, datasourceRead).Result.Rows)
                 try
                 {
                     _dataVPS.ClearParameters();
@@ -117,9 +115,8 @@ public static class MgSimples
                     _dataVPS.AddParameters("@OpcaoMEI", row[4]);
                     _dataVPS.AddParameters("@DataOpcaoMEI", row[5]);
                     _dataVPS.AddParameters("@DataExclusaoMEI", row[6]);
-                    await _dataVPS.WriteAsync(_insert, DataBase.IndicadoresNET);
+                    await _dataVPS.WriteAsync(_insert, databaseWrite, datasourceWrite);
                     i++;
-                    Console.Write(i);
                 }
                 catch (Exception ex)
                 {
@@ -127,7 +124,7 @@ public static class MgSimples
                 }
 
             _timer.Stop();
-            Log.Storage($"Read: {i} | Migrated: {i} | Time: {_timer.Elapsed.ToString("hh\\:mm\\:ss")}");
+            Log.Storage($"Read: {i} | Migrated: {i} | Time: {_timer.Elapsed:hh\\:mm\\:ss}");
         });
 
     private static MSimples DoFields(string[] fields)
@@ -142,7 +139,7 @@ public static class MgSimples
         DataExclusaoMEI = fields[6].ToString().Replace("\"", "").Trim()
     };
 
-    private static async Task DoInsert(string sqlcommand, IData data, MSimples model)
+    private static async Task DoInsert(string sqlcommand, IData data, MSimples model, string database, string datasource)
     {
         data.ClearParameters();
         data.AddParameters("@CNPJBase", model.CNPJBase!);
@@ -152,7 +149,6 @@ public static class MgSimples
         data.AddParameters("@OpcaoMEI", model.OpcaoMEI!);
         data.AddParameters("@DataOpcaoMEI", model.DataOpcaoMEI!);
         data.AddParameters("@DataExclusaoMEI", model.DataExclusaoMEI!);
-        await data.WriteAsync(sqlcommand, DataBase.MigraData_RFB);
-    }
+        await data.WriteAsync(sqlcommand, database, datasource);    }
 
 }
