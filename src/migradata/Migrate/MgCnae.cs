@@ -1,9 +1,7 @@
-using System.ComponentModel;
 using System.Data;
 using System.Diagnostics;
 using System.Text;
 using migradata.Helpers;
-using migradata.SqlServer;
 
 namespace migradata.Migrate;
 

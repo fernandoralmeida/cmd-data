@@ -1,5 +1,6 @@
 using System.IO.Compression;
 using System.IO;
+using MongoDB.Driver;
 
 namespace migradata.Helpers;
 
@@ -26,17 +27,17 @@ public class NormalizeFiles
 
 
         foreach (var rows in _lists)
-            _tasks.Add(Task.Run(async () =>
+            _tasks.Add(new Task(async () =>
             {
                 foreach (var row in rows)
                     await Unzip(row, path);
             }));
 
-        await Task.WhenAll(_tasks);
+        Parallel.ForEach(_tasks, t => t.Start());
     }
 
     public async Task<string[]> DoListAync(string path, string extension)
-        => await Task.Run(() => { return Directory.GetFiles(path).Where(s => s.Contains(extension)).ToArray(); });
+        => await Task.Run(() => Directory.GetFiles(path).Where(s => s.Contains(extension)).ToArray());
 
     private async Task DeleteNotZip(string sourceFilePath)
         => await Task.Run(() =>
