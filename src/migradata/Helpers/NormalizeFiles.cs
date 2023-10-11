@@ -27,13 +27,15 @@ public class NormalizeFiles
 
 
         foreach (var rows in _lists)
-            _tasks.Add(new Task(async () =>
+            _tasks.Add(Task.Run(async () =>
             {
                 foreach (var row in rows)
                     await Unzip(row, path);
             }));
 
-        Parallel.ForEach(_tasks, t => t.Start());
+        await Task.WhenAll(_tasks); 
+        //Parallel.ForEach(_tasks, t => t.Start());
+        //Task.WaitAll(_tasks.ToArray());
     }
 
     public async Task<string[]> DoListAync(string path, string extension)

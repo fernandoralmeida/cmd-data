@@ -69,6 +69,8 @@ public static class MgEmpresas
 
                 Parallel.ForEach(_tasks, t => t.Start());
 
+                Task.WaitAll(_tasks.ToArray());
+
                 _innertimer.Stop();
 
                 Log.Storage($"Read: {c1} | Migrated: {c2} | Time: {_innertimer.Elapsed:hh\\:mm\\:ss}");

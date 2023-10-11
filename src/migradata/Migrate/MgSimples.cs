@@ -68,8 +68,9 @@ public static class MgSimples
                         c2 += i;
                     }));
 
-                Parallel.ForEach(_tasks, t => t.Start());
 
+                Parallel.ForEach(_tasks, t => t.Start());
+                Task.WaitAll(_tasks.ToArray());
                 _innertimer.Stop();
                 Log.Storage($"Read: {c1} | Migrated: {c2} | Time: {_innertimer.Elapsed.ToString("hh\\:mm\\:ss")}");
             }
