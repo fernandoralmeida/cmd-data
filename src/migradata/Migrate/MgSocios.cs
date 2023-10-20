@@ -27,7 +27,7 @@ public static class MgSocios
         try
         {
 
-            foreach (var file in await new NormalizeFiles().DoListAync(@"C:\data", ".SOCIOCSV"))
+            foreach (var file in await FilesCsv.FilesListAync(@"C:\data", ".SOCIOCSV"))
             {
                 var _innertimer = new Stopwatch();
                 _innertimer.Start();
@@ -68,19 +68,21 @@ public static class MgSocios
                         c2 += i;
                     }));
 
-                //await Task.WhenAll(_tasks);
-                Parallel.ForEach(_tasks, t => t.Start());
-                Task.WaitAll(_tasks.ToArray());
-                _innertimer.Stop();
+                await Parallel.ForEachAsync(_tasks,
+                    async (t, _) =>
+                        await t
+                    );
 
+                _innertimer.Stop();
+                c3 = c2 * parts;
                 Log.Storage($"Read: {c1} | Migrated: {c2} | Time: {_innertimer.Elapsed:hh\\:mm\\:ss}");
             }
             Log.Storage("Analyzing data!");
 
-            var db = Factory.Data(server);
-            await db.WriteAsync(SqlCommands.DeleteNotExist("Socios", "Empresas"), database, datasource);
-            await db.ReadAsync(SqlCommands.SelectCommand("Socios"), database, datasource);
-            c3 = db.CNPJBase!.Count();
+            //var db = Factory.Data(server);
+            //await db.WriteAsync(SqlCommands.DeleteNotExist("Socios", "Empresas"), database, datasource);
+            //await db.ReadAsync(SqlCommands.SelectCommand("Socios"), database, datasource);
+            //c3 = db.CNPJBase!.Count();
 
             _timer.Stop();
             Log.Storage($"Read: {c1} | Migrated: {c3} | Time: {_timer.Elapsed:hh\\:mm\\:ss}");
@@ -91,49 +93,8 @@ public static class MgSocios
         }
     });
 
-    public static async Task DatabaseToDataBaseAsync(TServer server, string databaseRead, string datasourceRead, string databaseWrite, string datasourceWrite)
-        => await Task.Run(async () =>
-        {
-            var _timer = new Stopwatch();
-            _timer.Start();
-
-            int i = 0;
-            var _select = SqlCommands.SelectCommand("Socios");
-            var _insert = SqlCommands.InsertCommand("Socios", SqlCommands.Fields_Socios, SqlCommands.Values_Socios);
-
-            var _sqlserver = Factory.Data(TServer.SqlServer);
-
-            var _dataVPS = Factory.Data(server);
-
-            foreach (DataRow row in _sqlserver.ReadAsync(_select, databaseRead, datasourceRead).Result.Rows)
-                try
-                {
-                    _dataVPS.ClearParameters();
-                    _dataVPS.AddParameters("@CNPJBase", row[0]);
-                    _dataVPS.AddParameters("@IdentificadorSocio", row[1]);
-                    _dataVPS.AddParameters("@NomeRazaoSocio", row[2]);
-                    _dataVPS.AddParameters("@CnpjCpfSocio", row[3]);
-                    _dataVPS.AddParameters("@QualificacaoSocio", row[4]);
-                    _dataVPS.AddParameters("@DataEntradaSociedade", row[5]);
-                    _dataVPS.AddParameters("@Pais", row[6]);
-                    _dataVPS.AddParameters("@RepresentanteLegal", row[7]);
-                    _dataVPS.AddParameters("@NomeRepresentante", row[8]);
-                    _dataVPS.AddParameters("@QualificacaoRepresentanteLegal", row[9]);
-                    _dataVPS.AddParameters("@FaixaEtaria", row[10]);
-                    await _dataVPS.WriteAsync(_insert, databaseWrite, datasourceWrite);
-                    i++;
-                }
-                catch (Exception ex)
-                {
-                    Log.Storage("Error: " + ex.Message);
-                }
-
-            _timer.Stop();
-            Log.Storage($"Read: {i} | Migrated: {i} | Time: {_timer.Elapsed:hh\\:mm\\:ss}");
-        });
-
     private static MSocio DoFields(string[] fields)
-    => new MSocio()
+    => new()
     {
         CNPJBase = fields[0].ToString().Replace("\"", "").Trim(),
         IdentificadorSocio = fields[1].ToString().Replace("\"", "").Trim(),

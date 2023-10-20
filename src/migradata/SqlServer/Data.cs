@@ -2,6 +2,7 @@ using System.Data;
 using System.Data.SqlClient;
 using migradata.Helpers;
 using migradata.Interfaces;
+using migradata.Models;
 
 namespace migradata.SqlServer;
 
@@ -25,11 +26,11 @@ public class Data : IData
     public async Task<DataTable> ReadAsync(string querySelect, string database, string datasource)
      => await Task.Run(() =>
         {
-            using (SqlConnection connection = new ($"{datasource}Database={database};"))
+            using (SqlConnection connection = new($"{datasource}Database={database};"))
             {
                 try
                 {
-                    connection.Open();                    
+                    connection.Open();
 
                     SqlCommand _command = connection.CreateCommand();
                     _command.CommandType = CommandType.Text;
@@ -44,11 +45,13 @@ public class Data : IData
                     DataTable _table = new();
 
                     new SqlDataAdapter(_command).Fill(_table);
-
+                    connection.Close();
                     return _table;
+
                 }
                 catch (Exception ex)
                 {
+                    connection.Close();
                     Log.Storage("Error: " + ex.Message);
                     return new DataTable();
                 }
@@ -58,7 +61,7 @@ public class Data : IData
     public async Task WriteAsync(string queryWrite, string database, string datasource)
         => await Task.Run(() =>
             {
-                using (SqlConnection connection = new ($"{datasource}Database={database};"))
+                using (SqlConnection connection = new($"{datasource}Database={database};"))
                 {
                     try
                     {
@@ -73,28 +76,72 @@ public class Data : IData
                             _command.Parameters.Add(new SqlParameter(p.ParameterName, p.Value));
                         }
 
-                        var r = _command.ExecuteNonQuery();                        
+                        var r = _command.ExecuteNonQuery();
+                        connection.Close();
                     }
                     catch (Exception ex)
                     {
+                        connection.Close();
                         Log.Storage("Error: " + ex.Message);
                     }
                 }
             });
 
-    public void CheckDB(string database, string datasource)
+    public async Task<bool> DbExists(string database, string datasource)
+    => await Task.Run(() =>
     {
-        using (SqlConnection connection = new ($"{datasource}Database={database};"))
+        try
         {
-            try
+            using SqlConnection connection = new($"{datasource}Database={database};");
+            connection.Open();
+            Log.Storage("Successful Connection!");
+            connection.Close();
+            return true;
+        }
+        catch (Exception ex)
+        {
+            Log.Storage("Error: " + ex.Message);
+            return false;
+        }
+
+    });
+
+    /// <summary>
+    /// Cria Banco de Dados caso não exista
+    /// </summary>
+    /// <param name="datasource">DataSource</param>
+    /// <param name="dbname">DataBase Name</param>
+    /// <param name="sqlcommands">Lista de comandos SQL, ex: criar tabelas ou vews via scriptsql</param>
+    /// <returns></returns>
+    public async Task CreateDB(string datasource, string dbname, List<MSqlCommand> sqlcommands)
+    => await Task.Run(() =>
+    {
+        using SqlConnection connection = new($"{datasource}");
+        connection.Open();
+
+        var cmd = new SqlCommand($"SELECT database_id FROM sys.databases WHERE Name = '{dbname}'", connection);
+
+        var databaseId = cmd.ExecuteScalar();
+
+        if (databaseId == null)
+        {
+            cmd = new SqlCommand($"CREATE DATABASE {dbname}", connection);
+            if (cmd.ExecuteNonQuery() < 1)
+                Log.Storage($"{dbname} successfully created!");
+
+            Thread.Sleep(3000);
+
+            foreach (var item in sqlcommands)
             {
-                connection.Open();
-                Log.Storage("Successful Connection!");
-            }
-            catch (Exception ex)
-            {
-                Log.Storage("Error: " + ex.Message);
+                cmd = new SqlCommand(item.Command, connection);
+                if (cmd.ExecuteNonQuery() < 1)
+                    Log.Storage($"{item.Name} successfully created!");
+
+                Thread.Sleep(3000);
             }
         }
-    }
+        connection.Close();
+        Thread.Sleep(3000);
+    });
+
 }

@@ -1,10 +1,10 @@
 using System.Diagnostics;
 using System.Text;
 using migradata.Helpers;
-using migradata.SqlServer;
 using migradata.Models;
 using migradata.Interfaces;
 using System.Data;
+using System.Runtime.Intrinsics.Arm;
 
 namespace migradata.Migrate;
 
@@ -15,7 +15,7 @@ public static class MgEstabelecimentos
     {
         int c1 = 0;
         int c2 = 0;
-
+        int c3 = 0;
         var _insert = SqlCommands.InsertCommand("Estabelecimentos",
                         SqlCommands.Fields_Estabelecimentos,
                         SqlCommands.Values_Estabelecumentos);
@@ -24,7 +24,7 @@ public static class MgEstabelecimentos
         _timer.Start();
         try
         {
-            foreach (var file in await new NormalizeFiles().DoListAync(@"C:\data", ".ESTABELE"))
+            foreach (var file in await FilesCsv.FilesListAync(@"C:\data", ".ESTABELE"))
             {
                 var _innertimer = new Stopwatch();
                 _innertimer.Start();
@@ -57,10 +57,10 @@ public static class MgEstabelecimentos
                 for (int p = 0; p < parts; p++)
                     _lists.Add(_list.Skip(p * size).Take(size));
 
-                Log.Storage($"Migrating: {_list.Count()} -> {parts} : {size}");
+                Log.Storage($"Total: {_list.Count()} -> Parts: {parts} -> Rows: {size}");
 
                 foreach (var rows in _lists)
-                    _tasks.Add(new Task(async () =>
+                    _tasks.Add(Task.Run(async () =>
                     {
                         var i = 0;
                         var _db = Factory.Data(server);
@@ -70,18 +70,24 @@ public static class MgEstabelecimentos
                             await DoInsert(_insert, _db, row, database, datasource);
                         }
                         c2 += i;
+                        Log.Storage($"Part: {i} -> Rows: {c2}");
                     }));
 
-                Parallel.ForEach(_tasks, t => t.Start());
-                Task.WaitAll(_tasks.ToArray());
+                await Parallel.ForEachAsync(_tasks,
+                    async (t, _) =>
+                        await t
+                    );
+
                 _innertimer.Stop();
+
+                c3 = c2 * parts;
 
                 Log.Storage($"Read: {c1} | Migrated: {c2} | Time: {_innertimer.Elapsed:hh\\:mm\\:ss}");
             }
             _timer.Stop();
-            var db = Factory.Data(server);
-            var c3 = await db.ReadAsync(SqlCommands.SelectCommand("Estabelecimentos"), database, datasource);
-            Log.Storage($"Read: {c1} | Migrated: {c3.Rows.Count} | Time: {_timer.Elapsed:hh\\:mm\\:ss}");
+           // var db = Factory.Data(server);
+            //var c3 = await db.ReadAsync(SqlCommands.SelectCommand("Estabelecimentos"), database, datasource);
+            Log.Storage($"Read: {c1} | Migrated: {c3} | Time: {_timer.Elapsed:hh\\:mm\\:ss}");
         }
         catch (Exception ex)
         {
@@ -89,70 +95,8 @@ public static class MgEstabelecimentos
         }
     });
 
-    public static async Task DatabaseToDataBaseAsync(TServer server, string databaseRead, string datasourceRead, string databaseWrite, string datasourceWrite)
-    => await Task.Run(async () =>
-    {
-
-        var _timer = new Stopwatch();
-        _timer.Start();
-
-        int i = 0;
-        var _select = SqlCommands.SelectCommand("Estabelecimentos");
-        var _insert = SqlCommands.InsertCommand("Estabelecimentos", SqlCommands.Fields_Estabelecimentos, SqlCommands.Values_Estabelecumentos);
-
-        var _sqlserver = Factory.Data(TServer.SqlServer);
-
-        var _dataVPS = Factory.Data(server);
-
-        foreach (DataRow row in _sqlserver.ReadAsync(_select, databaseRead, datasourceRead).Result.Rows)
-            try
-            {
-                _dataVPS.ClearParameters();
-                _dataVPS.AddParameters("@CNPJBase", row[0]);
-                _dataVPS.AddParameters("@CNPJOrdem", row[1]);
-                _dataVPS.AddParameters("@CNPJDV", row[2]);
-                _dataVPS.AddParameters("@IdentificadorMatrizFilial", row[3]);
-                _dataVPS.AddParameters("@NomeFantasia", row[4]);
-                _dataVPS.AddParameters("@SituacaoCadastral", row[5]);
-                _dataVPS.AddParameters("@DataSituacaoCadastral", row[6]);
-                _dataVPS.AddParameters("@MotivoSituacaoCadastral", row[7]);
-                _dataVPS.AddParameters("@NomeCidadeExterior", row[8]);
-                _dataVPS.AddParameters("@Pais", row[9]);
-                _dataVPS.AddParameters("@DataInicioAtividade", row[10]);
-                _dataVPS.AddParameters("@CnaeFiscalPrincipal", row[11]);
-                _dataVPS.AddParameters("@CnaeFiscalSecundaria", row[12]);
-                _dataVPS.AddParameters("@TipoLogradouro", row[13]);
-                _dataVPS.AddParameters("@Logradouro", row[14]);
-                _dataVPS.AddParameters("@Numero", row[15]);
-                _dataVPS.AddParameters("@Complemento", row[16]);
-                _dataVPS.AddParameters("@Bairro", row[17]);
-                _dataVPS.AddParameters("@CEP", row[18]);
-                _dataVPS.AddParameters("@UF", row[19]);
-                _dataVPS.AddParameters("@Municipio", row[20]);
-                _dataVPS.AddParameters("@DDD1", row[21]);
-                _dataVPS.AddParameters("@Telefone1", row[22]);
-                _dataVPS.AddParameters("@DDD2", row[23]);
-                _dataVPS.AddParameters("@Telefone2", row[24]);
-                _dataVPS.AddParameters("@DDDFax", row[25]);
-                _dataVPS.AddParameters("@Fax", row[26]);
-                _dataVPS.AddParameters("@CorreioEletronico", row[27]);
-                _dataVPS.AddParameters("@SituacaoEspecial", row[28]);
-                _dataVPS.AddParameters("@DataSitucaoEspecial", row[29]);
-                await _dataVPS.WriteAsync(_insert, databaseWrite, datasourceWrite);
-                i++;
-                Console.Write(i);
-            }
-            catch (Exception ex)
-            {
-                Log.Storage("Error: " + ex.Message);
-            }
-
-        _timer.Stop();
-        Log.Storage($"Read: {i} | Migrated: {i} | Time: {_timer.Elapsed:hh\\:mm\\:ss}");
-    });
-
     private static MEstabelecimento DoFields(string[] fields)
-    => new MEstabelecimento()
+    => new()
     {
         CNPJBase = fields[0].ToString().Replace("\"", "").Trim(),
         CNPJOrdem = fields[1].ToString().Replace("\"", "").Trim(),

@@ -20,7 +20,7 @@ public static class Collections
         _timer.Start();
         try
         {
-            foreach (var file in await new NormalizeFiles().DoListAync(@"C:\data", ".ESTABELE"))
+            foreach (var file in await FilesCsv.FilesListAync(@"C:\data", ".ESTABELE"))
             {
                 var _innertimer = new Stopwatch();
                 _innertimer.Start();
@@ -99,7 +99,7 @@ public static class Collections
         try
         {
 
-            foreach (var file in await new NormalizeFiles().DoListAync(@"C:\data", ".EMPRECSV"))
+            foreach (var file in await FilesCsv.FilesListAync(@"C:\data", ".EMPRECSV"))
             {
                 var _innertimer = new Stopwatch();
                 _innertimer.Start();

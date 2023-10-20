@@ -27,7 +27,7 @@ public static class MgSimples
         try
         {
 
-            foreach (var file in await new NormalizeFiles().DoListAync(@"C:\data", ".D30"))
+            foreach (var file in await FilesCsv.FilesListAync(@"C:\data", ".D30"))
             {
                 var _innertimer = new Stopwatch();
                 _innertimer.Start();
@@ -69,18 +69,22 @@ public static class MgSimples
                     }));
 
 
-                Parallel.ForEach(_tasks, t => t.Start());
-                Task.WaitAll(_tasks.ToArray());
+                await Parallel.ForEachAsync(_tasks,
+                    async (t, _) =>
+                        await t
+                    );
+
                 _innertimer.Stop();
+                c3 = c2 * parts;
                 Log.Storage($"Read: {c1} | Migrated: {c2} | Time: {_innertimer.Elapsed.ToString("hh\\:mm\\:ss")}");
             }
 
             Log.Storage("Analyzing data!");
 
-            var db = Factory.Data(server);
-            await db.WriteAsync(SqlCommands.DeleteNotExist("Simples", "Empresas"), database, datasource);
-            await db.ReadAsync(SqlCommands.SelectCommand("Simples"), database, datasource);
-            c3 = db.CNPJBase!.Count();
+            //var db = Factory.Data(server);
+            //await db.WriteAsync(SqlCommands.DeleteNotExist("Simples", "Empresas"), database, datasource);
+            //await db.ReadAsync(SqlCommands.SelectCommand("Simples"), database, datasource);
+            //c3 = db.CNPJBase!.Count();
 
             _timer.Stop();
             Log.Storage($"Read: {c1} | Migrated: {c3} | Time: {_timer.Elapsed:hh\\:mm\\:ss}");
@@ -91,45 +95,8 @@ public static class MgSimples
         }
     });
 
-    public static async Task DatabaseToDataBaseAsync(TServer server, string databaseRead, string datasourceRead, string databaseWrite, string datasourceWrite)
-        => await Task.Run(async () =>
-        {
-            var _timer = new Stopwatch();
-            _timer.Start();
-
-            int i = 0;
-            var _select = SqlCommands.SelectCommand("Simples");
-            var _insert = SqlCommands.InsertCommand("Simples", SqlCommands.Fields_Simples, SqlCommands.Values_Simples);
-
-            var _sqlserver = Factory.Data(TServer.SqlServer);
-
-            var _dataVPS = Factory.Data(server);
-
-            foreach (DataRow row in _sqlserver.ReadAsync(_select, databaseRead, datasourceRead).Result.Rows)
-                try
-                {
-                    _dataVPS.ClearParameters();
-                    _dataVPS.AddParameters("@CNPJBase", row[0]);
-                    _dataVPS.AddParameters("@OpcaoSimples", row[1]);
-                    _dataVPS.AddParameters("@DataOpcaoSimples", row[2]);
-                    _dataVPS.AddParameters("@DataExclusaoSimples", row[3]);
-                    _dataVPS.AddParameters("@OpcaoMEI", row[4]);
-                    _dataVPS.AddParameters("@DataOpcaoMEI", row[5]);
-                    _dataVPS.AddParameters("@DataExclusaoMEI", row[6]);
-                    await _dataVPS.WriteAsync(_insert, databaseWrite, datasourceWrite);
-                    i++;
-                }
-                catch (Exception ex)
-                {
-                    Log.Storage("Error: " + ex.Message);
-                }
-
-            _timer.Stop();
-            Log.Storage($"Read: {i} | Migrated: {i} | Time: {_timer.Elapsed:hh\\:mm\\:ss}");
-        });
-
     private static MSimples DoFields(string[] fields)
-    => new MSimples()
+    => new()
     {
         CNPJBase = fields[0].ToString().Replace("\"", "").Trim(),
         OpcaoSimples = fields[1].ToString().Replace("\"", "").Trim(),
@@ -150,6 +117,7 @@ public static class MgSimples
         data.AddParameters("@OpcaoMEI", model.OpcaoMEI!);
         data.AddParameters("@DataOpcaoMEI", model.DataOpcaoMEI!);
         data.AddParameters("@DataExclusaoMEI", model.DataExclusaoMEI!);
-        await data.WriteAsync(sqlcommand, database, datasource);    }
+        await data.WriteAsync(sqlcommand, database, datasource);
+    }
 
 }

@@ -1,48 +1,42 @@
 using migradata.Helpers;
+using migradata.MySql;
 
 namespace migradata;
 
 public static class Container
 {
-    public static async Task MigrateFromFileAsync(TServer server, string database, string datasource)
+    public static async Task MigrateAsync(TServer server, string database, string datasource)
     {
         Log.Storage("Normalize Files");
-        //await new NormalizeFiles().Start(@"C:\data");
-        await Migrate.MgNormalize.StartAsync(server, database, datasource);
-        Log.Storage("Start migration...");
+        await FilesCsv.NormalizeAsync(Variables.CommandLine!);
 
-        await Task.WhenAll(
-            Migrate.MgCnaes.FileToDataBase(server, database, datasource),
-            Migrate.MgMotivos.FileToDataBase(server, database, datasource),
-            Migrate.MgMunicipios.FileToDataBase(server, database, datasource),
-            Migrate.MgNatureza.FileToDataBase(server, database, datasource),
-            Migrate.MgPaises.FileToDataBase(server, database, datasource),
-            Migrate.MgQualifica.FileToDataBase(server, database, datasource));
+        Log.Storage($"Normalize DataBase {database}!");
+        await DataBase.NormalizeAsync(server, database, datasource);        
+        
+        //await new Data().WriteAsync(SqlScript.SqlServer, DataBase.MigraData_RFB, DataSource.SqlServer);
+        //Log.Storage($"Views successfully created!");
+
+        Log.Storage("Start migration...");
+        //await Migrate.MgCnaes.FileToDataBase(server, database, datasource);
+        //await Migrate.MgMotivos.FileToDataBase(server, database, datasource);
+        //await Migrate.MgMunicipios.FileToDataBase(server, database, datasource);
+        //await Migrate.MgNatureza.FileToDataBase(server, database, datasource);
+        //await Migrate.MgPaises.FileToDataBase(server, database, datasource);
+        //await Migrate.MgQualifica.FileToDataBase(server, database, datasource);
 
         await Migrate.MgEstabelecimentos.FileToDataBase(server, database, datasource);
-        await Migrate.MgEmpresas.FileToDataBase(server, database, datasource);
-        await Migrate.MgSocios.FileToDataBase(server, database, datasource);
-        await Migrate.MgSimples.FileToDataBase(server, database, datasource);
+        //await Migrate.MgEmpresas.FileToDataBase(server, database, datasource);
+        //await Migrate.MgSocios.FileToDataBase(server, database, datasource);
+        //await Migrate.MgSimples.FileToDataBase(server, database, datasource);
+
+        await Migrate.MgIndicadores
+                        .ToDataBase(
+                            server: server,
+                            databaseOut: DataBase.Sim_RFB_db20210001,
+                            databaseIn: DataBase.IndicadoresNET,
+                            datasource: DataSource.SqlServer);
 
         await Log.Write(Log.StorageLog!);
     }
 
-    public static async Task DatabaseToDatabaseAsync(TServer server, string databaseRead, string datasourceRead, string databaseWrite, string datasourceWrite)
-    {
-        await Migrate.MgNormalize.StartAsync(server, databaseWrite, datasourceWrite);
-        Log.Storage("Start migration To VPS...");
-
-        await Migrate.MgCnaes.DatabaseToDataBaseAsync(server, databaseRead, datasourceRead, databaseWrite, datasourceWrite);
-        await Migrate.MgMotivos.DatabaseToDataBaseAsync(server, databaseRead, datasourceRead, databaseWrite, datasourceWrite);
-        await Migrate.MgMunicipios.DatabaseToDataBaseAsync(server, databaseRead, datasourceRead, databaseWrite, datasourceWrite);
-        await Migrate.MgNatureza.DatabaseToDataBaseAsync(server, databaseRead, datasourceRead, databaseWrite, datasourceWrite);
-        await Migrate.MgPaises.DatabaseToDataBaseAsync(server, databaseRead, datasourceRead, databaseWrite, datasourceWrite);
-        await Migrate.MgQualifica.DatabaseToDataBaseAsync(server, databaseRead, datasourceRead, databaseWrite, datasourceWrite);
-        await Migrate.MgEstabelecimentos.DatabaseToDataBaseAsync(server, databaseRead, datasourceRead, databaseWrite, datasourceWrite);
-        await Migrate.MgEmpresas.DatabaseToDataBaseAsync(server, databaseRead, datasourceRead, databaseWrite, datasourceWrite);
-        await Migrate.MgSocios.DatabaseToDataBaseAsync(server, databaseRead, datasourceRead, databaseWrite, datasourceWrite);
-        await Migrate.MgSimples.DatabaseToDataBaseAsync(server, databaseRead, datasourceRead, databaseWrite, datasourceWrite);
-
-        await Log.Write(Log.StorageLog!);
-    }
 }

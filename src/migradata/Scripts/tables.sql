@@ -1,8 +1,15 @@
-CREATE TABLE Cnaes (
-    Codigo VARCHAR(10) NULL,
-    Descricao varchar(MAX) NULL
-);
+USE [MigraData_RFB]
 
+IF NOT EXISTS (SELECT 1 FROM sys.tables WHERE name = 'Cnaes')
+BEGIN
+    CREATE TABLE Cnaes (
+        Codigo VARCHAR(10) NULL,
+        Descricao varchar(MAX) NULL
+    );
+END;
+
+IF NOT EXISTS (SELECT 1 FROM sys.tables WHERE name = 'Empresas')
+BEGIN
 CREATE TABLE Empresas (
     CNPJBase VARCHAR(8) NULL,
     RazaoSocial VARCHAR(255) NULL,
@@ -12,7 +19,10 @@ CREATE TABLE Empresas (
     PorteEmpresa VARCHAR(5) NULL,
     EnteFederativoResponsavel VARCHAR(255) NULL
 );
+END;
 
+IF NOT EXISTS (SELECT 1 FROM sys.tables WHERE name = 'Estabelecimentos')
+BEGIN
 CREATE TABLE Estabelecimentos (
     CNPJBase VARCHAR(8) NULL,
     CNPJOrdem VARCHAR(4) NULL,
@@ -45,32 +55,50 @@ CREATE TABLE Estabelecimentos (
     SituacaoEspecial VARCHAR(50) NULL,
     DataSitucaoEspecial VARCHAR(10) NULL
 );
+END;
 
+IF NOT EXISTS (SELECT 1 FROM sys.tables WHERE name = 'MotivoSituacaoCadastral')
+BEGIN
 CREATE TABLE MotivoSituacaoCadastral (
     Codigo VARCHAR(2) NULL,
     Descricao varchar(MAX) NULL
 );
+END;
 
+IF NOT EXISTS (SELECT 1 FROM sys.tables WHERE name = 'Municipios')
+BEGIN
 CREATE TABLE Municipios (
     Codigo VARCHAR(10) NULL,
     Descricao varchar(MAX) NULL
 );
+END;
 
+IF NOT EXISTS (SELECT 1 FROM sys.tables WHERE name = 'NaturezaJuridica')
+BEGIN
 CREATE TABLE NaturezaJuridica (
     Codigo VARCHAR(5) NULL,
     Descricao varchar(MAX) NULL
 );
+END;
 
+IF NOT EXISTS (SELECT 1 FROM sys.tables WHERE name = 'Paises')
+BEGIN
 CREATE TABLE Paises (
     Codigo VARCHAR(5) NULL,
     Descricao varchar(MAX) NULL
 );
+END;
 
+IF NOT EXISTS (SELECT 1 FROM sys.tables WHERE name = 'QualificacaoSocios')
+BEGIN
 CREATE TABLE QualificacaoSocios (
     Codigo VARCHAR(4) NULL,
     Descricao varchar(MAX) NULL
 );
+END;
 
+IF NOT EXISTS (SELECT 1 FROM sys.tables WHERE name = 'Simples')
+BEGIN
 CREATE TABLE Simples (
     CNPJBase VARCHAR(8) NULL,
     OpcaoSimples VARCHAR(2) NULL,
@@ -80,6 +108,10 @@ CREATE TABLE Simples (
     DataOpcaoMEI VARCHAR(10) NULL,
     DataExclusaoMEI VARCHAR(10) NULL
 );
+END;
+
+IF NOT EXISTS (SELECT 1 FROM sys.tables WHERE name = 'Socios')
+BEGIN
 
 CREATE TABLE Socios (
     CNPJBase VARCHAR(8) NULL,
@@ -94,3 +126,4 @@ CREATE TABLE Socios (
     QualificacaoRepresentanteLegal VARCHAR(4) NULL,
     FaixaEtaria VARCHAR(2) NULL
 );
+END;

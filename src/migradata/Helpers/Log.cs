@@ -1,6 +1,8 @@
+using Microsoft.Extensions.Logging;
+
 namespace migradata.Helpers;
 
-public static class Log
+public static class Log 
 {
     private static List<string> _storagelog = new();
     public static List<string>? StorageLog
@@ -11,8 +13,8 @@ public static class Log
 
     public static void Storage(string message)
     {
-        StorageLog!.Add($"{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")} | {message}");
-        Console.WriteLine($"{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")} | {message}");
+        StorageLog!.Add($"{DateTime.Now:yyyy-MM-dd HH:mm:ss} | {message}");
+        Console.WriteLine($"{DateTime.Now:yyyy-MM-dd HH:mm:ss} | {message}");
     }
 
     public async static Task Write(IEnumerable<string> messages)
@@ -33,7 +35,7 @@ public static class Log
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")} | Error | {ex.Message}");
+                Console.WriteLine($"{DateTime.Now:yyyy-MM-dd HH:mm:ss} | Error | {ex.Message}");
             }
             finally
             {

@@ -18,7 +18,7 @@ public static class MgMunicipios
             var _timer = new Stopwatch();
             _timer.Start();
 
-            foreach (var file in await new NormalizeFiles().DoListAync(@"C:\data", ".MUNICCSV"))
+            foreach (var file in await FilesCsv.FilesListAync(@"C:\data", ".MUNICCSV"))
                 try
                 {
                     Log.Storage($"Migrating File {Path.GetFileName(file)}");
@@ -46,35 +46,4 @@ public static class MgMunicipios
                 }
         });
 
-    public static async Task DatabaseToDataBaseAsync(TServer server, string databaseRead, string datasoruceRead, string databaseWrite, string datasourceWrite)
-        => await Task.Run(async () =>
-        {
-            var _timer = new Stopwatch();
-            _timer.Start();
-
-            int i = 0;
-            var _select = SqlCommands.SelectCommand("Municipios");
-            var _insert = SqlCommands.InsertCommand("Municipios", SqlCommands.Fields_Generic, SqlCommands.Values_Generic);
-
-            var _sqlserver = Factory.Data(TServer.SqlServer);
-
-            var _dataVPS = Factory.Data(server);
-
-            foreach (DataRow row in _sqlserver.ReadAsync(_select, databaseRead, datasoruceRead).Result.Rows)
-                try
-                {
-                    _dataVPS.ClearParameters();
-                    _dataVPS.AddParameters("@Codigo", row[0]);
-                    _dataVPS.AddParameters("@Descricao", row[1]);
-                    await _dataVPS.WriteAsync(_insert, databaseWrite, datasourceWrite);
-                    i++;
-                }
-                catch (Exception ex)
-                {
-                    Log.Storage("Error: " + ex.Message);
-                }
-
-            _timer.Stop();
-            Log.Storage($"Read: {i} | Migrated: {i} | Time: {_timer.Elapsed:hh\\:mm\\:ss}");
-        });
 }

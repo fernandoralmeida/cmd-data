@@ -1,6 +1,8 @@
-using System.Data.SqlClient;
-using MySql.Data.MySqlClient;
-using Npgsql;
+using System.Diagnostics;
+using migradata.Models;
+using migradata.MySql;
+using MySqlX.XDevAPI.Relational;
+using Org.BouncyCastle.Asn1.X509;
 
 namespace migradata.Helpers;
 
@@ -12,82 +14,47 @@ public static class DataBase
 
     public static readonly string IndicadoresNET = @"www_indicadores";
 
-    public static async void CreateInSqlServer(string database, string datasource)
+    public static async Task NormalizeAsync(TServer server, string dbname, string dtsource)
     {
-        using SqlConnection connection = new ($"{datasource}");
-        connection.Open();
+        var _timer = new Stopwatch();
+        _timer.Start();
+        var data = Factory.Data(server);
+        Log.Storage("Checking Connections...");
 
-        var cmd = new SqlCommand($"SELECT database_id FROM sys.databases WHERE Name = '{database}'", connection);
-
-        var databaseId = cmd.ExecuteScalar();
-
-        if (databaseId == null)
+        if (await data.DbExists(dbname, dtsource))
         {
-            cmd = new SqlCommand($"CREATE DATABASE {database}", connection);
-            if (cmd.ExecuteNonQuery() < 1)
-                Log.Storage($"{database} successfully created!");
+            Log.Storage("Normalizing Database...");
+            await data.WriteAsync(SqlCommands.DeletCommand("Cnaes"), dbname, dtsource);
+            await data.WriteAsync(SqlCommands.DeletCommand("MotivoSituacaoCadastral"), dbname, dtsource);
+            await data.WriteAsync(SqlCommands.DeletCommand("Municipios"), dbname, dtsource);
+            await data.WriteAsync(SqlCommands.DeletCommand("NaturezaJuridica"), dbname, dtsource);
+            await data.WriteAsync(SqlCommands.DeletCommand("Paises"), dbname, dtsource);
+            await data.WriteAsync(SqlCommands.DeletCommand("QualificacaoSocios"), dbname, dtsource);
+            await data.WriteAsync(SqlCommands.DeletCommand("Estabelecimentos"), dbname, dtsource);
+            await data.WriteAsync(SqlCommands.DeletCommand("Empresas"), dbname, dtsource);
+            await data.WriteAsync(SqlCommands.DeletCommand("Socios"), dbname, dtsource);
+            await data.WriteAsync(SqlCommands.DeletCommand("Simples"), dbname, dtsource);
         }
-        connection.Close();
-
-        await CreateTablesAsync(TServer.SqlServer, database, datasource);
-    }
-
-    public static async void CreateInMySql(string database, string datasource)
-    {
-        MySqlConnection connection = new($"{datasource}");
-        connection.Open();
-
-        MySqlCommand command = new MySqlCommand($"CREATE DATABASE IF NOT EXISTS {database};", connection);
-        if (command.ExecuteNonQuery() == 1)
-            Log.Storage($"{database} successfully created!");
-
-        connection.Close();
-
-        await CreateTablesAsync(TServer.MySql, database, datasource);
-    }
-
-    public static async void CreateInPostgreSql(string database, string datasource)
-    {
-        string connectionString = $"{datasource}Database={database};";
-        try
+        else
         {
-            using var conn = new NpgsqlConnection(connectionString);
-            conn.Open();
-            Log.Storage($"{database} OK!");
-        }
-        catch
-        {
-            try
-            {
-                using (var conn = new NpgsqlConnection(connectionString))
+            await data.CreateDB(
+                datasource: dtsource,
+                dbname: dbname,
+                new List<MSqlCommand>()
                 {
-                    conn.Open();
-                    using (var cmd = new NpgsqlCommand($"CREATE DATABASE {database}", conn))
-                    {
-                        cmd.ExecuteScalar();
-                        Log.Storage($"{database} successfully created!");
-                    }
-                }
-                
-                await CreateTablesAsync(TServer.PostgreSql, database, datasource);
-            }
-            catch (Exception ex)
-            {
-                Log.Storage($"{ex.Message}: Database OK!");
-            }
+                    new(){Name = "Tables", Command = SqlScript.SqlServer },
+                    new(){Name = "Views", Command = SqlScript.Create_View_Empresas }
+                });
+
+            Thread.Sleep(3000);
+
+            Log.Storage("Checking Connections...");
+
+            await data.DbExists(dbname, dtsource);
         }
+        _timer.Stop();
+        Log.Storage($"Normalized Database! {_timer.Elapsed:hh\\:mm\\:ss}");
+        Thread.Sleep(3000);
     }
 
-    private static async Task CreateTablesAsync(TServer server, string database, string datasource)
-    => await Task.Run(async () =>
-    {
-        if (server == TServer.SqlServer)
-            await new SqlServer.Data().WriteAsync(SqlScript.Default, database, datasource);
-
-        if (server == TServer.MySql)
-            await new MySql.Data().WriteAsync(SqlScript.MariaDB, database, datasource);
-
-        if (server == TServer.PostgreSql)
-            await new Postgres.Data().WriteAsync(SqlScript.Default, database, datasource);
-    });
 }

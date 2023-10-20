@@ -85,4 +85,10 @@ public static class SqlCommands
     public static string SelectCommand(string tablename)
         => $"SELECT * FROM {tablename}";
 
+    public static string ViewCommand(string viewname)
+        => $"SELECT * FROM {viewname}";
+
+    public static string CreateDataBase(string dbname)
+        => $"CREATE DATABASE {dbname}";
+
 }

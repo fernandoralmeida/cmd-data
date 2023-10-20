@@ -1,6 +1,7 @@
 using System.Data;
 using migradata.Helpers;
 using migradata.Interfaces;
+using migradata.Models;
 using MySql.Data.MySqlClient;
 
 namespace migradata.MySql;
@@ -77,17 +78,35 @@ public class Data : IData
                 }
             });
 
-    public void CheckDB(string database, string datasource)
+    public async Task<bool> DbExists(string database, string datasource)
+    => await Task.Run(() =>
     {
-        using MySqlConnection connection = new($"{datasource}Database={database};");
         try
         {
+            using MySqlConnection connection = new($"{datasource}Database={database};");
             connection.Open();
             Log.Storage("Successful Connection!");
+            return true;
         }
         catch (Exception ex)
         {
             Log.Storage("Error: " + ex.Message);
+            return false;
         }
-    }
+
+    });
+
+    public async Task CreateDB(string datasource, string dbname, List<MSqlCommand> sqlcommands)
+    => await Task.Run(() =>
+    {
+        MySqlConnection connection = new($"{datasource}");
+        connection.Open();
+
+        MySqlCommand command = new MySqlCommand($"CREATE DATABASE IF NOT EXISTS {dbname};", connection);
+        if (command.ExecuteNonQuery() == 1)
+            Log.Storage($"{dbname} successfully created!");
+
+        connection.Close();
+    });
+
 }
