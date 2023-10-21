@@ -6,6 +6,7 @@ using migradata.Interfaces;
 using System.Data;
 using System.Runtime.Intrinsics.Arm;
 using DnsClient.Protocol;
+using MongoDB.Driver.Linq;
 
 namespace migradata.Migrate;
 
@@ -16,7 +17,6 @@ public static class MgEstabelecimentos
     {
         int c1 = 0;
         int c2 = 0;
-        int c3 = 0;
         var _insert = SqlCommands.InsertCommand("Estabelecimentos",
                         SqlCommands.Fields_Estabelecimentos,
                         SqlCommands.Values_Estabelecumentos);
@@ -27,19 +27,18 @@ public static class MgEstabelecimentos
         {
             foreach (var file in await FilesCsv.FilesListAync(@"C:\data", ".ESTABELE"))
             {
-                var _innertimer = new Stopwatch();
-                _innertimer.Start();
                 var _data = Factory.Data(server);
                 var _list = new List<MEstabelecimento>();
                 Log.Storage($"Reading File {Path.GetFileName(file)}");
                 Console.Write("\n|");
                 using (var reader = new StreamReader(file, Encoding.GetEncoding("ISO-8859-1")))
                 {
+                    var _rows = 0;
                     while (!reader.EndOfStream)
                     {
                         var line = reader.ReadLine();
                         var fields = line!.Split(';');
-                        
+
                         foreach (var item in MMunicipio.MicroRegionJau()
                                                         .Where(s => s == fields[20]
                                                         .ToString()
@@ -47,11 +46,15 @@ public static class MgEstabelecimentos
                         {
 
                             _list.Add(DoFields(fields));
-                            if (c1 % 10000 == 0)
-                                Console.Write("|");
+                            _rows++;
+                            if (c1 % 1000 == 0)
+                            {
+                                Console.Write($"  {_rows}");
+                                Console.Write("\r");
+                            }
 
                         }
-                        c1++;                        
+                        c1++;
                     }
                 }
 
@@ -66,35 +69,27 @@ public static class MgEstabelecimentos
 
                 Log.Storage($"Total: {_list.Count} -> Parts: {parts} -> Rows: {size}");
                 Console.Write("\n|");
-                int registrosInseridos = 0;
-                int totalRegistros = _list.Count;
-                int progresso = 0;
-                int larguraBarra = 100;
 
                 foreach (var rows in _lists)
                 {
                     _tasks.Add(Task.Run(async () =>
                     {
-                        var i = 0;
                         var _db = Factory.Data(server);
-                        
+                        int registrosInseridos = 0;
+                        int totalRegistros = size;
+                        int progresso = 0;
+
                         foreach (var row in rows)
                         {
                             registrosInseridos++;
                             progresso = registrosInseridos * 100 / totalRegistros;
-                            i++;
+                            c2++;
                             await DoInsert(_insert, _db, row, database, datasource);
 
-                            if (i % 1000 == 0)
+                            if (progresso % 10 == 0)
                             {
-                                /**/
-                                //Console.Write(progresso / 100.0 * larguraBarra);
-                                //if(progresso / 100.0 * larguraBarra % 100 == 0)
-                                //{
-                                    Console.Write("|");
-                                //}
-                                //Console.Write("\r");
-                                //Console.Write("|");
+                                Console.Write($"| {progresso}% ");
+                                Console.Write("\r");
                             }
                         }
                     }));
@@ -102,12 +97,8 @@ public static class MgEstabelecimentos
 
                 await Parallel.ForEachAsync(_tasks,
                     async (t, _) =>
-                        await t
+                       await t
                     );
-
-                _innertimer.Stop();
-
-                c3 = c2 * parts;
 
                 //Log.Storage($"Read: {c1} | Migrated: {c2} | Time: {_innertimer.Elapsed:hh\\:mm\\:ss}");
             }

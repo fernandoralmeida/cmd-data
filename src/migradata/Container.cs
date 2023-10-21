@@ -14,17 +14,17 @@ public static class Container
         await DataBase.NormalizeAsync(server, database, datasource);        
 
         Log.Storage("Start migration...");
-        await Migrate.MgCnaes.FileToDataBase(server, database, datasource);
-        await Migrate.MgMotivos.FileToDataBase(server, database, datasource);
-        await Migrate.MgMunicipios.FileToDataBase(server, database, datasource);
-        await Migrate.MgNatureza.FileToDataBase(server, database, datasource);
-        await Migrate.MgPaises.FileToDataBase(server, database, datasource);
-        await Migrate.MgQualifica.FileToDataBase(server, database, datasource);
+        //await Migrate.MgCnaes.FileToDataBase(server, database, datasource);
+        //await Migrate.MgMotivos.FileToDataBase(server, database, datasource);
+        //await Migrate.MgMunicipios.FileToDataBase(server, database, datasource);
+        //await Migrate.MgNatureza.FileToDataBase(server, database, datasource);
+        //await Migrate.MgPaises.FileToDataBase(server, database, datasource);
+        //await Migrate.MgQualifica.FileToDataBase(server, database, datasource);
 
         await Migrate.MgEstabelecimentos.FileToDataBase(server, database, datasource);
         await Migrate.MgEmpresas.FileToDataBase(server, database, datasource);
-        await Migrate.MgSocios.FileToDataBase(server, database, datasource);
-        await Migrate.MgSimples.FileToDataBase(server, database, datasource);
+        //await Migrate.MgSocios.FileToDataBase(server, database, datasource);
+        //await Migrate.MgSimples.FileToDataBase(server, database, datasource);
 
         await DataBase.Normalize_IndicadoresNET(server, DataBase.IndicadoresNET, datasource);
 

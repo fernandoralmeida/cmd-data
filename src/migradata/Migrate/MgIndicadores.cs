@@ -13,7 +13,6 @@ public static class MgIndicadores
     {
         var c1 = 0;
         var c2 = 0;
-        var c3 = 0;
         var _timer = new Stopwatch();
         var _db = Factory.Data(server);
         var _list = new List<MIndicadoresnet>();
@@ -72,27 +71,25 @@ public static class MgIndicadores
 
         Log.Storage($"Total: {_list.Count} -> Parts: {parts} -> Rows: {size}");
 
-        int registrosInseridos = 0;
-        int totalRegistros = _list.Count;
-        int progresso = 0;
-
         foreach (var rows in _lists)
             _tasks.Add(Task.Run(async () =>
             {
-                var i = 0;
                 var _db = Factory.Data(server);
+                int registrosInseridos = 0;
+                int totalRegistros = _list.Count;
+                int progresso = 0;
                 foreach (var row in rows)
                 {
                     registrosInseridos++;
                     progresso = registrosInseridos * 100 / totalRegistros;
-                    i++;
+                    c2++;
                     await DoInsert(_insert, _db, row, databaseIn, datasource);
-                    if (registrosInseridos % 1000 == 0)
-                        Console.Write("#");
-
+                    if (progresso % 10 == 0)
+                    {
+                        Console.Write($"| {progresso}% ");
+                        Console.Write("\r");
+                    }
                 }
-                c2 += i;
-                Log.Storage($"Part: {i} -> Rows: {c2}");
             }));
 
         await Parallel.ForEachAsync(_tasks,
@@ -101,8 +98,6 @@ public static class MgIndicadores
             );
 
         _timer.Stop();
-
-        c3 = c2 * parts;
 
         Log.Storage($"Read: {c1} | Migrated: {c2} | Time: {_timer.Elapsed:hh\\:mm\\:ss}");
 
