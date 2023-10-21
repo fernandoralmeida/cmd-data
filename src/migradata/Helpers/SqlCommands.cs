@@ -72,6 +72,58 @@ public static class SqlCommands
     public static readonly string Values_Simples = @"(@CNPJBase,@OpcaoSimples,@DataOpcaoSimples,@DataExclusaoSimples,@OpcaoMEI,@DataOpcaoMEI,@DataExclusaoMEI)";
     public static readonly string Fields_Generic = @"(Codigo,Descricao)";
     public static readonly string Values_Generic = @"(@Codigo,@Descricao)";
+    public static readonly string Fields_Indicadores_Empresas = @"(
+                                        Id,
+                                        CNPJ,
+                                        RazaoSocial,
+                                        NaturezaJuridica,
+                                        CapitalSocial,
+                                        PorteEmpresa,
+                                        IdentificadorMatrizFilial,
+                                        NomeFantasia,
+                                        SituacaoCadastral,
+                                        DataSituacaoCadastral,
+                                        DataInicioAtividade,
+                                        CnaeFiscalPrincipal,
+                                        CnaeDescricao,
+                                        CEP,
+                                        Logradouro,
+                                        Numero,
+                                        Bairro,
+                                        UF,
+                                        Municipio,
+                                        OpcaoSimples,
+                                        DataOpcaoSimples,
+                                        DataExclusaoSimples,
+                                        OpcaoMEI,
+                                        DataOpcaoMEI,
+                                        DataExclusaoMEI)";
+    public static readonly string Values_Indicadores_Empresas = @"(
+                                        @Id,
+                                        @CNPJ,
+                                        @RazaoSocial,
+                                        @NaturezaJuridica,
+                                        @CapitalSocial,
+                                        @PorteEmpresa,
+                                        @IdentificadorMatrizFilial,
+                                        @NomeFantasia,
+                                        @SituacaoCadastral,
+                                        @DataSituacaoCadastral,
+                                        @DataInicioAtividade,
+                                        @CnaeFiscalPrincipal,
+                                        @CnaeDescricao,
+                                        @CEP,
+                                        @Logradouro,
+                                        @Numero,
+                                        @Bairro,
+                                        @UF,
+                                        @Municipio,
+                                        @OpcaoSimples,
+                                        @DataOpcaoSimples,
+                                        @DataExclusaoSimples,
+                                        @OpcaoMEI,
+                                        @DataOpcaoMEI,
+                                        @DataExclusaoMEI)";
 
     public static string DeleteNotExist(string tablename, string tablenameref)
         => $"DELETE FROM {tablename} WHERE NOT EXISTS (SELECT 1 FROM {tablenameref} WHERE {tablenameref}.CNPJBase = {tablename}.CNPJBase)";

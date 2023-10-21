@@ -12,9 +12,6 @@ public static class Container
 
         Log.Storage($"Normalize DataBase {database}!");
         await DataBase.NormalizeAsync(server, database, datasource);        
-        
-        //await new Data().WriteAsync(SqlScript.SqlServer, DataBase.MigraData_RFB, DataSource.SqlServer);
-        //Log.Storage($"Views successfully created!");
 
         Log.Storage("Start migration...");
         //await Migrate.MgCnaes.FileToDataBase(server, database, datasource);
@@ -24,10 +21,12 @@ public static class Container
         //await Migrate.MgPaises.FileToDataBase(server, database, datasource);
         //await Migrate.MgQualifica.FileToDataBase(server, database, datasource);
 
-        await Migrate.MgEstabelecimentos.FileToDataBase(server, database, datasource);
+        //await Migrate.MgEstabelecimentos.FileToDataBase(server, database, datasource);
         //await Migrate.MgEmpresas.FileToDataBase(server, database, datasource);
         //await Migrate.MgSocios.FileToDataBase(server, database, datasource);
         //await Migrate.MgSimples.FileToDataBase(server, database, datasource);
+
+        await DataBase.Normalize_IndicadoresNET(server, DataBase.IndicadoresNET, datasource);
 
         await Migrate.MgIndicadores
                         .ToDataBase(

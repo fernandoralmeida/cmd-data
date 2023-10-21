@@ -57,4 +57,37 @@ public static class DataBase
         Thread.Sleep(3000);
     }
 
+    public static async Task Normalize_IndicadoresNET(TServer server, string dbname, string dtsource)
+    => await Task.Run(async ()=> {
+        var _timer = new Stopwatch();
+        _timer.Start();
+        var data = Factory.Data(server);
+        Log.Storage("Checking Connections...");
+
+        if (await data.DbExists(dbname, dtsource))
+        {
+            Log.Storage("Normalizing Database...");
+            await data.WriteAsync(SqlCommands.DeletCommand("Empresas"), dbname, dtsource);
+        }
+        else
+        {
+            await data.CreateDB(
+                datasource: dtsource,
+                dbname: dbname,
+                new List<MSqlCommand>()
+                {
+                    new(){Name = "Tables", Command = SqlScript.Create_Table_Empresas }
+                });
+
+            Thread.Sleep(3000);
+
+            Log.Storage("Checking Connections...");
+
+            await data.DbExists(dbname, dtsource);
+        }
+        _timer.Stop();
+        Log.Storage($"Normalized Database! {_timer.Elapsed:hh\\:mm\\:ss}");
+        Thread.Sleep(3000);
+    });
+
 }
