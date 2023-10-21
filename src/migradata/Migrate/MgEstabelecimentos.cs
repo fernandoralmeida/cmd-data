@@ -5,6 +5,7 @@ using migradata.Models;
 using migradata.Interfaces;
 using System.Data;
 using System.Runtime.Intrinsics.Arm;
+using DnsClient.Protocol;
 
 namespace migradata.Migrate;
 
@@ -31,20 +32,26 @@ public static class MgEstabelecimentos
                 var _data = Factory.Data(server);
                 var _list = new List<MEstabelecimento>();
                 Log.Storage($"Reading File {Path.GetFileName(file)}");
+                Console.Write("\n|");
                 using (var reader = new StreamReader(file, Encoding.GetEncoding("ISO-8859-1")))
                 {
                     while (!reader.EndOfStream)
                     {
                         var line = reader.ReadLine();
                         var fields = line!.Split(';');
-
+                        
                         foreach (var item in MMunicipio.MicroRegionJau()
                                                         .Where(s => s == fields[20]
                                                         .ToString()
                                                         .Replace("\"", "")))
-                            _list.Add(DoFields(fields));
+                        {
 
-                        c1++;
+                            _list.Add(DoFields(fields));
+                            if (c1 % 10000 == 0)
+                                Console.Write("|");
+
+                        }
+                        c1++;                        
                     }
                 }
 
@@ -52,26 +59,46 @@ public static class MgEstabelecimentos
                 var _lists = new List<IEnumerable<MEstabelecimento>>();
 
                 int parts = Cpu.Count;
-                int size = (_list.Count() / parts) + 1;
+                int size = (_list.Count / parts) + 1;
 
                 for (int p = 0; p < parts; p++)
                     _lists.Add(_list.Skip(p * size).Take(size));
 
-                Log.Storage($"Total: {_list.Count()} -> Parts: {parts} -> Rows: {size}");
+                Log.Storage($"Total: {_list.Count} -> Parts: {parts} -> Rows: {size}");
+                Console.Write("\n|");
+                int registrosInseridos = 0;
+                int totalRegistros = _list.Count;
+                int progresso = 0;
+                int larguraBarra = 100;
 
                 foreach (var rows in _lists)
+                {
                     _tasks.Add(Task.Run(async () =>
                     {
                         var i = 0;
                         var _db = Factory.Data(server);
+                        
                         foreach (var row in rows)
                         {
+                            registrosInseridos++;
+                            progresso = registrosInseridos * 100 / totalRegistros;
                             i++;
                             await DoInsert(_insert, _db, row, database, datasource);
+
+                            if (i % 1000 == 0)
+                            {
+                                /**/
+                                //Console.Write(progresso / 100.0 * larguraBarra);
+                                //if(progresso / 100.0 * larguraBarra % 100 == 0)
+                                //{
+                                    Console.Write("|");
+                                //}
+                                //Console.Write("\r");
+                                //Console.Write("|");
+                            }
                         }
-                        c2 += i;
-                        Log.Storage($"Part: {i} -> Rows: {c2}");
                     }));
+                }
 
                 await Parallel.ForEachAsync(_tasks,
                     async (t, _) =>
@@ -82,12 +109,12 @@ public static class MgEstabelecimentos
 
                 c3 = c2 * parts;
 
-                Log.Storage($"Read: {c1} | Migrated: {c2} | Time: {_innertimer.Elapsed:hh\\:mm\\:ss}");
+                //Log.Storage($"Read: {c1} | Migrated: {c2} | Time: {_innertimer.Elapsed:hh\\:mm\\:ss}");
             }
             _timer.Stop();
-           // var db = Factory.Data(server);
+            // var db = Factory.Data(server);
             //var c3 = await db.ReadAsync(SqlCommands.SelectCommand("Estabelecimentos"), database, datasource);
-            Log.Storage($"Read: {c1} | Migrated: {c3} | Time: {_timer.Elapsed:hh\\:mm\\:ss}");
+            Log.Storage($"Read: {c1} | Migrated: {c2} | Time: {_timer.Elapsed:hh\\:mm\\:ss}");
         }
         catch (Exception ex)
         {

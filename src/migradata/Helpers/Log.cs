@@ -14,7 +14,7 @@ public static class Log
     public static void Storage(string message)
     {
         StorageLog!.Add($"{DateTime.Now:yyyy-MM-dd HH:mm:ss} | {message}");
-        Console.WriteLine($"{DateTime.Now:yyyy-MM-dd HH:mm:ss} | {message}");
+        Console.Write($"\n{DateTime.Now:yyyy-MM-dd HH:mm:ss} | {message}");
     }
 
     public async static Task Write(IEnumerable<string> messages)

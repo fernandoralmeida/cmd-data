@@ -21,6 +21,7 @@ class Program
             Console.Write("Option: ");
             string input = Console.ReadLine()!;
             int choice = int.Parse(input);
+            Variables.CommandLine = @"c:\\data";
             switch (choice)
             {
                 case 1:

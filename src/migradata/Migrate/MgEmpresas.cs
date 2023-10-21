@@ -31,6 +31,7 @@ public static class MgEmpresas
                 _innertimer.Start();
                 var _list = new List<MEmpresa>();
                 Log.Storage($"Reading File {Path.GetFileName(file)}");
+                Console.Write("\n|");
                 using (var reader = new StreamReader(file, Encoding.GetEncoding("ISO-8859-1")))
                 {
                     while (!reader.EndOfStream)
@@ -39,6 +40,8 @@ public static class MgEmpresas
                         var line = reader.ReadLine();
                         var fields = line!.Split(';');
                         _list.Add(DoFields(fields));
+                        if (c1 % 100000 == 0)
+                            Console.Write("|");
                     }
                 }
 
@@ -73,10 +76,10 @@ public static class MgEmpresas
 
                 _innertimer.Stop();
                 c3 = c2 * parts;
-                Log.Storage($"Read: {c1} | Migrated: {c3} | Time: {_innertimer.Elapsed:hh\\:mm\\:ss}");
+                //Log.Storage($"Read: {c1} | Migrated: {c3} | Time: {_innertimer.Elapsed:hh\\:mm\\:ss}");
             }
 
-            Log.Storage("Analyzing data!");
+            //Log.Storage("Analyzing data!");
 
             //var db = Factory.Data(server);
             //await db.WriteAsync(SqlCommands.DeleteNotExist("Empresas", "Estabelecimentos"), database, datasource);

@@ -46,7 +46,7 @@ public static class DataBase
                     new(){Name = "Views", Command = SqlScript.Create_View_Empresas }
                 });
 
-            Thread.Sleep(3000);
+            //Thread.Sleep(3000);
 
             Log.Storage("Checking Connections...");
 
@@ -54,7 +54,7 @@ public static class DataBase
         }
         _timer.Stop();
         Log.Storage($"Normalized Database! {_timer.Elapsed:hh\\:mm\\:ss}");
-        Thread.Sleep(3000);
+       // Thread.Sleep(3000);
     }
 
     public static async Task Normalize_IndicadoresNET(TServer server, string dbname, string dtsource)

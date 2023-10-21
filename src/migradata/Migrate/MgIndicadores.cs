@@ -88,7 +88,7 @@ public static class MgIndicadores
                     i++;
                     await DoInsert(_insert, _db, row, databaseIn, datasource);
                     if (registrosInseridos % 1000 == 0)
-                        Console.Write("|");
+                        Console.Write("#");
 
                 }
                 c2 += i;

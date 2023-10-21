@@ -56,7 +56,7 @@ public static class MgSocios
                 Log.Storage($"Migrating: {_list.Count()} -> {parts} : {size}");
 
                 foreach (var rows in _lists)
-                    _tasks.Add(new Task(async () =>
+                    _tasks.Add(Task.Run(async () =>
                     {
                         var i = 0;
                         var _db = Factory.Data(server);
@@ -75,7 +75,7 @@ public static class MgSocios
 
                 _innertimer.Stop();
                 c3 = c2 * parts;
-                Log.Storage($"Read: {c1} | Migrated: {c2} | Time: {_innertimer.Elapsed:hh\\:mm\\:ss}");
+                //Log.Storage($"Read: {c1} | Migrated: {c2} | Time: {_innertimer.Elapsed:hh\\:mm\\:ss}");
             }
             Log.Storage("Analyzing data!");
 
@@ -85,7 +85,7 @@ public static class MgSocios
             //c3 = db.CNPJBase!.Count();
 
             _timer.Stop();
-            Log.Storage($"Read: {c1} | Migrated: {c3} | Time: {_timer.Elapsed:hh\\:mm\\:ss}");
+            Log.Storage($"Read: {c1} | Migrated: {c2} | Time: {_timer.Elapsed:hh\\:mm\\:ss}");
         }
         catch (Exception ex)
         {
