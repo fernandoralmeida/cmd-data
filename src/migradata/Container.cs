@@ -21,8 +21,8 @@ public static class Container
         //await Migrate.MgPaises.FileToDataBase(server, database, datasource);
         //await Migrate.MgQualifica.FileToDataBase(server, database, datasource);
 
-        await Migrate.MgEstabelecimentos.FileToDataBase(server, database, datasource);
-        await Migrate.MgEmpresas.FileToDataBase(server, database, datasource);
+        //await Migrate.MgEstabelecimentos.FileToDataBase(server, database, datasource);
+        //await Migrate.MgEmpresas.FileToDataBase(server, database, datasource);
         //await Migrate.MgSocios.FileToDataBase(server, database, datasource);
         //await Migrate.MgSimples.FileToDataBase(server, database, datasource);
 

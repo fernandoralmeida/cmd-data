@@ -51,12 +51,13 @@ public static class MgEmpresas
                 var _lists = new List<IEnumerable<MEmpresa>>();
 
                 int parts = Cpu.Count;
-                int size = (_list.Count() / parts) + 1;
+                int size = (_list.Count / parts) + 1;
 
                 for (int p = 0; p < parts; p++)
                     _lists.Add(_list.Skip(p * size).Take(size));
 
-                Log.Storage($"Migrating: {_list.Count()} -> {parts} : {size}");
+                Log.Storage($"Migrating: {_list.Count} -> {parts} : {size}");
+                Console.Write("\n|");
 
                 foreach (var rows in _lists)
                     _tasks.Add(Task.Run(async () =>

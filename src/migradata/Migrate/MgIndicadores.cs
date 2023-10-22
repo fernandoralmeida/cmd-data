@@ -22,9 +22,12 @@ public static class MgIndicadores
                 SqlCommands.Values_Indicadores_Empresas);
 
         _timer.Start();
-
+        var _rows = 0;
+        Log.Storage($"Starting Migrate to Indicadores");
+        Console.Write("\n");
         foreach (DataRow row in _dataRead.Rows)
         {
+            _rows++;
             _list.Add(new MIndicadoresnet()
             {
                 CNPJ = row["CNPJ"].ToString(),
@@ -52,13 +55,15 @@ public static class MgIndicadores
                 DataOpcaoMEI = row["DataOpcaoMEI"].ToString(),
                 DataExclusaoMEI = row["DataExclusaoMEI"].ToString()
             });
+            if (c1 % 1000 == 0)
+            {
+                Console.Write($"  {_rows}");
+                Console.Write("\r");
+            }
         }
         _timer.Stop();
 
-        Log.Storage($"View: {_list.Count()}: {_timer.Elapsed:hh\\:mm\\:ss}");
-        Thread.Sleep(3000);
-
-        Log.Storage($"Starting Migrate to Indicadores");
+        Log.Storage($"View: {_list.Count}: {_timer.Elapsed:hh\\:mm\\:ss}");
 
         var _tasks = new List<Task>();
         var _lists = new List<IEnumerable<MIndicadoresnet>>();
@@ -70,13 +75,14 @@ public static class MgIndicadores
             _lists.Add(_list.Skip(p * size).Take(size));
 
         Log.Storage($"Total: {_list.Count} -> Parts: {parts} -> Rows: {size}");
+        Console.Write("\n|");
 
         foreach (var rows in _lists)
             _tasks.Add(Task.Run(async () =>
             {
                 var _db = Factory.Data(server);
                 int registrosInseridos = 0;
-                int totalRegistros = _list.Count;
+                int totalRegistros = size;
                 int progresso = 0;
                 foreach (var row in rows)
                 {

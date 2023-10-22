@@ -11,7 +11,7 @@ class Program
         while (true)
         {
             Thread.Sleep(1000);
-            Console.WriteLine("MigraData V1.0");
+            Console.WriteLine("\nMigraData V1.0");
             Console.WriteLine("Choose Options!");
             Console.WriteLine("------------------------");
             Console.WriteLine("1 Use SqlServer");

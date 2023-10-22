@@ -30,6 +30,7 @@ public static class MgSimples
             {
                 var _list = new List<MSimples>();
                 Log.Storage($"Reading File {Path.GetFileName(file)}");
+                Console.Write("\n|");
                 using (var reader = new StreamReader(file, Encoding.GetEncoding("ISO-8859-1")))
                 {
                     var _rows = 0;
@@ -58,6 +59,7 @@ public static class MgSimples
                     _lists.Add(_list.Skip(p * size).Take(size));
 
                 Log.Storage($"Migrating: {_list.Count} -> {parts} : {size}");
+                Console.Write("\n|");
 
                 foreach (var rows in _lists)
                     _tasks.Add(Task.Run(async () =>
