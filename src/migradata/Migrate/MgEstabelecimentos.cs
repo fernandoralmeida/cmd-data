@@ -39,7 +39,19 @@ public static class MgEstabelecimentos
                         var line = reader.ReadLine();
                         var fields = line!.Split(';');
 
-                        foreach (var item in MMunicipio.MicroRegionJau()
+                        if (fields[19].ToString().Replace("\"", "").Trim() == "SP")
+                        {
+                            _list.Add(DoFields(fields));
+                            _rows++;
+                            if (c1 % 1000 == 0)
+                            {
+                                Console.Write($"  {_rows}");
+                                Console.Write("\r");
+                            }
+                        }
+
+                        /*
+                        foreach (var item in  MMunicipio.MicroRegionJau()
                                                         .Where(s => s == fields[20]
                                                         .ToString()
                                                         .Replace("\"", "")))
@@ -53,7 +65,7 @@ public static class MgEstabelecimentos
                                 Console.Write("\r");
                             }
 
-                        }
+                        }*/
                         c1++;
                     }
                 }
