@@ -1,8 +1,5 @@
 using System.Diagnostics;
 using migradata.Models;
-using migradata.MySql;
-using MySqlX.XDevAPI.Relational;
-using Org.BouncyCastle.Asn1.X509;
 
 namespace migradata.Helpers;
 
@@ -24,22 +21,22 @@ public static class DataBase
         if (await data.DbExists(dbname, dtsource))
         {
             Log.Storage("Normalizing Database...");
-            await data.WriteAsync(SqlCommands.DeletCommand("Cnaes"), dbname, dtsource);
-            await data.WriteAsync(SqlCommands.DeletCommand("MotivoSituacaoCadastral"), dbname, dtsource);
-            await data.WriteAsync(SqlCommands.DeletCommand("Municipios"), dbname, dtsource);
-            await data.WriteAsync(SqlCommands.DeletCommand("NaturezaJuridica"), dbname, dtsource);
-            await data.WriteAsync(SqlCommands.DeletCommand("Paises"), dbname, dtsource);
-            await data.WriteAsync(SqlCommands.DeletCommand("QualificacaoSocios"), dbname, dtsource);
-            await data.WriteAsync(SqlCommands.DeletCommand("Estabelecimentos"), dbname, dtsource);
-            await data.WriteAsync(SqlCommands.DeletCommand("Empresas"), dbname, dtsource);
-            await data.WriteAsync(SqlCommands.DeletCommand("Socios"), dbname, dtsource);
-            await data.WriteAsync(SqlCommands.DeletCommand("Simples"), dbname, dtsource);
+            await data.ExecuteAsync(SqlCommands.DeletCommand("Cnaes"), dbname, dtsource);
+            await data.ExecuteAsync(SqlCommands.DeletCommand("MotivoSituacaoCadastral"), dbname, dtsource);
+            await data.ExecuteAsync(SqlCommands.DeletCommand("Municipios"), dbname, dtsource);
+            await data.ExecuteAsync(SqlCommands.DeletCommand("NaturezaJuridica"), dbname, dtsource);
+            await data.ExecuteAsync(SqlCommands.DeletCommand("Paises"), dbname, dtsource);
+            await data.ExecuteAsync(SqlCommands.DeletCommand("QualificacaoSocios"), dbname, dtsource);
+            await data.ExecuteAsync(SqlCommands.DeletCommand("Estabelecimentos"), dbname, dtsource);
+            await data.ExecuteAsync(SqlCommands.DeletCommand("Empresas"), dbname, dtsource);
+            await data.ExecuteAsync(SqlCommands.DeletCommand("Socios"), dbname, dtsource);
+            await data.ExecuteAsync(SqlCommands.DeletCommand("Simples"), dbname, dtsource);
         }
         else
         {
             await data.CreateDB(
                 datasource: dtsource,
-                dbname: dbname,
+                database: dbname,
                 new List<MSqlCommand>()
                 {
                     new(){Name = "Tables", Command = SqlScript.SqlServer },
@@ -67,13 +64,13 @@ public static class DataBase
         if (await data.DbExists(dbname, dtsource))
         {
             Log.Storage("Normalizing Database...");
-            await data.WriteAsync(SqlCommands.DeletCommand("Empresas"), dbname, dtsource);
+            await data.ExecuteAsync(SqlCommands.DeletCommand("Empresas"), dbname, dtsource);
         }
         else
         {
             await data.CreateDB(
                 datasource: dtsource,
-                dbname: dbname,
+                database: dbname,
                 new List<MSqlCommand>()
                 {
                     new(){Name = "Tables", Command = SqlScript.Create_Table_Empresas }

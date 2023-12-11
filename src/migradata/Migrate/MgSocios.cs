@@ -1,5 +1,6 @@
 using System.Data;
 using System.Diagnostics;
+using System.Reflection;
 using System.Text;
 using migradata.Helpers;
 using migradata.Interfaces;
@@ -15,7 +16,7 @@ public static class MgSocios
     {
         int c1 = 0;
         int c2 = 0;
-
+        int c3 = 0;
         var _insert = SqlCommands.InsertCommand("Socios",
                         SqlCommands.Fields_Socios,
                         SqlCommands.Values_Socios);
@@ -25,9 +26,9 @@ public static class MgSocios
 
         try
         {
-
             foreach (var file in await FilesCsv.FilesListAync(@"C:\data", ".SOCIOCSV"))
             {
+                var _data = Factory.Data(server);
                 var _list = new List<MSocio>();
                 Log.Storage($"Reading File {Path.GetFileName(file)}");
                 Console.Write("\n|");
@@ -36,69 +37,68 @@ public static class MgSocios
                     var _rows = 0;
                     while (!reader.EndOfStream)
                     {
-                        c1++;
-                        _rows++;
                         var line = reader.ReadLine();
                         var fields = line!.Split(';');
+
                         _list.Add(DoFields(fields));
+                        _rows++;
+                        if (c1 % 1000 == 0)
                         {
                             Console.Write($"  {_rows}");
                             Console.Write("\r");
                         }
+
+                        c1++;
                     }
                 }
 
                 var _tasks = new List<Task>();
-                var _lists = new List<IEnumerable<MSocio>>();
+                var _list_datatables = new List<DataTable>();
 
                 int parts = Cpu.Count;
                 int size = (_list.Count / parts) + 1;
 
                 for (int p = 0; p < parts; p++)
-                    _lists.Add(_list.Skip(p * size).Take(size));
+                {
+                    _list_datatables.Add(
+                        ModelToDataTable(
+                            new MSocio(),
+                            _list.Skip(p * size).Take(size)
+                        ));
+                }
 
-                Log.Storage($"Migrating: {_list.Count} -> {parts} : {size}");
-                Console.Write("\n|");
+                Log.Storage($"Total: {_list.Count} -> Parts: {parts} -> Rows: {size}");
 
-                foreach (var rows in _lists)
+                int _ntask = -1;
+                foreach (var dtables in _list_datatables)
+                {
                     _tasks.Add(Task.Run(async () =>
                     {
-                        int registrosInseridos = 0;
-                        int totalRegistros = size;
-                        int progresso = 0;
+                        _ntask++;
+                        var _timer_task = new Stopwatch();
+                        _timer_task.Start();
                         var _db = Factory.Data(server);
-                        foreach (var row in rows)
-                        {
-                            registrosInseridos++;
-                            progresso = registrosInseridos * 100 / totalRegistros;
-                            c2++;
-                            await DoInsert(_insert, _db, row, database, datasource);
-                            if (progresso % 10 == 0)
-                            {
-                                Console.Write($"| {progresso}% ");
-                                Console.Write("\r");
-                            }
-                        }
+                        c2 = dtables.Rows.Count;
+                        c3 += c2;
+                        await _data.WriteAsync(dtables, "Socios", database, datasource);
+                        _timer_task.Start();
+                        Log.Storage($"Task: {_ntask} | Migrated: {c2} | Time: {_timer.Elapsed:hh\\:mm\\:ss}");
                     }));
+                }
 
                 await Parallel.ForEachAsync(_tasks,
                     async (t, _) =>
-                        await t
+                       await t
                     );
 
-                //Log.Storage($"Read: {c1} | Migrated: {c2} | Time: {_innertimer.Elapsed:hh\\:mm\\:ss}");
             }
-            //var db = Factory.Data(server);
-            //await db.WriteAsync(SqlCommands.DeleteNotExist("Socios", "Empresas"), database, datasource);
-            //await db.ReadAsync(SqlCommands.SelectCommand("Socios"), database, datasource);
-            //c3 = db.CNPJBase!.Count();
-
             _timer.Stop();
-            Log.Storage($"Read: {c1} | Migrated: {c2} | Time: {_timer.Elapsed:hh\\:mm\\:ss}");
+
+            Log.Storage($"Read: {c1} | Migrated: {c3} | Time: {_timer.Elapsed:hh\\:mm\\:ss}");
         }
         catch (Exception ex)
         {
-            Log.Storage($"Error: {ex.Message}");
+            Log.Storage($"Erro: {ex.Message}");
         }
     });
 
@@ -118,21 +118,23 @@ public static class MgSocios
         FaixaEtaria = fields[10].ToString().Replace("\"", "").Trim()
     };
 
-    private static async Task DoInsert(string sqlcommand, IData data, MSocio model, string database, string datasource)
+    private static DataTable ModelToDataTable(MSocio model, IEnumerable<MSocio> modelList)
     {
-        data.ClearParameters();
-        data.AddParameters("@CNPJBase", model.CNPJBase!);
-        data.AddParameters("@IdentificadorSocio", model.IdentificadorSocio!);
-        data.AddParameters("@NomeRazaoSocio", model.NomeRazaoSocio!);
-        data.AddParameters("@CnpjCpfSocio", model.CnpjCpfSocio!);
-        data.AddParameters("@QualificacaoSocio", model.QualificacaoSocio!);
-        data.AddParameters("@DataEntradaSociedade", model.DataEntradaSociedade!);
-        data.AddParameters("@Pais", model.Pais!);
-        data.AddParameters("@RepresentanteLegal", model.RepresentanteLegal!);
-        data.AddParameters("@NomeRepresentante", model.NomeRepresentante!);
-        data.AddParameters("@QualificacaoRepresentanteLegal", model.QualificacaoRepresentanteLegal!);
-        data.AddParameters("@FaixaEtaria", model.FaixaEtaria!);
-        await data.WriteAsync(sqlcommand, database, datasource);
-    }
+        DataTable dataTable = new();
 
+        foreach (PropertyInfo property in model.GetType().GetProperties())
+            dataTable.Columns.Add(property.Name, property.PropertyType);
+
+        foreach (var item in modelList)
+        {
+            DataRow row = dataTable.NewRow();
+
+            foreach (PropertyInfo property in model.GetType().GetProperties())
+                row[property.Name] = property.GetValue(item);
+
+            dataTable.Rows.Add(row);
+        }
+
+        return dataTable;
+    }
 }

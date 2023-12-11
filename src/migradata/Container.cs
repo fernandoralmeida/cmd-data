@@ -1,5 +1,4 @@
 using migradata.Helpers;
-using migradata.MySql;
 
 namespace migradata;
 

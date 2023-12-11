@@ -2,11 +2,9 @@ using System.Diagnostics;
 using System.Text;
 using migradata.Helpers;
 using migradata.Models;
-using migradata.Interfaces;
 using System.Data;
-using System.Runtime.Intrinsics.Arm;
-using DnsClient.Protocol;
 using MongoDB.Driver.Linq;
+using System.Reflection;
 
 namespace migradata.Migrate;
 
@@ -17,6 +15,7 @@ public static class MgEstabelecimentos
     {
         int c1 = 0;
         int c2 = 0;
+        int c3 = 0;
         var _insert = SqlCommands.InsertCommand("Estabelecimentos",
                         SqlCommands.Fields_Estabelecimentos,
                         SqlCommands.Values_Estabelecumentos);
@@ -49,61 +48,41 @@ public static class MgEstabelecimentos
                                 Console.Write("\r");
                             }
                         }
-
-                        /*
-                        foreach (var item in  MMunicipio.MicroRegionJau()
-                                                        .Where(s => s == fields[20]
-                                                        .ToString()
-                                                        .Replace("\"", "")))
-                        {
-
-                            _list.Add(DoFields(fields));
-                            _rows++;
-                            if (c1 % 1000 == 0)
-                            {
-                                Console.Write($"  {_rows}");
-                                Console.Write("\r");
-                            }
-
-                        }*/
                         c1++;
                     }
                 }
 
                 var _tasks = new List<Task>();
-                var _lists = new List<IEnumerable<MEstabelecimento>>();
+                var _list_datatables = new List<DataTable>();
 
                 int parts = Cpu.Count;
                 int size = (_list.Count / parts) + 1;
 
                 for (int p = 0; p < parts; p++)
-                    _lists.Add(_list.Skip(p * size).Take(size));
+                {
+                    _list_datatables.Add(
+                        ModelToDataTable(
+                            new MEstabelecimento(),
+                            _list.Skip(p * size).Take(size)
+                        ));
+                }
 
                 Log.Storage($"Total: {_list.Count} -> Parts: {parts} -> Rows: {size}");
-                Console.Write("\n|");
 
-                foreach (var rows in _lists)
+                int _ntask = -1;
+                foreach (var dtables in _list_datatables)
                 {
                     _tasks.Add(Task.Run(async () =>
                     {
+                        _ntask++;
+                        var _timer_task = new Stopwatch();
+                        _timer_task.Start();
                         var _db = Factory.Data(server);
-                        int registrosInseridos = 0;
-                        int totalRegistros = size;
-                        int progresso = 0;
-
-                        foreach (var row in rows)
-                        {
-                            registrosInseridos++;
-                            progresso = registrosInseridos * 100 / totalRegistros;
-                            c2++;
-                            await DoInsert(_insert, _db, row, database, datasource);
-
-                            if (progresso % 10 == 0)
-                            {
-                                Console.Write($"| {progresso}% ");
-                                Console.Write("\r");
-                            }
-                        }
+                        c2 = dtables.Rows.Count;
+                        c3 += c2;                     
+                        await _data.WriteAsync(dtables, "Estabelecimentos", database, datasource);                      
+                        _timer_task.Start();
+                        Log.Storage($"Task: {_ntask} | Migrated: {c2} | Time: {_timer.Elapsed:hh\\:mm\\:ss}");
                     }));
                 }
 
@@ -112,12 +91,10 @@ public static class MgEstabelecimentos
                        await t
                     );
 
-                //Log.Storage($"Read: {c1} | Migrated: {c2} | Time: {_innertimer.Elapsed:hh\\:mm\\:ss}");
             }
             _timer.Stop();
-            // var db = Factory.Data(server);
-            //var c3 = await db.ReadAsync(SqlCommands.SelectCommand("Estabelecimentos"), database, datasource);
-            Log.Storage($"Read: {c1} | Migrated: {c2} | Time: {_timer.Elapsed:hh\\:mm\\:ss}");
+
+            Log.Storage($"Read: {c1} | Migrated: {c3} | Time: {_timer.Elapsed:hh\\:mm\\:ss}");
         }
         catch (Exception ex)
         {
@@ -160,40 +137,24 @@ public static class MgEstabelecimentos
         DataSitucaoEspecial = fields[29].ToString().Replace("\"", "").Trim()
     };
 
-    private static async Task DoInsert(string sqlcommand, IData data, MEstabelecimento est, string database, string datasource)
+    private static DataTable ModelToDataTable(MEstabelecimento model, IEnumerable<MEstabelecimento> modelList)
     {
-        data.ClearParameters();
-        data.AddParameters("@CNPJBase", est.CNPJBase!);
-        data.AddParameters("@CNPJOrdem", est.CNPJOrdem!);
-        data.AddParameters("@CNPJDV", est.CNPJDV!);
-        data.AddParameters("@IdentificadorMatrizFilial", est.IdentificadorMatrizFilial!);
-        data.AddParameters("@NomeFantasia", est.NomeFantasia!);
-        data.AddParameters("@SituacaoCadastral", est.SituacaoCadastral!);
-        data.AddParameters("@DataSituacaoCadastral", est.DataSituacaoCadastral!);
-        data.AddParameters("@MotivoSituacaoCadastral", est.MotivoSituacaoCadastral!);
-        data.AddParameters("@NomeCidadeExterior", est.NomeCidadeExterior!);
-        data.AddParameters("@Pais", est.Pais!);
-        data.AddParameters("@DataInicioAtividade", est.DataInicioAtividade!);
-        data.AddParameters("@CnaeFiscalPrincipal", est.CnaeFiscalPrincipal!);
-        data.AddParameters("@CnaeFiscalSecundaria", est.CnaeFiscalSecundaria!);
-        data.AddParameters("@TipoLogradouro", est.TipoLogradouro!);
-        data.AddParameters("@Logradouro", est.Logradouro!);
-        data.AddParameters("@Numero", est.Numero!);
-        data.AddParameters("@Complemento", est.Complemento!);
-        data.AddParameters("@Bairro", est.Bairro!);
-        data.AddParameters("@CEP", est.CEP!);
-        data.AddParameters("@UF", est.UF!);
-        data.AddParameters("@Municipio", est.Municipio!);
-        data.AddParameters("@DDD1", est.DDD1!);
-        data.AddParameters("@Telefone1", est.Telefone1!);
-        data.AddParameters("@DDD2", est.DDD2!);
-        data.AddParameters("@Telefone2", est.Telefone2!);
-        data.AddParameters("@DDDFax", est.DDDFax!);
-        data.AddParameters("@Fax", est.Fax!);
-        data.AddParameters("@CorreioEletronico", est.CorreioEletronico!.ToLower());
-        data.AddParameters("@SituacaoEspecial", est.SituacaoEspecial!);
-        data.AddParameters("@DataSitucaoEspecial", est.DataSitucaoEspecial!);
-        await data.WriteAsync(sqlcommand, database, datasource);
+        DataTable dataTable = new();
+
+        foreach (PropertyInfo property in model.GetType().GetProperties())
+            dataTable.Columns.Add(property.Name, property.PropertyType);
+
+        foreach (var item in modelList)
+        {
+            DataRow row = dataTable.NewRow();
+
+            foreach (PropertyInfo property in model.GetType().GetProperties())
+                row[property.Name] = property.GetValue(item);
+
+            dataTable.Rows.Add(row);
+        }
+
+        return dataTable;
     }
 
 }

@@ -5,7 +5,7 @@ namespace migradata.MongoDB;
 public static class Documents
 {
     public static MEstabelecimento Estabelecimento(string[] fields)
-    => new MEstabelecimento()
+    => new()
     {
         CNPJBase = fields[0].ToString().Replace("\"", "").Trim(),
         CNPJOrdem = fields[1].ToString().Replace("\"", "").Trim(),
@@ -40,7 +40,7 @@ public static class Documents
     };
 
     public static MEmpresa Empresa(string[] fields)
-    => new MEmpresa()
+    => new()
     {
         CNPJBase = fields[0].ToString().Replace("\"", ""),
         RazaoSocial = fields[1].ToString().Replace("\"", ""),

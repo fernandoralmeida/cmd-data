@@ -1,142 +1,100 @@
 using System.Data;
 using System.Diagnostics;
+using System.Reflection;
+using DnsClient.Protocol;
 using migradata.Helpers;
-using migradata.Interfaces;
 using migradata.Models;
 
 namespace migradata.Migrate;
 
 public static class MgIndicadores
 {
+
     public static async Task ToDataBase(TServer server, string databaseOut, string databaseIn, string datasource)
-    => await Task.Run(async () =>
     {
-        var c1 = 0;
         var c2 = 0;
+        var c3 = 0;
         var _timer = new Stopwatch();
-        var _db = Factory.Data(server);
-        var _list = new List<MIndicadoresnet>();
-        var _dataRead = await _db.ReadAsync(SqlCommands.ViewCommand("view_empresas_by_municipio"), databaseOut, datasource);
-        var _insert = SqlCommands.InsertCommand("Empresas",
-                SqlCommands.Fields_Indicadores_Empresas,
-                SqlCommands.Values_Indicadores_Empresas);
 
         _timer.Start();
-        var _rows = 0;
-        Log.Storage($"Starting Migrate to Indicadores");
-        Console.Write("\n");
-        foreach (DataRow row in _dataRead.Rows)
-        {
-            _rows++;
-            _list.Add(new MIndicadoresnet()
-            {
-                CNPJ = row["CNPJ"].ToString(),
-                RazaoSocial = row["RazaoSocial"].ToString(),
-                NaturezaJuridica = row["NaturezaJuridica"].ToString(),
-                CapitalSocial = Convert.ToDecimal(row["CapitalSocial"]),
-                PorteEmpresa = row["PorteEmpresa"].ToString(),
-                IdentificadorMatrizFilial = row["IdentificadorMatrizFilial"].ToString(),
-                NomeFantasia = row["NomeFantasia"].ToString(),
-                SituacaoCadastral = row["SituacaoCadastral"].ToString(),
-                DataSituacaoCadastral = row["DataSituacaoCadastral"].ToString(),
-                DataInicioAtividade = row["DataInicioAtividade"].ToString(),
-                CnaeFiscalPrincipal = row["CnaeFiscalPrincipal"].ToString(),
-                CnaeDescricao = row["CnaeDescricao"].ToString(),
-                CEP = row["CEP"].ToString(),
-                Logradouro = row["Logradouro"].ToString(),
-                Numero = row["Numero"].ToString(),
-                Bairro = row["Bairro"].ToString(),
-                UF = row["UF"].ToString(),
-                Municipio = row["Municipio"].ToString(),
-                OpcaoSimples = row["OpcaoSimples"].ToString(),
-                DataOpcaoSimples = row["DataOpcaoSimples"].ToString(),
-                DataExclusaoSimples = row["DataExclusaoSimples"].ToString(),
-                OpcaoMEI = row["OpcaoMEI"].ToString(),
-                DataOpcaoMEI = row["DataOpcaoMEI"].ToString(),
-                DataExclusaoMEI = row["DataExclusaoMEI"].ToString()
-            });
-            if (c1 % 1000 == 0)
-            {
-                Console.Write($"  {_rows}");
-                Console.Write("\r");
-            }
-        }
-        _timer.Stop();
 
-        Log.Storage($"View: {_list.Count}: {_timer.Elapsed:hh\\:mm\\:ss}");
+        var _list = await DoList(
+                            server,
+                            SqlCommands.ViewCommand("view_empresas_by_municipio"),
+                            databaseOut,
+                            datasource);
+
+        var blocos = _list.Chunk(500000).ToList();
+
+        Log.Storage($"Total: {_list.Count} -> Parts: {blocos.Count} -> Rows: {500000}");
 
         var _tasks = new List<Task>();
-        var _lists = new List<IEnumerable<MIndicadoresnet>>();
-
-        int parts = Cpu.Count;
-        int size = (_list.Count / parts) + 1;
-
-        for (int p = 0; p < parts; p++)
-            _lists.Add(_list.Skip(p * size).Take(size));
-
-        Log.Storage($"Total: {_list.Count} -> Parts: {parts} -> Rows: {size}");
-        Console.Write("\n|");
-
-        foreach (var rows in _lists)
+        var _t_cont = -1;
+        foreach (var bloco in blocos)
+        {
             _tasks.Add(Task.Run(async () =>
             {
-                var _db = Factory.Data(server);
-                int registrosInseridos = 0;
-                int totalRegistros = size;
-                int progresso = 0;
-                foreach (var row in rows)
-                {
-                    registrosInseridos++;
-                    progresso = registrosInseridos * 100 / totalRegistros;
-                    c2++;
-                    await DoInsert(_insert, _db, row, databaseIn, datasource);
-                    if (progresso % 10 == 0)
-                    {
-                        Console.Write($"| {progresso}% ");
-                        Console.Write("\r");
-                    }
-                }
+                Interlocked.Increment(ref _t_cont);
+                var _timer_task = new Stopwatch();
+                var _data = Factory.Data(server);
+                c2 = bloco.Length;
+                c3 += c2;
+                await _data.
+                        WriteAsync(
+                            ModelToDataTable(bloco),
+                            "Empresas",
+                            databaseIn,
+                            datasource
+                        );
+                _timer_task.Stop();
+                Log.Storage($"T:{_t_cont} Read: {_list.Count} | Migrated: {c2} | Time: {_timer_task.Elapsed:hh\\:mm\\:ss}");
             }));
+        }
 
-        await Parallel.ForEachAsync(_tasks,
-            async (t, _) =>
-                await t
-            );
+        await Task.WhenAll(_tasks);
 
         _timer.Stop();
 
-        Log.Storage($"Read: {c1} | Migrated: {c2} | Time: {_timer.Elapsed:hh\\:mm\\:ss}");
-
-    });
-
-    private static async Task DoInsert(string sqlcommand, IData data, MIndicadoresnet est, string database, string datasource)
-    {
-        data.ClearParameters();
-        data.AddParameters("@Id", Guid.NewGuid());
-        data.AddParameters("@CNPJ", est.CNPJ!);
-        data.AddParameters("@RazaoSocial", est.RazaoSocial!);
-        data.AddParameters("@NaturezaJuridica", est.NaturezaJuridica!);
-        data.AddParameters("@CapitalSocial", est.CapitalSocial!);
-        data.AddParameters("@PorteEmpresa", est.PorteEmpresa!);
-        data.AddParameters("@IdentificadorMatrizFilial", est.IdentificadorMatrizFilial!);
-        data.AddParameters("@NomeFantasia", est.NomeFantasia!);
-        data.AddParameters("@SituacaoCadastral", est.SituacaoCadastral!);
-        data.AddParameters("@DataSituacaoCadastral", est.DataSituacaoCadastral!);
-        data.AddParameters("@DataInicioAtividade", est.DataInicioAtividade!);
-        data.AddParameters("@CnaeFiscalPrincipal", est.CnaeFiscalPrincipal!);
-        data.AddParameters("@CnaeDescricao", est.CnaeDescricao!);
-        data.AddParameters("@CEP", est.CEP!);
-        data.AddParameters("@Logradouro", est.Logradouro!);
-        data.AddParameters("@Numero", est.Numero!);
-        data.AddParameters("@Bairro", est.Bairro!);
-        data.AddParameters("@UF", est.UF!);
-        data.AddParameters("@Municipio", est.Municipio!);
-        data.AddParameters("@OpcaoSimples", est.OpcaoSimples!);
-        data.AddParameters("@DataOpcaoSimples", est.DataOpcaoSimples!);
-        data.AddParameters("@DataExclusaoSimples", est.DataExclusaoSimples!);
-        data.AddParameters("@OpcaoMEI", est.OpcaoMEI!);
-        data.AddParameters("@DataOpcaoMEI", est.DataOpcaoMEI!);
-        data.AddParameters("@DataExclusaoMEI", est.DataExclusaoMEI!);
-        await data.WriteAsync(sqlcommand, database, datasource);
+        Log.Storage($"Read: {_list.Count} | Migrated: {c3} | Time: {_timer.Elapsed:hh\\:mm\\:ss}");
     }
+
+    private static async Task<List<MIndicadoresnet>> DoList(TServer server, string sqlquery, string databaseOut, string datasource)
+    {
+        var _rows = 0;
+        var _db = Factory.Data(server);
+        var _list = new List<MIndicadoresnet>();
+        Log.Storage($"Starting Migrate to Indicadores");
+        Console.Write("\n");
+        await foreach (var row in _db.ReadViewAsync(sqlquery, databaseOut, datasource))
+        {
+            _rows++;
+            _list.Add(row);
+            Console.Write($"  {_rows}");
+            Console.Write("\r");
+
+        }
+        return _list;
+    }
+
+    private static DataTable ModelToDataTable(IEnumerable<MIndicadoresnet> modelList)
+    {
+        DataTable dataTable = new();
+        var model = new MIndicadoresnet();
+
+        foreach (PropertyInfo property in model.GetType().GetProperties())
+            dataTable.Columns.Add(property.Name, property.PropertyType);
+
+        foreach (var item in modelList)
+        {
+            DataRow row = dataTable.NewRow();
+
+            foreach (PropertyInfo property in model.GetType().GetProperties())
+                row[property.Name] = property.GetValue(item);
+
+            dataTable.Rows.Add(row);
+        }
+
+        return dataTable;
+    }
+
 }

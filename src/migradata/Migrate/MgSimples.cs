@@ -1,5 +1,6 @@
 using System.Data;
 using System.Diagnostics;
+using System.Reflection;
 using System.Text;
 using migradata.Helpers;
 using migradata.Interfaces;
@@ -15,7 +16,7 @@ public static class MgSimples
     {
         int c1 = 0;
         int c2 = 0;
-
+        int c3 = 0;
         var _insert = SqlCommands.InsertCommand("Simples",
                         SqlCommands.Fields_Simples,
                         SqlCommands.Values_Simples);
@@ -28,6 +29,7 @@ public static class MgSimples
 
             foreach (var file in await FilesCsv.FilesListAync(@"C:\data", ".D30"))
             {
+                var _data = Factory.Data(server);
                 var _list = new List<MSimples>();
                 Log.Storage($"Reading File {Path.GetFileName(file)}");
                 Console.Write("\n|");
@@ -36,70 +38,62 @@ public static class MgSimples
                     var _rows = 0;
                     while (!reader.EndOfStream)
                     {
-                        c1++;
-                        _rows++;
                         var line = reader.ReadLine();
                         var fields = line!.Split(';');
+
                         _list.Add(DoFields(fields));
-                        if (c1 % 100000 == 0)
+                        _rows++;
+                        if (c1 % 1000 == 0)
                         {
                             Console.Write($"  {_rows}");
                             Console.Write("\r");
                         }
+
+                        c1++;
                     }
                 }
 
                 var _tasks = new List<Task>();
-                var _lists = new List<IEnumerable<MSimples>>();
+                var _list_datatables = new List<DataTable>();
 
                 int parts = Cpu.Count;
                 int size = (_list.Count / parts) + 1;
 
                 for (int p = 0; p < parts; p++)
-                    _lists.Add(_list.Skip(p * size).Take(size));
+                {
+                    _list_datatables.Add(
+                        ModelToDataTable(
+                            new MSimples(),
+                            _list.Skip(p * size).Take(size)
+                        ));
+                }
 
-                Log.Storage($"Migrating: {_list.Count} -> {parts} : {size}");
-                Console.Write("\n|");
+                Log.Storage($"Total: {_list.Count} -> Parts: {parts} -> Rows: {size}");
 
-                foreach (var rows in _lists)
+                int _ntask = -1;
+                foreach (var dtables in _list_datatables)
+                {
                     _tasks.Add(Task.Run(async () =>
                     {
-                        int registrosInseridos = 0;
-                        int totalRegistros = size;
-                        int progresso = 0;
+                        _ntask++;
+                        var _timer_task = new Stopwatch();
+                        _timer_task.Start();
                         var _db = Factory.Data(server);
-                        foreach (var row in rows)
-                        {
-                            registrosInseridos++;
-                            progresso = registrosInseridos * 100 / totalRegistros;
-                            c2++;
-                            await DoInsert(_insert, _db, row, database, datasource);
-                            if (progresso % 10 == 0)
-                            {
-                                Console.Write($"| {progresso}% ");
-                                Console.Write("\r");
-                            }
-                        }
+                        c2 = dtables.Rows.Count;
+                        c3 += c2;
+                        await _data.WriteAsync(dtables, "Simples", database, datasource);
+                        _timer_task.Start();
+                        Log.Storage($"Task: {_ntask} | Migrated: {c2} | Time: {_timer.Elapsed:hh\\:mm\\:ss}");
                     }));
-
+                }
 
                 await Parallel.ForEachAsync(_tasks,
                     async (t, _) =>
                         await t
                     );
-
-                //Log.Storage($"Read: {c1} | Migrated: {c2} | Time: {_innertimer.Elapsed.ToString("hh\\:mm\\:ss")}");
             }
-
-            //Log.Storage("Analyzing data!");
-
-            //var db = Factory.Data(server);
-            //await db.WriteAsync(SqlCommands.DeleteNotExist("Simples", "Empresas"), database, datasource);
-            //await db.ReadAsync(SqlCommands.SelectCommand("Simples"), database, datasource);
-            //c3 = db.CNPJBase!.Count();
-
             _timer.Stop();
-            Log.Storage($"Read: {c1} | Migrated: {c2} | Time: {_timer.Elapsed:hh\\:mm\\:ss}");
+            Log.Storage($"Read: {c1} | Migrated: {c3} | Time: {_timer.Elapsed:hh\\:mm\\:ss}");
         }
         catch (Exception ex)
         {
@@ -119,17 +113,24 @@ public static class MgSimples
         DataExclusaoMEI = fields[6].ToString().Replace("\"", "").Trim()
     };
 
-    private static async Task DoInsert(string sqlcommand, IData data, MSimples model, string database, string datasource)
+    private static DataTable ModelToDataTable(MSimples model, IEnumerable<MSimples> modelList)
     {
-        data.ClearParameters();
-        data.AddParameters("@CNPJBase", model.CNPJBase!);
-        data.AddParameters("@OpcaoSimples", model.OpcaoSimples!);
-        data.AddParameters("@DataOpcaoSimples", model.DataOpcaoSimples!);
-        data.AddParameters("@DataExclusaoSimples", model.DataExclusaoSimples!);
-        data.AddParameters("@OpcaoMEI", model.OpcaoMEI!);
-        data.AddParameters("@DataOpcaoMEI", model.DataOpcaoMEI!);
-        data.AddParameters("@DataExclusaoMEI", model.DataExclusaoMEI!);
-        await data.WriteAsync(sqlcommand, database, datasource);
+        DataTable dataTable = new();
+
+        foreach (PropertyInfo property in model.GetType().GetProperties())
+            dataTable.Columns.Add(property.Name, property.PropertyType);
+
+        foreach (var item in modelList)
+        {
+            DataRow row = dataTable.NewRow();
+
+            foreach (PropertyInfo property in model.GetType().GetProperties())
+                row[property.Name] = property.GetValue(item);
+
+            dataTable.Rows.Add(row);
+        }
+
+        return dataTable;
     }
 
 }

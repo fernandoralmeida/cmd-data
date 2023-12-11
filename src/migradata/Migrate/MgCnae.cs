@@ -23,18 +23,18 @@ public static class MgCnaes
 
                     var _data = Factory.Data(server);
 
+                    var _dtable = new DataTable();
+
                     using (var reader = new StreamReader(file, Encoding.GetEncoding("ISO-8859-1")))
                         while (!reader.EndOfStream)
                         {
                             var line = reader.ReadLine();
                             var fields = line!.Split(';');
-                            _data.ClearParameters();
-                            _data.AddParameters("@Codigo", fields[0].ToString().Replace("\"", "").Trim());
-                            _data.AddParameters("@Descricao", fields[1].ToString().Replace("\"", "").Trim());
-                            await _data.WriteAsync(_insert, database, datasource);
+                            _dtable.Rows.Add(DoDataTable(_dtable, fields));
                             i++;
                         }
 
+                    await _data.WriteAsync(_dtable, "Cnaes", database, datasource);
                     _timer.Stop();
                     Log.Storage($"Read: {i} | Migrated: {i} | Time: {_timer.Elapsed:hh\\:mm\\:ss}");
                 }
@@ -43,4 +43,12 @@ public static class MgCnaes
                     Log.Storage("Error: " + ex.Message);
                 }
         });
+
+    private static DataRow DoDataTable(DataTable dataTable, string[] fields)
+    {
+        var row = dataTable.NewRow();
+        row["Codigo"] = fields[0].ToString().Replace("\"", "").Trim();
+        row["Descricao"] = fields[1].ToString().Replace("\"", "").Trim();
+        return row;
+    }
 }
