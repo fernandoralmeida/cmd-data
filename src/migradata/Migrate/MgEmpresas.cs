@@ -40,7 +40,7 @@ public static class MgEmpresas
 
                         _list.Add(DoFields(fields));
                         _rows++;
-                        if (c1 % 1000 == 0)
+                        if (c1 % 100000 == 0)
                         {
                             Console.Write($"  {_rows}");
                             Console.Write("\r");

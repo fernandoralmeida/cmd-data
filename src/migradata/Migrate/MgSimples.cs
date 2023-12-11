@@ -27,7 +27,7 @@ public static class MgSimples
         try
         {
 
-            foreach (var file in await FilesCsv.FilesListAync(@"C:\data", ".D30"))
+            foreach (var file in await FilesCsv.FilesListAync(@"C:\data", ".D3"))
             {
                 var _data = Factory.Data(server);
                 var _list = new List<MSimples>();
@@ -43,7 +43,7 @@ public static class MgSimples
 
                         _list.Add(DoFields(fields));
                         _rows++;
-                        if (c1 % 1000 == 0)
+                        if (c1 % 10000 == 0)
                         {
                             Console.Write($"  {_rows}");
                             Console.Write("\r");

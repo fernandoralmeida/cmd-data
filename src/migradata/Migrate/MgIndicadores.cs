@@ -69,8 +69,12 @@ public static class MgIndicadores
         {
             _rows++;
             _list.Add(row);
-            Console.Write($"  {_rows}");
-            Console.Write("\r");
+            if (_rows % 100000 == 0)
+            {
+                Console.Write($"  {_rows}");
+                Console.Write("\r");
+            }
+
         }
         return _list;
     }

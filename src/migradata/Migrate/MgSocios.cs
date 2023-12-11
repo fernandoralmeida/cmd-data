@@ -42,7 +42,7 @@ public static class MgSocios
 
                         _list.Add(DoFields(fields));
                         _rows++;
-                        if (c1 % 1000 == 0)
+                        if (c1 % 10000 == 0)
                         {
                             Console.Write($"  {_rows}");
                             Console.Write("\r");

@@ -38,11 +38,15 @@ public static class MgEstabelecimentos
                         var line = reader.ReadLine();
                         var fields = line!.Split(';');
 
-                        if (fields[19].ToString().Replace("\"", "").Trim() == "SP")
+                        var _uf = fields[19].ToString().Replace("\"", "").Trim();
+                        var _cidade = fields[20].ToString().Replace("\"", "").Trim();
+                        var _situacao = fields[5].ToString().Replace("\"", "").Trim();
+
+                        if (_uf == "SP" && _cidade != "7107" && (_situacao == "02" || _situacao == "08"))
                         {
                             _list.Add(DoFields(fields));
                             _rows++;
-                            if (c1 % 1000 == 0)
+                            if (c1 % 100000 == 0)
                             {
                                 Console.Write($"  {_rows}");
                                 Console.Write("\r");
