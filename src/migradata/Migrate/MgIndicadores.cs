@@ -33,7 +33,7 @@ public static class MgIndicadores
                 CNPJ = row["CNPJ"].ToString(),
                 RazaoSocial = row["RazaoSocial"].ToString(),
                 NaturezaJuridica = row["NaturezaJuridica"].ToString(),
-                CapitalSocial = Convert.ToDecimal(row["CapitalSocial"]),
+                CapitalSocial = decimal.TryParse(row["CapitalSocial"].ToString(), out decimal valor) ? valor : 0,
                 PorteEmpresa = row["PorteEmpresa"].ToString(),
                 IdentificadorMatrizFilial = row["IdentificadorMatrizFilial"].ToString(),
                 NomeFantasia = row["NomeFantasia"].ToString(),

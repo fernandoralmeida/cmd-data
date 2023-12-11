@@ -59,33 +59,32 @@ public class Data : IData
         });
 
     public async Task WriteAsync(string queryWrite, string database, string datasource)
-        => await Task.Run(() =>
+    {
+        using (SqlConnection connection = new($"{datasource}Database={database};"))
+        {
+            try
             {
-                using (SqlConnection connection = new($"{datasource}Database={database};"))
+                connection.Open();
+                SqlCommand _command = connection.CreateCommand();
+                _command.CommandType = CommandType.Text;
+                _command.CommandText = queryWrite;
+                _command.CommandTimeout = 0;
+
+                foreach (SqlParameter p in ParameterCollection)
                 {
-                    try
-                    {
-                        connection.Open();
-                        SqlCommand _command = connection.CreateCommand();
-                        _command.CommandType = CommandType.Text;
-                        _command.CommandText = queryWrite;
-                        _command.CommandTimeout = 0;
-
-                        foreach (SqlParameter p in ParameterCollection)
-                        {
-                            _command.Parameters.Add(new SqlParameter(p.ParameterName, p.Value));
-                        }
-
-                        var r = _command.ExecuteNonQuery();
-                        connection.Close();
-                    }
-                    catch (Exception ex)
-                    {
-                        connection.Close();
-                        Log.Storage("Error: " + ex.Message);
-                    }
+                    _command.Parameters.Add(new SqlParameter(p.ParameterName, p.Value));
                 }
-            });
+
+                await _command.ExecuteNonQueryAsync();
+                connection.Close();
+            }
+            catch (Exception ex)
+            {
+                connection.Close();
+                Log.Storage("Error: " + ex.Message);
+            }
+        };
+    }
 
     public async Task<bool> DbExists(string database, string datasource)
     => await Task.Run(() =>
