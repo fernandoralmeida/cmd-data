@@ -165,7 +165,10 @@ public class Data : IData
         {
             await connection.OpenAsync();
 
-            var command = new SqlCommand(query, connection);
+            var command = new SqlCommand(query, connection)
+            {
+                CommandTimeout = 200
+            };
 
             using (var reader = await command.ExecuteReaderAsync())
             {
@@ -176,7 +179,7 @@ public class Data : IData
                         CNPJ = reader["CNPJ"] == null ? reader["CNPJ"].ToString() : "",
                         RazaoSocial = reader["RazaoSocial"].ToString(),
                         NaturezaJuridica = reader["NaturezaJuridica"].ToString(),
-                        CapitalSocial = Convert.ToDecimal(reader["CapitalSocial"]),
+                        CapitalSocial = decimal.TryParse(reader["CapitalSocial"].ToString(), out decimal valor) ? valor : 0,
                         PorteEmpresa = reader["PorteEmpresa"].ToString(),
                         IdentificadorMatrizFilial = reader["IdentificadorMatrizFilial"].ToString(),
                         NomeFantasia = reader["NomeFantasia"].ToString(),

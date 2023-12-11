@@ -71,7 +71,6 @@ public static class MgIndicadores
             _list.Add(row);
             Console.Write($"  {_rows}");
             Console.Write("\r");
-
         }
         return _list;
     }
