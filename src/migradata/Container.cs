@@ -22,9 +22,9 @@ public static class Container
         await Repositories.RQualifica.DoFileToDB(server, database, datasource);
 
         await Repositories.REstabelecimentos.DoFileToDBBulkCopy(server, database, datasource);
-        await Repositories.REmpresas.DoFileToDB(server, database, datasource);
-        await Repositories.RSocios.DoFileToDB(server, database, datasource);
-        await Repositories.RSimples.DoFileToDB(server, database, datasource);
+        await Repositories.REmpresas.DoFileToDBBulkCopy(server, database, datasource);
+        await Repositories.RSocios.DoFileToDBBulkCopy(server, database, datasource);
+        await Repositories.RSimples.DoFileToDBBulkCopy(server, database, datasource);
 
 
         await DataBase.Normalize_IndicadoresNET(server, DataBase.IndicadoresNET, datasource);

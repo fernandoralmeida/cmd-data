@@ -9,7 +9,7 @@ namespace migradata.Repositories;
 
 public static class RSocios
 {
-    public static async Task DoFileToDB(TServer server, string database, string datasource)
+    public static async Task DoFileToDBBulkCopy(TServer server, string database, string datasource)
     {
         int c1;
         int c2;

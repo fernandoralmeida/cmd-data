@@ -4,12 +4,13 @@ using System.Diagnostics;
 using System.Text;
 using migradata.Helpers;
 using migradata.Interfaces;
+using migradata.Models;
 
 namespace migradata.Repositories;
 
 public static class RSimples
 {
-    public static async Task DoFileToDB(TServer server, string database, string datasource)
+    public static async Task DoFileToDBBulkCopy(TServer server, string database, string datasource)
     {
         int c1;
         int c2;
@@ -26,20 +27,14 @@ public static class RSimples
 
             foreach (var file in await FilesCsv.FilesListAsync(@"C:\data", ".D3"))
             {
-                var dataTable = new DataTable();
-                dataTable.Columns.Add("CNPJBase");
-                dataTable.Columns.Add("OpcaoSimples");
-                dataTable.Columns.Add("DataOpcaoSimples");
-                dataTable.Columns.Add("DataExclusaoSimples");
-                dataTable.Columns.Add("OpcaoMEI");
-                dataTable.Columns.Add("DataOpcaoMEI");
-                dataTable.Columns.Add("DataExclusaoMEI");
-
                 c2 = 0;
                 c1 = 0;
 
                 Log.Storage($"Reading File {Path.GetFileName(file)}");
                 Console.Write("\n|");
+
+                var _groups = new List<IEnumerable<MSimples>>();
+                var _lista_simples_completa = new List<MSimples>();
 
                 using var reader = new StreamReader(file, Encoding.GetEncoding("ISO-8859-1"));
                 {
@@ -50,17 +45,16 @@ public static class RSimples
 
                         c1++;
 
-                        // Adicionar a linha à DataTable
-                        DataRow row = dataTable.NewRow();
-                        row["CNPJBase"] = fields[0].ToString().Replace("\"", "").Trim();
-                        row["OpcaoSimples"] = fields[1].ToString().Replace("\"", "").Trim();
-                        row["DataOpcaoSimples"] = fields[2].ToString().Replace("\"", "").Trim();
-                        row["DataExclusaoSimples"] = fields[3].ToString().Replace("\"", "").Trim();
-                        row["OpcaoMEI"] = fields[4].ToString().Replace("\"", "").Trim();
-                        row["DataOpcaoMEI"] = fields[5].ToString().Replace("\"", "").Trim();
-                        row["DataExclusaoMEI"] = fields[6].ToString().Replace("\"", "").Trim();
-
-                        dataTable.Rows.Add(row);
+                        _lista_simples_completa.Add(new MSimples()
+                        {
+                            CNPJBase = fields[0].ToString().Replace("\"", "").Trim(),
+                            OpcaoSimples = fields[1].ToString().Replace("\"", "").Trim(),
+                            DataOpcaoSimples = fields[2].ToString().Replace("\"", "").Trim(),
+                            DataExclusaoSimples = fields[3].ToString().Replace("\"", "").Trim(),
+                            OpcaoMEI = fields[4].ToString().Replace("\"", "").Trim(),
+                            DataOpcaoMEI = fields[5].ToString().Replace("\"", "").Trim(),
+                            DataExclusaoMEI = fields[6].ToString().Replace("\"", "").Trim()
+                        });
 
                         c2++;
 
@@ -69,38 +63,81 @@ public static class RSimples
                             Console.Write($"  {c2}");
                             Console.Write("\r");
                         }
-
                     }
 
-                    // Usar SqlBulkCopy para inserir os dados na tabela do banco de dados
-                    using (var connection = new SqlConnection(connectionString))
+                    int _parts = 10;
+                    int _size_parts = _lista_simples_completa.Count / _parts;
+
+                    //quebra em 10 partes iguais
+                    _groups = Enumerable
+                                .Range(0, _parts)
+                                .Select(s => _lista_simples_completa.Skip(s * _size_parts).Take(_size_parts))
+                                .ToList();
+
+                    //para cada grupo, execute o codigo;
+                    foreach (var parts in _groups)
                     {
-                        var _timer_migration = new Stopwatch();
-                        _timer_migration.Start();
-                        connection.Open(); ;
-                        using (var bulkCopy = new SqlBulkCopy(connection))
+                        var _rows = 0;
+
+                        var dataTable = new DataTable();
+                        dataTable.Columns.Add("CNPJBase");
+                        dataTable.Columns.Add("OpcaoSimples");
+                        dataTable.Columns.Add("DataOpcaoSimples");
+                        dataTable.Columns.Add("DataExclusaoSimples");
+                        dataTable.Columns.Add("OpcaoMEI");
+                        dataTable.Columns.Add("DataOpcaoMEI");
+                        dataTable.Columns.Add("DataExclusaoMEI");
+
+                        foreach (var item in parts)
                         {
-                            bulkCopy.DestinationTableName = tableName;
-                            // Mapear as colunas se necessário 
-                            bulkCopy.ColumnMappings.Add("CNPJBase", "CNPJBase");
-                            bulkCopy.ColumnMappings.Add("OpcaoSimples", "OpcaoSimples");
-                            bulkCopy.ColumnMappings.Add("DataOpcaoSimples", "DataOpcaoSimples");
-                            bulkCopy.ColumnMappings.Add("DataExclusaoSimples", "DataExclusaoSimples");
-                            bulkCopy.ColumnMappings.Add("OpcaoMEI", "OpcaoMEI");
-                            bulkCopy.ColumnMappings.Add("DataOpcaoMEI", "DataOpcaoMEI");
-                            bulkCopy.ColumnMappings.Add("DataExclusaoMEI", "DataExclusaoMEI");
+                            _rows++;
+                            // Adicionar a linha à DataTable                            
+                            DataRow row = dataTable.NewRow();
+                            row["CNPJBase"] = item.CNPJBase;
+                            row["OpcaoSimples"] = item.OpcaoSimples;
+                            row["DataOpcaoSimples"] = item.DataOpcaoSimples;
+                            row["DataExclusaoSimples"] = item.DataExclusaoSimples;
+                            row["OpcaoMEI"] = item.OpcaoMEI;
+                            row["DataOpcaoMEI"] = item.DataOpcaoMEI;
+                            row["DataExclusaoMEI"] = item.DataExclusaoMEI;
+                            dataTable.Rows.Add(row);
 
-                            bulkCopy.BulkCopyTimeout = 0;
-                            await bulkCopy.WriteToServerAsync(dataTable);
+                            if (_rows % 100 == 0)
+                            {
+                                Console.Write($"  {_rows}");
+                                Console.Write("\r");
+                            }
                         }
-                        _timer_migration.Stop();
-                        Log.Storage($"Lines: {c1} | Migrated: {c2} | Time: {_timer_migration.Elapsed:hh\\:mm\\:ss}");
-                    }
 
+                        // Usar SqlBulkCopy para inserir os dados na tabela do banco de dados
+                        using (var connection = new SqlConnection(connectionString))
+                        {
+                            var _timer_migration = new Stopwatch();
+                            _timer_migration.Start();
+                            connection.Open(); ;
+                            using (var bulkCopy = new SqlBulkCopy(connection))
+                            {
+                                bulkCopy.DestinationTableName = tableName;
+                                // Mapear as colunas se necessário 
+                                bulkCopy.ColumnMappings.Add("CNPJBase", "CNPJBase");
+                                bulkCopy.ColumnMappings.Add("OpcaoSimples", "OpcaoSimples");
+                                bulkCopy.ColumnMappings.Add("DataOpcaoSimples", "DataOpcaoSimples");
+                                bulkCopy.ColumnMappings.Add("DataExclusaoSimples", "DataExclusaoSimples");
+                                bulkCopy.ColumnMappings.Add("OpcaoMEI", "OpcaoMEI");
+                                bulkCopy.ColumnMappings.Add("DataOpcaoMEI", "DataOpcaoMEI");
+                                bulkCopy.ColumnMappings.Add("DataExclusaoMEI", "DataExclusaoMEI");
+
+                                bulkCopy.BulkCopyTimeout = 0;
+                                await bulkCopy.WriteToServerAsync(dataTable);
+                            }
+                            _timer_migration.Stop();
+                            Log.Storage($"Lines: {_rows} | Migrated: {_rows} | Time: {_timer_migration.Elapsed:hh\\:mm\\:ss}");
+                        }                        
+                        dataTable.Dispose();
+                    }
                 }
                 tc1 += c1;
-                tc2 += c2;
-                dataTable.Dispose();
+                tc2 += c2;                
             }
             _timer.Stop();
             Log.Storage($"TLines: {tc1} | TMigrated: {tc2} | TTime: {_timer.Elapsed:hh\\:mm\\:ss}");
