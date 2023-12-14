@@ -167,7 +167,7 @@ public class Data : IData
 
             var command = new SqlCommand(query, connection)
             {
-                CommandTimeout = 200
+                CommandTimeout = 0
             };
 
             using (var reader = await command.ExecuteReaderAsync())
