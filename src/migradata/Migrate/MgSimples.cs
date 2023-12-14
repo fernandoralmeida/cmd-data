@@ -26,7 +26,7 @@ public static class MgSimples
         try
         {
 
-            foreach (var file in await FilesCsv.FilesListAync(@"C:\data", ".D30"))
+            foreach (var file in await FilesCsv.FilesListAync(@"C:\data", ".D3"))
             {
                 var _list = new List<MSimples>();
                 Log.Storage($"Reading File {Path.GetFileName(file)}");

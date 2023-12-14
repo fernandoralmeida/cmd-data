@@ -25,7 +25,8 @@ public class MMunicipio
             "6607",
             "6697",
             "6835",
-            "7195"
+            "7195",
+            "6249"
         }.ToList();
     }
     public bool MicroRegiaoJahu(MMunicipio obj)
@@ -60,7 +61,8 @@ public class MMunicipio
             obj.Codigo == "6697" ||
             obj.Codigo == "6835" ||
             obj.Codigo == "6383" ||
-            obj.Codigo == "6219";
+            obj.Codigo == "6219" ||
+            obj.Codigo == "6249";
     }
 }
 

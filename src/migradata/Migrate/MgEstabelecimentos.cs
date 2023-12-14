@@ -4,8 +4,6 @@ using migradata.Helpers;
 using migradata.Models;
 using migradata.Interfaces;
 using System.Data;
-using System.Runtime.Intrinsics.Arm;
-using DnsClient.Protocol;
 using MongoDB.Driver.Linq;
 
 namespace migradata.Migrate;
@@ -42,7 +40,7 @@ public static class MgEstabelecimentos
                         var _uf = fields[19].ToString().Replace("\"", "").Trim();
                         var _cidade = fields[20].ToString().Replace("\"", "").Trim();
                         var _situacao = fields[5].ToString().Replace("\"", "").Trim();
-
+                        /*
                         if (_uf == "SP" && _cidade != "7107" && (_situacao == "02" || _situacao == "08"))
                         {
                             _list.Add(DoFields(fields));
@@ -52,9 +50,9 @@ public static class MgEstabelecimentos
                                 Console.Write($"  {_rows}");
                                 Console.Write("\r");
                             }
-                        }
+                        }*/
 
-                        /*
+                        
                         foreach (var item in  MMunicipio.MicroRegionJau()
                                                         .Where(s => s == fields[20]
                                                         .ToString()
@@ -69,7 +67,7 @@ public static class MgEstabelecimentos
                                 Console.Write("\r");
                             }
 
-                        }*/
+                        }
                         c1++;
                     }
                 }
