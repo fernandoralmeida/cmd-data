@@ -12,8 +12,8 @@ public static class REmpresas
         int c1 = 0;
         int c2 = 0;
         var _insert = SqlCommands.InsertCommand("Empresas",
-                        SqlCommands.Fields_Estabelecimentos,
-                        SqlCommands.Values_Estabelecumentos);
+                        SqlCommands.Fields_Empresas,
+                        SqlCommands.Values_Empresas);
 
         var _timer = new Stopwatch();
         _timer.Start();
