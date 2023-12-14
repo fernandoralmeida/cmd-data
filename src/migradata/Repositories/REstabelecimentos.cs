@@ -41,6 +41,7 @@ public class REstabelecimentos
             dataTable.Columns.Add("CnaeFiscalPrincipal");
             dataTable.Columns.Add("CnaeFiscalSecundaria");
             dataTable.Columns.Add("TipoLogradouro");
+            dataTable.Columns.Add("Logradouro");
             dataTable.Columns.Add("Numero");
             dataTable.Columns.Add("Complemento");
             dataTable.Columns.Add("Bairro");
@@ -49,7 +50,6 @@ public class REstabelecimentos
             dataTable.Columns.Add("Municipio");
             dataTable.Columns.Add("DDD1");
             dataTable.Columns.Add("Telefone1");
-            dataTable.Columns.Add("Bairro");
             dataTable.Columns.Add("DDD2");
             dataTable.Columns.Add("Telefone2");
             dataTable.Columns.Add("DDDFax");
@@ -64,7 +64,7 @@ public class REstabelecimentos
                 _timer_pre.Start();
 
                 Log.Storage($"Reading File {Path.GetFileName(file)}");
-                Console.Write("\r");
+                Console.Write("\n|");
 
                 using var reader = new StreamReader(file, Encoding.GetEncoding("ISO-8859-1"));
                 while (!reader.EndOfStream)
@@ -94,15 +94,15 @@ public class REstabelecimentos
                         row["CnaeFiscalPrincipal"] = fields[11].ToString().Replace("\"", "").Trim();
                         row["CnaeFiscalSecundaria"] = fields[12].ToString().Replace("\"", "").Trim();
                         row["TipoLogradouro"] = fields[13].ToString().Replace("\"", "").Trim();
-                        row["Numero"] = fields[14].ToString().Replace("\"", "").Trim();
-                        row["Complemento"] = fields[15].ToString().Replace("\"", "").Trim();
-                        row["Bairro"] = fields[16].ToString().Replace("\"", "").Trim();
-                        row["CEP"] = fields[17].ToString().Replace("\"", "").Trim();
-                        row["UF"] = fields[18].ToString().Replace("\"", "").Trim();
-                        row["Municipio"] = fields[19].ToString().Replace("\"", "").Trim();
-                        row["DDD1"] = fields[20].ToString().Replace("\"", "").Trim();
-                        row["Telefone1"] = fields[21].ToString().Replace("\"", "").Trim();
-                        row["Bairro"] = fields[22].ToString().Replace("\"", "").Trim();
+                        row["Logradouro"] = fields[14].ToString().Replace("\"", "").Trim();
+                        row["Numero"] = fields[15].ToString().Replace("\"", "").Trim();
+                        row["Complemento"] = fields[16].ToString().Replace("\"", "").Trim();
+                        row["Bairro"] = fields[17].ToString().Replace("\"", "").Trim();
+                        row["CEP"] = fields[18].ToString().Replace("\"", "").Trim();
+                        row["UF"] = fields[19].ToString().Replace("\"", "").Trim();
+                        row["Municipio"] = fields[20].ToString().Replace("\"", "").Trim();
+                        row["DDD1"] = fields[21].ToString().Replace("\"", "").Trim();
+                        row["Telefone1"] = fields[22].ToString().Replace("\"", "").Trim();
                         row["DDD2"] = fields[23].ToString().Replace("\"", "").Trim();
                         row["Telefone2"] = fields[24].ToString().Replace("\"", "").Trim();
                         row["DDDFax"] = fields[25].ToString().Replace("\"", "").Trim();
@@ -110,7 +110,7 @@ public class REstabelecimentos
                         row["CorreioEletronico"] = fields[27].ToString().Replace("\"", "").Trim();
                         row["SituacaoEspecial"] = fields[28].ToString().Replace("\"", "").Trim();
                         row["DataSitucaoEspecial"] = fields[29].ToString().Replace("\"", "").Trim();
-                        // Preencher outras colunas conforme necessário
+
                         dataTable.Rows.Add(row);
 
                         c2++;
@@ -135,7 +135,7 @@ public class REstabelecimentos
             {
                 var _timer_migration = new Stopwatch();
                 _timer_migration.Start();
-                connection.Open();
+                connection.Open(); ;
                 using (var bulkCopy = new SqlBulkCopy(connection))
                 {
                     bulkCopy.DestinationTableName = tableName;
@@ -171,7 +171,8 @@ public class REstabelecimentos
                     bulkCopy.ColumnMappings.Add("SituacaoEspecial", "SituacaoEspecial");
                     bulkCopy.ColumnMappings.Add("DataSitucaoEspecial", "DataSitucaoEspecial");
 
-                    bulkCopy.WriteToServer(dataTable);
+                    bulkCopy.BulkCopyTimeout = 0;
+                    await bulkCopy.WriteToServerAsync(dataTable);
                 }
                 _timer_migration.Stop();
                 Log.Storage($"Migrated: {c2} | Time: {_timer_migration.Elapsed:hh\\:mm\\:ss}");
