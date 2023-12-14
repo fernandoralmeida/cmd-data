@@ -26,46 +26,42 @@ public class REstabelecimentos
 
         try
         {
-            var dataTable = new DataTable();
-
-            // Configurar as colunas da tabela de acordo com o seu banco de dados
-            dataTable.Columns.Add("CNPJBase");
-            dataTable.Columns.Add("CNPJOrdem");
-            dataTable.Columns.Add("CNPJDV");
-            dataTable.Columns.Add("IdentificadorMatrizFilial");
-            dataTable.Columns.Add("NomeFantasia");
-            dataTable.Columns.Add("SituacaoCadastral");
-            dataTable.Columns.Add("DataSituacaoCadastral");
-            dataTable.Columns.Add("MotivoSituacaoCadastral");
-            dataTable.Columns.Add("NomeCidadeExterior");
-            dataTable.Columns.Add("Pais");
-            dataTable.Columns.Add("DataInicioAtividade");
-            dataTable.Columns.Add("CnaeFiscalPrincipal");
-            dataTable.Columns.Add("CnaeFiscalSecundaria");
-            dataTable.Columns.Add("TipoLogradouro");
-            dataTable.Columns.Add("Logradouro");
-            dataTable.Columns.Add("Numero");
-            dataTable.Columns.Add("Complemento");
-            dataTable.Columns.Add("Bairro");
-            dataTable.Columns.Add("CEP");
-            dataTable.Columns.Add("UF");
-            dataTable.Columns.Add("Municipio");
-            dataTable.Columns.Add("DDD1");
-            dataTable.Columns.Add("Telefone1");
-            dataTable.Columns.Add("DDD2");
-            dataTable.Columns.Add("Telefone2");
-            dataTable.Columns.Add("DDDFax");
-            dataTable.Columns.Add("Fax");
-            dataTable.Columns.Add("CorreioEletronico");
-            dataTable.Columns.Add("SituacaoEspecial");
-            dataTable.Columns.Add("DataSitucaoEspecial");
-
             foreach (var file in await FilesCsv.FilesListAsync(@"C:\data", ".ESTABELE"))
             {
+                var dataTable = new DataTable();
+                dataTable.Columns.Add("CNPJBase");
+                dataTable.Columns.Add("CNPJOrdem");
+                dataTable.Columns.Add("CNPJDV");
+                dataTable.Columns.Add("IdentificadorMatrizFilial");
+                dataTable.Columns.Add("NomeFantasia");
+                dataTable.Columns.Add("SituacaoCadastral");
+                dataTable.Columns.Add("DataSituacaoCadastral");
+                dataTable.Columns.Add("MotivoSituacaoCadastral");
+                dataTable.Columns.Add("NomeCidadeExterior");
+                dataTable.Columns.Add("Pais");
+                dataTable.Columns.Add("DataInicioAtividade");
+                dataTable.Columns.Add("CnaeFiscalPrincipal");
+                dataTable.Columns.Add("CnaeFiscalSecundaria");
+                dataTable.Columns.Add("TipoLogradouro");
+                dataTable.Columns.Add("Logradouro");
+                dataTable.Columns.Add("Numero");
+                dataTable.Columns.Add("Complemento");
+                dataTable.Columns.Add("Bairro");
+                dataTable.Columns.Add("CEP");
+                dataTable.Columns.Add("UF");
+                dataTable.Columns.Add("Municipio");
+                dataTable.Columns.Add("DDD1");
+                dataTable.Columns.Add("Telefone1");
+                dataTable.Columns.Add("DDD2");
+                dataTable.Columns.Add("Telefone2");
+                dataTable.Columns.Add("DDDFax");
+                dataTable.Columns.Add("Fax");
+                dataTable.Columns.Add("CorreioEletronico");
+                dataTable.Columns.Add("SituacaoEspecial");
+                dataTable.Columns.Add("DataSitucaoEspecial");
+
                 c2 = 0;
                 c1 = 0;
-                var _timer_pre = new Stopwatch();
-                _timer_pre.Start();
 
                 Log.Storage($"Reading File {Path.GetFileName(file)}");
                 Console.Write("\n|");
@@ -127,9 +123,7 @@ public class REstabelecimentos
                             }
                         }
                     }
-                    _timer_pre.Stop();
-                    Log.Storage($"Read: {c1} | Prepared: {c2} | Time: {_timer_pre.Elapsed:hh\\:mm\\:ss}");
-                    Log.Storage($"Start Migration | Time: {_timer.Elapsed:hh\\:mm\\:ss}");
+
                     // Usar SqlBulkCopy para inserir os dados na tabela do banco de dados
                     using (var connection = new SqlConnection(connectionString))
                     {
@@ -175,15 +169,16 @@ public class REstabelecimentos
                             await bulkCopy.WriteToServerAsync(dataTable);
                         }
                         _timer_migration.Stop();
-                        Log.Storage($"Migrated: {c2} | Time: {_timer_migration.Elapsed:hh\\:mm\\:ss}");
+                        Log.Storage($"Lines: {c1} | Migrated: {c2} | Time: {_timer_migration.Elapsed:hh\\:mm\\:ss}");
                     }
                     
                 }
                 tc1 += c1;
                 tc2 += c2;
+                dataTable.Dispose();
             }
             _timer.Stop();
-            Log.Storage($"Total Lines: {tc1} | Migrated: {tc2} | Time: {_timer.Elapsed:hh\\:mm\\:ss}");
+            Log.Storage($"TLines: {tc1} | TMigrated: {tc2} | TTime: {_timer.Elapsed:hh\\:mm\\:ss}");
         }
         catch (Exception ex)
         {
