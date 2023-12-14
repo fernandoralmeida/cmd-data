@@ -16,7 +16,7 @@ public static class RQualifica
         var _timer = new Stopwatch();
         _timer.Start();
 
-        foreach (var file in await FilesCsv.FilesListAync(@"C:\data", ".QUALSCSV"))
+        foreach (var file in await FilesCsv.FilesListAsync(@"C:\data", ".QUALSCSV"))
             try
             {
                 Log.Storage($"Migrating File {Path.GetFileName(file)}");

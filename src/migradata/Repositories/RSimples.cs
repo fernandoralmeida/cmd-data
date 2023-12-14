@@ -21,7 +21,7 @@ public static class RSimples
         try
         {
 
-            foreach (var file in await FilesCsv.FilesListAync(@"C:\data", ".D3"))
+            foreach (var file in await FilesCsv.FilesListAsync(@"C:\data", ".D3"))
             {
                 var _data = Factory.Data(server);
                 var _timer_task = new Stopwatch();

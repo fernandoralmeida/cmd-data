@@ -33,7 +33,7 @@ public static class SqlCommands
                                         SituacaoEspecial,
                                         DataSitucaoEspecial)";
 
-    public static readonly string Values_Estabelecumentos = @"(@CNPJBase,
+    public static readonly string Values_Estabelecimentos = @"(@CNPJBase,
                                         @CNPJOrdem,
                                         @CNPJDV,
                                         @IdentificadorMatrizFilial,

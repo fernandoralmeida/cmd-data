@@ -16,7 +16,7 @@ public static class RPaises
         var _timer = new Stopwatch();
         _timer.Start();
 
-        foreach (var file in await FilesCsv.FilesListAync(@"C:\data", ".PAISCSV"))
+        foreach (var file in await FilesCsv.FilesListAsync(@"C:\data", ".PAISCSV"))
             try
             {
                 Log.Storage($"Migrating File {Path.GetFileName(file)}");

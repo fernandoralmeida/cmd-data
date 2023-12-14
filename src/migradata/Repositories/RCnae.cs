@@ -15,7 +15,7 @@ public static class RCnaes
         var _timer = new Stopwatch();
         _timer.Start();
 
-        foreach (var file in await FilesCsv.FilesListAync(@"C:\data", ".CNAECSV"))
+        foreach (var file in await FilesCsv.FilesListAsync(@"C:\data", ".CNAECSV"))
             try
             {
                 Log.Storage($"Migrating File {Path.GetFileName(file)}");

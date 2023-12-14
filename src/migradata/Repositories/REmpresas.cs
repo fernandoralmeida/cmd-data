@@ -19,7 +19,7 @@ public static class REmpresas
         _timer.Start();
         try
         {
-            foreach (var file in await FilesCsv.FilesListAync(@"C:\data", ".EMPRECSV"))
+            foreach (var file in await FilesCsv.FilesListAsync(@"C:\data", ".EMPRECSV"))
             {
                 var _data = Factory.Data(server);
                 var _timer_task = new Stopwatch();

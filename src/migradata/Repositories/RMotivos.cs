@@ -15,7 +15,7 @@ public static class RMotivos
         var _timer = new Stopwatch();
         _timer.Start();
 
-        foreach (var file in await FilesCsv.FilesListAync(@"C:\data", ".MOTICSV"))
+        foreach (var file in await FilesCsv.FilesListAsync(@"C:\data", ".MOTICSV"))
             try
             {
                 Log.Storage($"Migrating File {Path.GetFileName(file)}");

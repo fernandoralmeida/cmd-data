@@ -14,7 +14,7 @@ public static class RNatureza
         var _timer = new Stopwatch();
         _timer.Start();
 
-        foreach (var file in await FilesCsv.FilesListAync(@"C:\data", ".NATJUCSV"))
+        foreach (var file in await FilesCsv.FilesListAsync(@"C:\data", ".NATJUCSV"))
             try
             {
                 Log.Storage($"Migrating File {Path.GetFileName(file)}");

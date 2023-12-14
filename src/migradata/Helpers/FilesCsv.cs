@@ -35,7 +35,7 @@ public static class FilesCsv
         Log.Storage($"Normalized Files! {_timer.Elapsed:hh\\:mm\\:ss}");
     });
 
-    public static async Task<string[]> FilesListAync(string path, string extension)
+    public static async Task<string[]> FilesListAsync(string path, string extension)
     => await Task.Run(() => Directory.GetFiles(path).Where(s => s.Contains(extension)).ToArray());
 
     private static async Task DeleteNotZip(string sourceFilePath)

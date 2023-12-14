@@ -16,7 +16,7 @@ public static class RMunicipios
         var _timer = new Stopwatch();
         _timer.Start();
 
-        foreach (var file in await FilesCsv.FilesListAync(@"C:\data", ".MUNICCSV"))
+        foreach (var file in await FilesCsv.FilesListAsync(@"C:\data", ".MUNICCSV"))
             try
             {
                 Log.Storage($"Migrating File {Path.GetFileName(file)}");

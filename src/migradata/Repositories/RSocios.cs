@@ -20,7 +20,7 @@ public static class RSocios
 
         try
         {
-            foreach (var file in await FilesCsv.FilesListAync(@"C:\data", ".SOCIOCSV"))
+            foreach (var file in await FilesCsv.FilesListAsync(@"C:\data", ".SOCIOCSV"))
             {
                 var _data = Factory.Data(server);
                 var _timer_task = new Stopwatch();
