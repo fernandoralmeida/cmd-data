@@ -13,8 +13,8 @@ public class REstabelecimentos
 
     public static async Task DoFileToDBBulkCopy(TServer server, string database, string datasource)
     {
-        int c1 = 0;
-        int c2 = 0;
+        int c1;
+        int c2;
         int tc1 = 0;
         int tc2 = 0;
 

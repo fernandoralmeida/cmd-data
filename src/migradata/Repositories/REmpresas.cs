@@ -1,75 +1,112 @@
+using System.Data;
+using System.Data.SqlClient;
 using System.Diagnostics;
 using System.Text;
 using migradata.Helpers;
-using migradata.Interfaces;
 
 namespace migradata.Repositories;
 
 public static class REmpresas
 {
-    public static async Task DoFileToDB(TServer server, string database, string datasource)
+    public static async Task DoFileToDBBulkCopy(TServer server, string database, string datasource)
     {
-        int c1 = 0;
-        int c2 = 0;
-        var _insert = SqlCommands.InsertCommand("Empresas",
-                        SqlCommands.Fields_Empresas,
-                        SqlCommands.Values_Empresas);
+        int c1;
+        int c2;
+        int tc1 = 0;
+        int tc2 = 0;
+
+        var connectionString = $"{datasource}Database={database};";
+        var tableName = "Empresas";
 
         var _timer = new Stopwatch();
         _timer.Start();
+
         try
         {
             foreach (var file in await FilesCsv.FilesListAsync(@"C:\data", ".EMPRECSV"))
             {
-                var _data = Factory.Data(server);
-                var _timer_task = new Stopwatch();
-                _timer_task.Start();
+                var dataTable = new DataTable();
+                dataTable.Columns.Add("CNPJBase");
+                dataTable.Columns.Add("RazaoSocial");
+                dataTable.Columns.Add("NaturezaJuridica");
+                dataTable.Columns.Add("QualificacaoResponsavel");
+                dataTable.Columns.Add("CapitalSocial");
+                dataTable.Columns.Add("PorteEmpresa");
+                dataTable.Columns.Add("EnteFederativoResponsavel");
+
+                c2 = 0;
+                c1 = 0;
+
                 Log.Storage($"Reading File {Path.GetFileName(file)}");
                 Console.Write("\n|");
-                using var reader = new StreamReader(file, Encoding.GetEncoding("ISO-8859-1"));
-                var _rows = 0;
-                while (!reader.EndOfStream)
-                {
-                    var line = await reader.ReadLineAsync();
-                    var fields = line!.Split(';');
 
-                    await DoInsert(_insert, _data, fields, database, datasource);
-                    _rows++;
-                    if (c1 % 100000 == 0)
+                using var reader = new StreamReader(file, Encoding.GetEncoding("ISO-8859-1"));
+                {
+                    while (!reader.EndOfStream)
                     {
-                        Console.Write($"  {_rows}");
-                        Console.Write("\r");
+                        var line = await reader.ReadLineAsync();
+                        var fields = line!.Split(';');
+
+                        c1++;
+                        
+                        // Adicionar a linha à DataTable
+                        DataRow row = dataTable.NewRow();
+                        row["CNPJBase"] = fields[0].ToString().Replace("\"", "").Trim();
+                        row["RazaoSocial"] = fields[1].ToString().Replace("\"", "").Trim();
+                        row["NaturezaJuridica"] = fields[2].ToString().Replace("\"", "").Length <= 4 ? fields[2].ToString().Replace("\"", "").Trim() : "0000";
+                        row["QualificacaoResponsavel"] = fields[3].ToString().Replace("\"", "").Length <= 2 ? fields[3].ToString().Replace("\"", "").Trim() : "00";
+                        row["CapitalSocial"] = fields[4].ToString().Replace("\"", "").Trim()!;
+                        row["PorteEmpresa"] = fields[5].ToString().Replace("\"", "").Length <= 2 ? fields[5].ToString().Replace("\"", "").Trim() : "00";
+                        row["EnteFederativoResponsavel"] = fields[6].ToString().Replace("\"", "").Trim();
+
+                        dataTable.Rows.Add(row);
+
+                        c2++;
+
+                        if (c2 % 100 == 0)
+                        {
+                            Console.Write($"  {c2}");
+                            Console.Write("\r");
+                        }
+
                     }
 
-                    c1++;
+                    // Usar SqlBulkCopy para inserir os dados na tabela do banco de dados
+                    using (var connection = new SqlConnection(connectionString))
+                    {
+                        var _timer_migration = new Stopwatch();
+                        _timer_migration.Start();
+                        connection.Open(); ;
+                        using (var bulkCopy = new SqlBulkCopy(connection))
+                        {
+                            bulkCopy.DestinationTableName = tableName;
+                            // Mapear as colunas se necessário 
+                            bulkCopy.ColumnMappings.Add("CNPJBase", "CNPJBase");
+                            bulkCopy.ColumnMappings.Add("RazaoSocial", "RazaoSocial");
+                            bulkCopy.ColumnMappings.Add("NaturezaJuridica", "NaturezaJuridica");
+                            bulkCopy.ColumnMappings.Add("QualificacaoResponsavel", "QualificacaoResponsavel");
+                            bulkCopy.ColumnMappings.Add("CapitalSocial", "CapitalSocial");
+                            bulkCopy.ColumnMappings.Add("PorteEmpresa", "PorteEmpresa");
+                            bulkCopy.ColumnMappings.Add("EnteFederativoResponsavel", "EnteFederativoResponsavel");
+
+                            bulkCopy.BulkCopyTimeout = 0;
+                            await bulkCopy.WriteToServerAsync(dataTable);
+                        }
+                        _timer_migration.Stop();
+                        Log.Storage($"Lines: {c1} | Migrated: {c2} | Time: {_timer_migration.Elapsed:hh\\:mm\\:ss}");
+                    }
+
                 }
-                reader.Close();
-                c2 += _rows;
-                _timer_task.Start();
-                Log.Storage($"Read: {c1} | Migrated: {_rows} | Time: {_timer_task.Elapsed:hh\\:mm\\:ss}");
+                tc1 += c1;
+                tc2 += c2;
+                dataTable.Dispose();
             }
-
             _timer.Stop();
-
-            Log.Storage($"Read: {c1} | Migrated: {c2} | Time: {_timer.Elapsed:hh\\:mm\\:ss}");
+            Log.Storage($"TLines: {tc1} | TMigrated: {tc2} | TTime: {_timer.Elapsed:hh\\:mm\\:ss}");
         }
         catch (Exception ex)
         {
             Log.Storage($"Erro: {ex.Message}");
         }
     }
-
-    private static async Task DoInsert(string sqlcommand, IData data, string[] fields, string database, string datasource)
-    {
-        data.ClearParameters();
-        data.AddParameters("@CNPJBase", fields[0].ToString().Replace("\"", ""));
-        data.AddParameters("@RazaoSocial", fields[1].ToString().Replace("\"", ""));
-        data.AddParameters("@NaturezaJuridica", fields[2].ToString().Replace("\"", "").Length <= 4 ? fields[2].ToString().Replace("\"", "") : "0000");
-        data.AddParameters("@QualificacaoResponsavel", fields[3].ToString().Replace("\"", "").Length <= 2 ? fields[3].ToString().Replace("\"", "") : "00");
-        data.AddParameters("@CapitalSocial", fields[4].ToString().Replace("\"", "")!);
-        data.AddParameters("@PorteEmpresa", fields[5].ToString().Replace("\"", "").Length <= 2 ? fields[5].ToString().Replace("\"", "") : "00");
-        data.AddParameters("@EnteFederativoResponsavel", fields[6].ToString().Replace("\"", ""));
-        await data.ExecuteAsync(sqlcommand, database, datasource);
-    }
-
 }
