@@ -3,19 +3,17 @@ using System.Data.SqlClient;
 using System.Diagnostics;
 using System.Text;
 using migradata.Helpers;
-using migradata.Interfaces;
 using migradata.Models;
 
 namespace migradata.Repositories;
+
+
 
 public static class RSimples
 {
     public static async Task DoFileToDBBulkCopy(TServer server, string database, string datasource)
     {
-        int c1;
-        int c2;
-        int tc1 = 0;
-        int tc2 = 0;
+        int _count = 0;
         var connectionString = $"{datasource}Database={database};";
         var tableName = "Simples";
 
@@ -27,8 +25,7 @@ public static class RSimples
 
             foreach (var file in await FilesCsv.FilesListAsync(@"C:\data", ".D3"))
             {
-                c2 = 0;
-                c1 = 0;
+                _count = 0;
 
                 Log.Storage($"Reading File {Path.GetFileName(file)}");
                 Console.Write("\n|");
@@ -43,7 +40,7 @@ public static class RSimples
                         var line = await reader.ReadLineAsync();
                         var fields = line!.Split(';');
 
-                        c1++;
+                        _count++;
 
                         _lista_simples_completa.Add(new MSimples()
                         {
@@ -56,11 +53,9 @@ public static class RSimples
                             DataExclusaoMEI = fields[6].ToString().Replace("\"", "").Trim()
                         });
 
-                        c2++;
-
-                        if (c2 % 10000 == 0)
+                        if (_count % 10000 == 0)
                         {
-                            Console.Write($"  {c2}");
+                            Console.Write($"  {_count}");
                             Console.Write("\r");
                         }
                     }
@@ -74,10 +69,14 @@ public static class RSimples
                                 .Select(s => _lista_simples_completa.Skip(s * _size_parts).Take(_size_parts))
                                 .ToList();
 
+                    //libera os itens para o coletor
+                    _lista_simples_completa.Clear();
+
                     //para cada grupo, execute o codigo;
                     foreach (var parts in _groups)
                     {
                         var _rows = 0;
+                        Console.Write("\n|");
 
                         var dataTable = new DataTable();
                         dataTable.Columns.Add("CNPJBase");
@@ -132,15 +131,14 @@ public static class RSimples
                             }
                             _timer_migration.Stop();
                             Log.Storage($"Lines: {_rows} | Migrated: {_rows} | Time: {_timer_migration.Elapsed:hh\\:mm\\:ss}");
-                        }                        
+                        }
                         dataTable.Dispose();
                     }
                 }
-                tc1 += c1;
-                tc2 += c2;                
+
             }
             _timer.Stop();
-            Log.Storage($"TLines: {tc1} | TMigrated: {tc2} | TTime: {_timer.Elapsed:hh\\:mm\\:ss}");
+            Log.Storage($"TLines: {_count} | TMigrated: {_count} | TTime: {_timer.Elapsed:hh\\:mm\\:ss}");
         }
         catch (Exception ex)
         {

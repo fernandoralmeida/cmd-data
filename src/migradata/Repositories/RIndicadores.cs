@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Data;
 using System.Data.SqlClient;
 using System.Diagnostics;
@@ -76,9 +77,13 @@ public static class RIndicadores
                         .Select(s => _indicadores_full.Skip(s * _size_parts).Take(_size_parts))
                         .ToList();
 
+            //libera itens para o coletor
+            _indicadores_full.Clear();
+
             foreach (var parts in _groups)
             {
                 var _rows_parts = 0;
+                Console.Write("\n|");
                 var dataTable = new DataTable();
                 dataTable.Columns.Add("Id", typeof(Guid));
                 dataTable.Columns.Add("CNPJ");

@@ -11,10 +11,8 @@ public static class RSocios
 {
     public static async Task DoFileToDBBulkCopy(TServer server, string database, string datasource)
     {
-        int c1;
-        int c2;
-        int tc1 = 0;
-        int tc2 = 0;
+        int _count = 0;
+        int _tcount = 0;
         var connectionString = $"{datasource}Database={database};";
         var tableName = "Socios";
 
@@ -38,8 +36,7 @@ public static class RSocios
                 dataTable.Columns.Add("QualificacaoRepresentanteLegal");
                 dataTable.Columns.Add("FaixaEtaria");
 
-                c2 = 0;
-                c1 = 0;
+                _count = 0;
 
                 Log.Storage($"Reading File {Path.GetFileName(file)}");
                 Console.Write("\n|");
@@ -51,7 +48,7 @@ public static class RSocios
                         var line = await reader.ReadLineAsync();
                         var fields = line!.Split(';');
 
-                        c1++;
+                        _count++;
 
                         // Adicionar a linha à DataTable
                         DataRow row = dataTable.NewRow();
@@ -69,11 +66,9 @@ public static class RSocios
 
                         dataTable.Rows.Add(row);
 
-                        c2++;
-
-                        if (c2 % 100 == 0)
+                        if (_count % 100 == 0)
                         {
-                            Console.Write($"  {c2}");
+                            Console.Write($"  {_count}");
                             Console.Write("\r");
                         }
 
@@ -105,16 +100,15 @@ public static class RSocios
                             await bulkCopy.WriteToServerAsync(dataTable);
                         }
                         _timer_migration.Stop();
-                        Log.Storage($"Lines: {c1} | Migrated: {c2} | Time: {_timer_migration.Elapsed:hh\\:mm\\:ss}");
+                        Log.Storage($"Lines: {_count} | Migrated: {_count} | Time: {_timer_migration.Elapsed:hh\\:mm\\:ss}");
                     }
 
                 }
-                tc1 += c1;
-                tc2 += c2;
+                _tcount += _count;
                 dataTable.Dispose();
             }
             _timer.Stop();
-            Log.Storage($"TLines: {tc1} | TMigrated: {tc2} | TTime: {_timer.Elapsed:hh\\:mm\\:ss}");
+            Log.Storage($"TLines: {_tcount} | TMigrated: {_tcount} | TTime: {_timer.Elapsed:hh\\:mm\\:ss}");
         }
         catch (Exception ex)
         {
