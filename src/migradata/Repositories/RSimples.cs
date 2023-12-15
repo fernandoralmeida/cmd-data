@@ -70,7 +70,7 @@ public static class RSimples
                                 .ToList();
 
                     //libera os itens para o coletor
-                    _lista_simples_completa.Clear();
+                    //_lista_simples_completa.Clear();
 
                     //para cada grupo, execute o codigo;
                     foreach (var parts in _groups)

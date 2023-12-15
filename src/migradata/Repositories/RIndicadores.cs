@@ -78,7 +78,7 @@ public static class RIndicadores
                         .ToList();
 
             //libera itens para o coletor
-            _indicadores_full.Clear();
+            //_indicadores_full.Clear();
 
             foreach (var parts in _groups)
             {
