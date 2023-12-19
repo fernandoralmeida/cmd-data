@@ -143,4 +143,51 @@ public class Data : IData
         Thread.Sleep(3000);
     });
 
+    public async IAsyncEnumerable<MIndicadoresnet> ReadViewAsync(string query, string database, string datasource)
+    {
+        using (SqlConnection connection = new($"{datasource}Database={database};"))
+        {
+            await connection.OpenAsync();
+
+            var command = new SqlCommand(query, connection)
+            {
+                CommandTimeout = 0
+            };
+
+            using (var reader = await command.ExecuteReaderAsync())
+            {
+                while (await reader.ReadAsync())
+                {
+                    yield return new MIndicadoresnet()
+                    {
+                        CNPJ = reader["CNPJ"] == null ? reader["CNPJ"].ToString() : "",
+                        RazaoSocial = reader["RazaoSocial"].ToString(),
+                        NaturezaJuridica = reader["NaturezaJuridica"].ToString(),
+                        CapitalSocial = decimal.TryParse(reader["CapitalSocial"].ToString(), out decimal valor) ? valor : 0,
+                        PorteEmpresa = reader["PorteEmpresa"].ToString(),
+                        IdentificadorMatrizFilial = reader["IdentificadorMatrizFilial"].ToString(),
+                        NomeFantasia = reader["NomeFantasia"].ToString(),
+                        SituacaoCadastral = reader["SituacaoCadastral"].ToString(),
+                        DataSituacaoCadastral = reader["DataSituacaoCadastral"].ToString(),
+                        DataInicioAtividade = reader["DataInicioAtividade"].ToString(),
+                        CnaeFiscalPrincipal = reader["CnaeFiscalPrincipal"].ToString(),
+                        CnaeDescricao = reader["CnaeDescricao"].ToString(),
+                        CEP = reader["CEP"].ToString(),
+                        Logradouro = reader["Logradouro"].ToString(),
+                        Numero = reader["Numero"].ToString(),
+                        Bairro = reader["Bairro"].ToString(),
+                        UF = reader["UF"].ToString(),
+                        Municipio = reader["Municipio"].ToString(),
+                        OpcaoSimples = reader["OpcaoSimples"].ToString(),
+                        DataOpcaoSimples = reader["DataOpcaoSimples"].ToString(),
+                        DataExclusaoSimples = reader["DataExclusaoSimples"].ToString(),
+                        OpcaoMEI = reader["OpcaoMEI"].ToString(),
+                        DataOpcaoMEI = reader["DataOpcaoMEI"].ToString(),
+                        DataExclusaoMEI = reader["DataExclusaoMEI"].ToString()
+                    };
+                }
+            }
+        }
+    }
+
 }

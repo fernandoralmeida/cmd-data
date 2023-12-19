@@ -1,4 +1,3 @@
-using System.Data;
 using System.Diagnostics;
 using migradata.Helpers;
 using migradata.Interfaces;
@@ -15,8 +14,7 @@ public static class MgIndicadores
         var c2 = 0;
         var _timer = new Stopwatch();
         var _db = Factory.Data(server);
-        var _list = new List<MIndicadoresnet>();
-        var _dataRead = await _db.ReadAsync(SqlCommands.ViewCommand("view_empresas_by_municipio"), databaseOut, datasource);
+        
         var _insert = SqlCommands.InsertCommand("Empresas",
                 SqlCommands.Fields_Indicadores_Empresas,
                 SqlCommands.Values_Indicadores_Empresas);
@@ -25,37 +23,12 @@ public static class MgIndicadores
         var _rows = 0;
         Log.Storage($"Starting Migrate to Indicadores");
         Console.Write("\n");
-        foreach (DataRow row in _dataRead.Rows)
+        var _list = new List<MIndicadoresnet>();
+        await foreach (var row in _db.ReadViewAsync(SqlCommands.ViewCommand("view_empresas_by_municipio"), databaseOut, datasource))
         {
             _rows++;
-            _list.Add(new MIndicadoresnet()
-            {
-                CNPJ = row["CNPJ"].ToString(),
-                RazaoSocial = row["RazaoSocial"].ToString(),
-                NaturezaJuridica = row["NaturezaJuridica"].ToString(),
-                CapitalSocial = decimal.TryParse(row["CapitalSocial"].ToString(), out decimal valor) ? valor : 0,
-                PorteEmpresa = row["PorteEmpresa"].ToString(),
-                IdentificadorMatrizFilial = row["IdentificadorMatrizFilial"].ToString(),
-                NomeFantasia = row["NomeFantasia"].ToString(),
-                SituacaoCadastral = row["SituacaoCadastral"].ToString(),
-                DataSituacaoCadastral = row["DataSituacaoCadastral"].ToString(),
-                DataInicioAtividade = row["DataInicioAtividade"].ToString(),
-                CnaeFiscalPrincipal = row["CnaeFiscalPrincipal"].ToString(),
-                CnaeDescricao = row["CnaeDescricao"].ToString(),
-                CEP = row["CEP"].ToString(),
-                Logradouro = row["Logradouro"].ToString(),
-                Numero = row["Numero"].ToString(),
-                Bairro = row["Bairro"].ToString(),
-                UF = row["UF"].ToString(),
-                Municipio = row["Municipio"].ToString(),
-                OpcaoSimples = row["OpcaoSimples"].ToString(),
-                DataOpcaoSimples = row["DataOpcaoSimples"].ToString(),
-                DataExclusaoSimples = row["DataExclusaoSimples"].ToString(),
-                OpcaoMEI = row["OpcaoMEI"].ToString(),
-                DataOpcaoMEI = row["DataOpcaoMEI"].ToString(),
-                DataExclusaoMEI = row["DataExclusaoMEI"].ToString()
-            });
-            if (c1 % 1000 == 0)
+            _list.Add(row);
+            if (c1 % 10000 == 0)
             {
                 Console.Write($"  {_rows}");
                 Console.Write("\r");

@@ -12,4 +12,5 @@ public interface IData
     Task WriteAsync(string query, string dbname, string datasource);
     Task CreateDB(string datasource, string dbname, List<MSqlCommand> sqlcommands);
     Task<bool> DbExists(string dbname, string datasource);
+    IAsyncEnumerable<MIndicadoresnet> ReadViewAsync(string query, string database, string datasource);
 }
